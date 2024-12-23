@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
 	AppstoreOutlined,
@@ -14,7 +15,9 @@ import {
 	CarOutlined,
 	ShoppingOutlined,
 	DollarOutlined,
+	UserOutlined,
 } from "@ant-design/icons";
+import { FileCheck, Ship } from "lucide-react";
 
 const menuItems = [
 	{
@@ -26,18 +29,13 @@ const menuItems = [
 				href: "/",
 				badge: "12",
 			},
-		],
-	},
-	{
-		title: "CAR INVENTORY",
-		items: [
 			{
-				title: "car Inventory",
+				title: "Car Inventory",
 				icon: <CarOutlined />,
 				href: "/car-inventory",
 			},
 			{
-				title: "Shipping preparation",
+				title: "Shipping Preparation",
 				icon: <ShoppingOutlined />,
 				href: "/shipping-preparation",
 			},
@@ -45,6 +43,42 @@ const menuItems = [
 				title: "Cost Management",
 				icon: <DollarOutlined />,
 				href: "/cost-management",
+			},
+			{
+				title: "Shipping Logistics",
+				icon: <Ship size={16} />,
+				href: "/shipping-logistics",
+			},
+			{
+				title: "Export Compliance",
+				icon: <FileCheck size={16} />,
+				href: "/export-compliance",
+			},
+			{
+				title: "User Management",
+				icon: <UserOutlined />,
+				href: "/user-management",
+			},
+		],
+	},
+	{
+		title: "PAGES",
+		items: [
+			{
+				title: "Pages",
+				icon: <FileTextOutlined />,
+				href: "/pages",
+				badge: "New",
+			},
+			{
+				title: "Authentication",
+				icon: <TeamOutlined />,
+				href: "/auth",
+			},
+			{
+				title: "Sign Up",
+				icon: <UserAddOutlined />,
+				href: "/signup",
 			},
 		],
 	},
@@ -62,6 +96,7 @@ const menuItems = [
 
 export function Sidebar() {
 	const [collapsed, setCollapsed] = useState(false);
+	const pathname = usePathname();
 
 	return (
 		<div
@@ -100,7 +135,11 @@ export function Sidebar() {
 								<li key={j}>
 									<Link
 										href={item.href}
-										className="flex items-center gap-x-3 rounded-lg px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white"
+										className={cn(
+											"flex items-center gap-x-3 rounded-lg px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white",
+											pathname === item.href &&
+												"bg-gray-800 text-white"
+										)}
 									>
 										<span className="text-lg">
 											{item.icon}
@@ -110,6 +149,13 @@ export function Sidebar() {
 												<span className="flex-1">
 													{item.title}
 												</span>
+												{item.badge && (
+													<span className="rounded bg-primary/20 px-2 py-0.5 text-xs text-primary">
+														{
+															item.badge
+														}
+													</span>
+												)}
 											</>
 										)}
 									</Link>

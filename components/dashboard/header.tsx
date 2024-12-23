@@ -59,10 +59,8 @@ export function Header() {
 				<div className="flex items-center gap-3">
 					<div className="h-8 w-8 rounded-full bg-gray-200" />
 					<div>
-						<div className="font-medium">Json Taylor</div>
-						<div className="text-sm text-gray-500">
-							Web Designer
-						</div>
+						<div className="font-medium">Bukenya</div>
+						<div className="text-sm text-gray-500">Admin</div>
 					</div>
 				</div>
 			</div>
