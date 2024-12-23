@@ -49,14 +49,14 @@ export function ChartTooltip({
 // }
 
 interface LineChartProps extends React.HTMLAttributes<HTMLDivElement> {
-	data: { [key: string]: any }[];
+	data: any;
 
 	categories: string[];
 
 	index: string;
 
 	colors?: string[];
-	labels?: string;
+	labels?: string[];
 	valueFormatter?: (value: any) => string;
 }
 
@@ -67,7 +67,12 @@ export function LineChart({
 	className,
 	...props
 }: LineChartProps) {
-	const chartData = data.map((value, i) => ({
+	interface ChartData {
+		value: number;
+		label: string;
+	}
+
+	const chartData: ChartData[] = data.map((value: number, i: number) => ({
 		value,
 		label: labels?.[i] || `Point ${i + 1}`,
 	}));

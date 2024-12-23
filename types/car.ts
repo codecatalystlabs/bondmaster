@@ -13,7 +13,7 @@ export interface Car {
   year: number
   chassisNumber: string
   engineCapacity: string
-  emissionsRating: string
+  emissionsRating?: any
   mileage: number
   condition: 'excellent' | 'good' | 'fair' | 'poor'
   price: number
