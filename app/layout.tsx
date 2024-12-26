@@ -1,8 +1,11 @@
+"use client";
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { Header } from "@/components/dashboard/header";
+import { SnackbarProvider } from "notistack";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -29,13 +32,22 @@ export default function RootLayout({
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
-				<div className="flex h-screen">
-					<Sidebar />
-					<div className="flex flex-1 flex-col">
-						<Header />
-						{children}
+				<SnackbarProvider
+					maxSnack={3}
+					anchorOrigin={{
+						vertical: "top",
+						horizontal: "right",
+					}}
+					preventDuplicate
+				>
+					<div className="flex h-screen">
+						<Sidebar />
+						<div className="flex flex-1 flex-col">
+							<Header />
+							{children}
+						</div>
 					</div>
-				</div>
+				</SnackbarProvider>
 			</body>
 		</html>
 	);
