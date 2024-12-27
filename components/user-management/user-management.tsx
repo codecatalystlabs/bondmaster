@@ -54,10 +54,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { UserInfo, UserResponseInfo } from "@/types/user";
 import useSWR, { mutate } from "swr";
-import { createUser, fetcher } from "@/apis";
+import { createUser, editUser, fetcher } from "@/apis";
 import { BASE_URL } from "@/constants/baseUrl";
-import { useSnackbar, SnackbarProvider } from "notistack";
 import { Loader } from "../ui/loader";
+import toast, { Toaster } from "react-hot-toast";
 
 const formSchema = z.object({
 	username: z.string().min(2, {
@@ -81,13 +81,11 @@ const formSchema = z.object({
 });
 
 export function UserManagement() {
-	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const [users, setUsers] = React.useState<UserInfo[]>([]);
 	const [user, setUser] = React.useState<UserInfo | null>(null);
 	const [isDialogOpen, setIsDialogOpen] = React.useState(false);
-	const [editingUser, setEditingUser] = React.useState<UserInfo | null>(
-		null
-	);
+	const [editingUser, setEditingUser] =
+		React.useState<UserResponseInfo | null>(null);
 	const [showPassword, setShowPassword] = React.useState<{
 		[key: string]: boolean;
 	}>({});
@@ -134,6 +132,8 @@ export function UserManagement() {
 		setShowModalPassword(false);
 	}, [editingUser, form]);
 
+	console.log(editingUser, "editingUser");
+
 	const {
 		data: usersData,
 		error,
@@ -141,34 +141,45 @@ export function UserManagement() {
 	} = useSWR(`${BASE_URL}/users`, fetcher);
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		const newUser: UserInfo = {
+		const userPayload: UserInfo = {
 			...values,
 			company_id: 1,
+			title: values.title || "",
 			created_by: "admin",
 			updated_by: "admin",
-			title: values.title || "",
 		};
 
-		// Call createUser API directly without using useSWR
 		try {
-			const response = await createUser({
-				url: `${BASE_URL}/user`,
-				userInfo: newUser,
-			});
+			if (editingUser) {
+				// Edit existing user
+				const response = await editUser({
+					url: `${BASE_URL}/user/${editingUser.ID}`,
+					userInfo: userPayload,
+				});
 
-			console.log(response, "response");
+				mutate(`${BASE_URL}/users`);
+				if (response.data) {
+					toast.success("User updated successfully");
+				}
+			} else {
+				// Create new user
+				const response = await createUser({
+					url: `${BASE_URL}/user`,
+					userInfo: userPayload,
+				});
 
-			mutate(`${BASE_URL}/user`);
-			enqueueSnackbar("User created successfully", {
-        variant: "success",
-        
-       
-			});
-			setUsers([...users, newUser]);
+				mutate(`${BASE_URL}/users`);
+				if (response.data) {
+					toast.success("User created successfully");
+				}
+			}
+
 			setIsDialogOpen(false);
+			setEditingUser(null);
 			form.reset();
-		} catch (error) {
-			console.error("Error creating user:", error);
+		} catch (error: any) {
+			toast.error(error.error.message || "An error occurred");
+			console.error("Error submitting form:", error);
 		}
 	}
 
@@ -189,7 +200,6 @@ export function UserManagement() {
 
 	return (
 		<div className="space-y-4">
-			
 			{!usersData ? (
 				<Loader />
 			) : (
@@ -248,7 +258,7 @@ export function UserManagement() {
 														</FormLabel>
 														<FormControl>
 															<Input
-																placeholder="johndoe"
+																placeholder="roland"
 																{...field}
 															/>
 														</FormControl>
@@ -270,7 +280,7 @@ export function UserManagement() {
 														</FormLabel>
 														<FormControl>
 															<Input
-																placeholder="john@example.com"
+																placeholder="roland@example.com"
 																{...field}
 															/>
 														</FormControl>

@@ -17,7 +17,7 @@ import {
 	DollarOutlined,
 	UserOutlined,
 } from "@ant-design/icons";
-import { FileCheck, Ship } from "lucide-react";
+import { FileCheck, Ship, Users } from "lucide-react";
 
 const menuItems = [
 	{
@@ -58,6 +58,11 @@ const menuItems = [
 				title: "User Management",
 				icon: <UserOutlined />,
 				href: "/user-management",
+			},
+			{
+				title: "Customer Management",
+				icon: <Users size={16} />,
+				href: "/customer-management",
 			},
 		],
 	},
