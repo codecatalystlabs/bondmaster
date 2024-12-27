@@ -57,6 +57,7 @@ import useSWR, { mutate } from "swr";
 import { createUser, fetcher } from "@/apis";
 import { BASE_URL } from "@/constants/baseUrl";
 import { useSnackbar, SnackbarProvider } from "notistack";
+import { Loader } from "../ui/loader";
 
 const formSchema = z.object({
 	username: z.string().min(2, {
@@ -189,8 +190,8 @@ export function UserManagement() {
 	return (
 		<div className="space-y-4">
 			
-			{isValidating ? (
-				<p>Loading data...</p>
+			{!usersData ? (
+				<Loader />
 			) : (
 				<>
 					<div className="flex justify-between items-center">
