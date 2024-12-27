@@ -89,7 +89,7 @@ export function CustomerManagement() {
 			surname: "",
 			firstname: "",
 			othername: "",
-			gender: "Male",
+			gender: "Male" as "Male" | "Female" | "Other",
 			nationality: "",
 			age: 0,
 			dob: "",
@@ -105,7 +105,10 @@ export function CustomerManagement() {
 				surname: editingCustomer.surname,
 				firstname: editingCustomer.firstname,
 				othername: editingCustomer.othername,
-				gender: editingCustomer.gender,
+				gender: editingCustomer.gender as
+					| "Male"
+					| "Female"
+					| "Other",
 				nationality: editingCustomer.nationality,
 				age: editingCustomer.age,
 				dob: editingCustomer.dob,
@@ -134,7 +137,7 @@ export function CustomerManagement() {
 		fetcher
 	);
 
-	console.log(customerList, "list");
+	
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		const userPayload: Customer = {
@@ -145,7 +148,6 @@ export function CustomerManagement() {
 
 		try {
 			if (editingCustomer) {
-				
 				const response = await editCustomer({
 					url: `${BASE_URL}/customer/${editingCustomer.ID}`,
 					customerInfo: userPayload,
@@ -484,9 +486,19 @@ export function CustomerManagement() {
 											variant="ghost"
 											size="icon"
 											onClick={() => {
-												setEditingCustomer(
-													customer
-												);
+												setEditingCustomer({
+													...customer,
+													ID: 0,
+													CreatedAt: "",
+													UpdatedAt: "",
+													DeletedAt: "",
+													customer_uuid:
+														customer.customer_uuid ||
+														"",
+													othername:
+														customer.othername ||
+														"",
+												});
 												setIsDialogOpen(
 													true
 												);

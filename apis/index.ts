@@ -1,3 +1,4 @@
+import { Car } from "@/types/car";
 import { Customer } from "@/types/customer";
 import { UserInfo } from "@/types/user";
 
@@ -11,6 +12,10 @@ interface ICreateCustomer {
     customerInfo: Partial<Customer> | any;
 }
 
+interface ICreateCar {
+    url: string;
+    carInfo: Partial<Car> | any;
+}
 
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
@@ -85,4 +90,21 @@ const editCustomer = async ({ url, customerInfo }: ICreateCustomer) => {
 };
 
 
-export { createUser, fetcher, editUser,editCustomer, createCustomer };
+const addCar = async ({ url, carInfo }: ICreateCar) => {
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(carInfo),
+    })
+
+    if (!response.ok) {
+        throw new Error('Failed to create user');
+    }
+
+    return response.json();
+}
+
+
+export { createUser, fetcher, editUser, editCustomer, createCustomer, addCar };
