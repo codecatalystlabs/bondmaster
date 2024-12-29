@@ -53,7 +53,7 @@ const stats = [
 					"Jun",
 					"Jul",
 				]}
-					index="0"
+				index="0"
 			/>
 		),
 	},
@@ -74,7 +74,7 @@ const stats = [
 					"Jun",
 					"Jul",
 				]}
-					index="0"
+				index="0"
 			/>
 		),
 	},
@@ -95,7 +95,7 @@ const stats = [
 					"Jun",
 					"Jul",
 				]}
-					index="0"
+				index="0"
 			/>
 		),
 	},
@@ -134,23 +134,43 @@ export function DashboardMain() {
 		<div className="flex-1 overflow-y-auto p-8">
 			<div className="grid gap-6">
 				<Card className="bg-primary p-6">
-					<div className="flex items-center gap-6">
-						<div className="flex-1">
-							<h3 className="text-xl font-semibold text-white">
-								Your target is incomplete
-							</h3>
-							<p className="mt-1 text-primary-foreground/80">
-								You have completed 48% of the given
-								target, you can also check your state.
-							</p>
+					<div className="flex justify-between items-center">
+						<h3 className="text-xl font-semibold text-white">
+							Your Progress Overview
+						</h3>
+						<span className="text-sm text-primary-foreground/80">
+							{new Date().toLocaleString("en-US", {
+								weekday: "long",
+								year: "numeric",
+								month: "long",
+								day: "numeric",
+								hour: "2-digit",
+								minute: "2-digit",
+								timeZoneName: "short",
+							})}
+						</span>
+					</div>
+					
+					<div className="mt-2">
+						<div className="flex justify-between items-center mb-1">
+							<span className="text-sm font-medium text-primary-foreground/80">
+								Target Progress
+							</span>
+							<span className="text-sm font-medium text-primary-foreground/80">
+								48%
+							</span>
 						</div>
-						<div className="h-24 w-24 ">
-							<Progress
-								className="text-white bg-green-500"
-								value={48}
-							/>
+						<div className="w-full bg-gray-700 rounded-full h-2.5">
+							<div
+								className="bg-green-600 h-2.5 rounded-full"
+								style={{ width: "48%" }}
+							></div>
 						</div>
 					</div>
+					<p className="mt-2 text-primary-foreground/80">
+						You have completed 48% of your target. Keep up the
+						good work!
+					</p>
 				</Card>
 
 				<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">

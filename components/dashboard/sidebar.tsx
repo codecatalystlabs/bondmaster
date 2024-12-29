@@ -18,6 +18,7 @@ import {
 	UserOutlined,
 } from "@ant-design/icons";
 import { DollarSign, FileCheck, Ship, Users } from "lucide-react";
+import Image from "next/image";
 
 const menuItems = [
 	{
@@ -115,8 +116,10 @@ export function Sidebar() {
 				collapsed ? "w-20" : "w-64"
 			)}
 		>
-			<div className="flex h-16 items-center justify-between px-4 border-b border-gray-700">
-				<div className="h-8 w-8 bg-gray-400" />
+			<div className="flex h-20  items-center justify-between px-4 py-4 border-b border-gray-700">
+				<div >
+					<Image width={120} height={50} src="/logo.png" alt="logo" objectFit="cover" />
+				</div>
 				<button
 					onClick={() => setCollapsed(!collapsed)}
 					className="text-gray-400 hover:text-white"

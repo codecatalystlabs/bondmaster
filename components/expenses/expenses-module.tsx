@@ -180,7 +180,6 @@ export function ExpensesModule() {
 				);
 			}
 			setEditingExpense(null);
-			toast.success("Your expense has been successfully updated.");
 		} else {
 			const newExpense: Expense = {
 				...values,
