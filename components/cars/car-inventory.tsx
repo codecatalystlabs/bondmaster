@@ -53,6 +53,7 @@ import { Car, CarResponse } from "@/types/car";
 import useSWR from "swr";
 import { BASE_URL } from "@/constants/baseUrl";
 import { fetcher } from "@/apis";
+import { Loader } from "../ui/loader";
 
 export function CarInventory() {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -64,12 +65,14 @@ export function CarInventory() {
 	const [showAddForm, setShowAddForm] = React.useState(false);
 	const [showEditForm, setShowEditForm] = React.useState(false);
 	const [showDetailsModal, setShowDetailsModal] = React.useState(false);
-	const [selectedCar, setSelectedCar] = React.useState<Car | null>(null);
+	const [selectedCar, setSelectedCar] = React.useState<Car | null | any>(null);
 	const [cars, setCars] = React.useState<Car[]>([]);
 
-	const { data: carList, error } = useSWR(`${BASE_URL}/cars`, fetcher);
-
-	console.log(carList);
+	const {
+		data: carList,
+		error,
+		isLoading,
+	} = useSWR(`${BASE_URL}/cars`, fetcher);
 
 	const handleViewDetails = (car: Car) => {
 		setSelectedCar(car);
@@ -232,7 +235,10 @@ export function CarInventory() {
 								View details
 							</DropdownMenuItem>
 							<DropdownMenuItem
-								onClick={() => handleEditCar(car)}
+								onClick={() => {
+									console.log("Edit car", car);
+									handleEditCar(car)
+								}}
 							>
 								Edit car
 							</DropdownMenuItem>
@@ -266,164 +272,211 @@ export function CarInventory() {
 	});
 
 	return (
-		<Card>
-			<CardHeader>
-				<CardTitle>Car Inventory</CardTitle>
-				<CardDescription>
-					Manage your car inventory, upload documents, and track
-					vehicle details.
-				</CardDescription>
-			</CardHeader>
-			<CardContent>
-				<div className="mb-4 flex items-center gap-4">
-					<Input
-						placeholder="Filter makes..."
-						value={
-							(table
-								.getColumn("make")
-								?.getFilterValue() as string) ?? ""
-						}
-						onChange={(event) =>
-							table
-								.getColumn("make")
-								?.setFilterValue(event.target.value)
-						}
-						className="max-w-sm"
-					/>
-					<Button onClick={() => setShowAddForm(true)}>
-						<Plus className="mr-2 h-4 w-4" /> Add Car
-					</Button>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant="outline">
-								Columns{" "}
-								<ChevronDownIcon className="ml-2 h-4 w-4" />
+		<>
+			{isLoading ? (
+				<Loader />
+			) : (
+				<Card>
+					<CardHeader>
+						<CardTitle>Car Inventory</CardTitle>
+						<CardDescription>
+							Manage your car inventory, upload documents,
+							and track vehicle details.
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<div className="mb-4 flex items-center gap-4">
+							<Input
+								placeholder="Filter makes..."
+								value={
+									(table
+										.getColumn("make")
+										?.getFilterValue() as string) ??
+									""
+								}
+								onChange={(event) =>
+									table
+										.getColumn("make")
+										?.setFilterValue(
+											event.target.value
+										)
+								}
+								className="max-w-sm"
+							/>
+							<Button onClick={() => setShowAddForm(true)}>
+								<Plus className="mr-2 h-4 w-4" /> Add
+								Car
 							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							{table
-								.getAllColumns()
-								.filter((column) => column.getCanHide())
-								.map((column) => {
-									return (
-										<DropdownMenuCheckboxItem
-											key={column.id}
-											className="capitalize"
-											checked={column.getIsVisible()}
-											onCheckedChange={(
-												value: boolean
-											) =>
-												column.toggleVisibility(
-													!!value
-												)
-											}
-										>
-											{column.id}
-										</DropdownMenuCheckboxItem>
-									);
-								})}
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</div>
-				<div className="rounded-md border">
-					<Table>
-			<TableHeader>
-  {table.getHeaderGroups().map((headerGroup) => (
-    <TableRow key={headerGroup.id}>
-      {headerGroup.headers.map((column) => (
-        <TableCell key={column.id}>
-		 
-		{flexRender(column.column.columnDef.header, column.getContext())}
-		  
-        </TableCell>
-      ))}
-    </TableRow>
-  ))}
-</TableHeader>
-
-
-						<TableBody>
-							{table?.getRowModel()?.rows?.length ? (
-								table.getRowModel().rows.map((row) => (
-									<TableRow
-										key={row.id}
-										data-state={
-											row.getIsSelected() &&
-											"selected"
-										}
-									>
-										{row
-											.getVisibleCells()
-											.map((cell) => (
-												<TableCell
-													key={cell.id}
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button variant="outline">
+										Columns{" "}
+										<ChevronDownIcon className="ml-2 h-4 w-4" />
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent align="end">
+									{table
+										.getAllColumns()
+										.filter((column) =>
+											column.getCanHide()
+										)
+										.map((column) => {
+											return (
+												<DropdownMenuCheckboxItem
+													key={column.id}
+													className="capitalize"
+													checked={column.getIsVisible()}
+													onCheckedChange={(
+														value: boolean
+													) =>
+														column.toggleVisibility(
+															!!value
+														)
+													}
 												>
-													{flexRender(
-														cell
-															.column
-															.columnDef
-															.cell,
-														cell.getContext()
-													)}
-												</TableCell>
-											))}
-									</TableRow>
-								))
-							) : (
-								<TableRow>
-									<TableCell
-										colSpan={columns.length}
-										className="h-24 text-center"
-									>
-										No cars found.
-									</TableCell>
-								</TableRow>
-							)}
-						</TableBody>
-					</Table>
-				</div>
-				<div className="flex items-center justify-end space-x-2 py-4">
-					<div className="text-muted-foreground flex-1 text-sm">
-						{table.getFilteredSelectedRowModel().rows.length}{" "}
-						of {table.getFilteredRowModel().rows.length}{" "}
-						row(s) selected.
-					</div>
-					<div className="space-x-2">
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={() => table.previousPage()}
-							disabled={!table.getCanPreviousPage()}
-						>
-							Previous
-						</Button>
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={() => table.nextPage()}
-							disabled={!table.getCanNextPage()}
-						>
-							Next
-						</Button>
-					</div>
-				</div>
-			</CardContent>
-			<CarForm
-				open={showAddForm}
-				onOpenChange={setShowAddForm}
-				onSubmit={handleAddCar}
-			/>
-			<CarForm
-				open={showEditForm}
-				onOpenChange={setShowEditForm}
-				car={selectedCar}
-				onSubmit={handleUpdateCar}
-			/>
-			<CarDetailsModal
-				open={showDetailsModal}
-				onOpenChange={setShowDetailsModal}
-				car={selectedCar}
-			/>
-		</Card>
+													{column.id}
+												</DropdownMenuCheckboxItem>
+											);
+										})}
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</div>
+						<div className="rounded-md border">
+							<Table>
+								<TableHeader>
+									{table
+										.getHeaderGroups()
+										.map((headerGroup) => (
+											<TableRow
+												key={headerGroup.id}
+											>
+												{headerGroup.headers.map(
+													(column) => (
+														<TableCell
+															key={
+																column.id
+															}
+														>
+															{flexRender(
+																column
+																	.column
+																	.columnDef
+																	.header,
+																column.getContext()
+															)}
+														</TableCell>
+													)
+												)}
+											</TableRow>
+										))}
+								</TableHeader>
+
+								<TableBody>
+									{table?.getRowModel()?.rows
+										?.length ? (
+										table
+											.getRowModel()
+											.rows.map((row) => (
+												<TableRow
+													key={row.id}
+													data-state={
+														row.getIsSelected() &&
+														"selected"
+													}
+												>
+													{row
+														.getVisibleCells()
+														.map(
+															(
+																cell
+															) => (
+																<TableCell
+																	key={
+																		cell.id
+																	}
+																>
+																	{flexRender(
+																		cell
+																			.column
+																			.columnDef
+																			.cell,
+																		cell.getContext()
+																	)}
+																</TableCell>
+															)
+														)}
+												</TableRow>
+											))
+									) : (
+										<TableRow>
+											<TableCell
+												colSpan={
+													columns.length
+												}
+												className="h-24 text-center"
+											>
+												No cars found.
+											</TableCell>
+										</TableRow>
+									)}
+								</TableBody>
+							</Table>
+						</div>
+						<div className="flex items-center justify-end space-x-2 py-4">
+							<div className="text-muted-foreground flex-1 text-sm">
+								{
+									table.getFilteredSelectedRowModel()
+										.rows.length
+								}{" "}
+								of{" "}
+								{
+									table.getFilteredRowModel().rows
+										.length
+								}{" "}
+								row(s) selected.
+							</div>
+							<div className="space-x-2">
+								<Button
+									variant="outline"
+									size="sm"
+									onClick={() =>
+										table.previousPage()
+									}
+									disabled={
+										!table.getCanPreviousPage()
+									}
+								>
+									Previous
+								</Button>
+								<Button
+									variant="outline"
+									size="sm"
+									onClick={() => table.nextPage()}
+									disabled={!table.getCanNextPage()}
+								>
+									Next
+								</Button>
+							</div>
+						</div>
+					</CardContent>
+					<CarForm
+						open={showAddForm}
+						onOpenChange={setShowAddForm}
+						onSubmit={handleAddCar}
+					/>
+					<CarForm
+						open={showEditForm}
+						onOpenChange={setShowEditForm}
+						car={selectedCar}
+						onSubmit={handleUpdateCar}
+					/>
+					<CarDetailsModal
+						open={showDetailsModal}
+						onOpenChange={setShowDetailsModal}
+						car={selectedCar}
+					/>
+				</Card>
+			)}
+		</>
 	);
 }

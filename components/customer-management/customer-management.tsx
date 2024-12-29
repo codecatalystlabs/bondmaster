@@ -81,7 +81,6 @@ export function CustomerManagement() {
 	const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 	const [editingCustomer, setEditingCustomer] =
 		React.useState<CustomerResponse | null>(null);
-	const [isLoading, setIsLoading] = React.useState(false);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -132,12 +131,11 @@ export function CustomerManagement() {
 		}
 	}, [editingCustomer, form]);
 
-	const { data: customerList, error } = useSWR(
-		`${BASE_URL}/customers`,
-		fetcher
-	);
-
-	
+	const {
+		data: customerList,
+		error,
+		isLoading,
+	} = useSWR(`${BASE_URL}/customers`, fetcher);
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		const userPayload: Customer = {
@@ -187,382 +185,474 @@ export function CustomerManagement() {
 	};
 
 	return (
-		<div className="space-y-4">
-			<div className="flex justify-between items-center">
-				<h2 className="text-2xl font-bold">Customer Management</h2>
-				<Dialog
-					open={isDialogOpen}
-					onOpenChange={setIsDialogOpen}
-				>
-					<DialogTrigger asChild>
-						<Button onClick={() => setEditingCustomer(null)}>
-							<Plus className="mr-2 h-4 w-4" /> Add
-							Customer
-						</Button>
-					</DialogTrigger>
-					<DialogContent className="sm:max-w-[700px]">
-						<DialogHeader>
-							<DialogTitle>
-								{editingCustomer
-									? "Edit Customer"
-									: "Add New Customer"}
-							</DialogTitle>
-							<DialogDescription>
-								{editingCustomer
-									? "Edit customer details."
-									: "Create a new customer account."}{" "}
-								Click save when you're done.
-							</DialogDescription>
-						</DialogHeader>
-						<Form {...form}>
-							<form
-								onSubmit={form.handleSubmit(onSubmit)}
-								className="space-y-4"
-							>
-								<div className="grid grid-cols-2 gap-4">
-									<FormField
-										control={form.control}
-										name="surname"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													Surname
-												</FormLabel>
-												<FormControl>
-													<Input
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
+		<>
+			{isLoading ? (
+				<Loader />
+			) : (
+				<div className="space-y-4">
+					<div className="flex justify-between items-center">
+						<h2 className="text-2xl font-bold">
+							Customer Management
+						</h2>
+						<Dialog
+							open={isDialogOpen}
+							onOpenChange={setIsDialogOpen}
+						>
+							<DialogTrigger asChild>
+								<Button
+									onClick={() =>
+										setEditingCustomer(null)
+									}
+								>
+									<Plus className="mr-2 h-4 w-4" />{" "}
+									Add Customer
+								</Button>
+							</DialogTrigger>
+							<DialogContent className="sm:max-w-[700px]">
+								<DialogHeader>
+									<DialogTitle>
+										{editingCustomer
+											? "Edit Customer"
+											: "Add New Customer"}
+									</DialogTitle>
+									<DialogDescription>
+										{editingCustomer
+											? "Edit customer details."
+											: "Create a new customer account."}{" "}
+										Click save when you're done.
+									</DialogDescription>
+								</DialogHeader>
+								<Form {...form}>
+									<form
+										onSubmit={form.handleSubmit(
+											onSubmit
 										)}
-									/>
-									<FormField
-										control={form.control}
-										name="firstname"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													Firstname
-												</FormLabel>
-												<FormControl>
-													<Input
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-									<FormField
-										control={form.control}
-										name="othername"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													Other Name
-												</FormLabel>
-												<FormControl>
-													<Input
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-									<FormField
-										control={form.control}
-										name="gender"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													Gender
-												</FormLabel>
-												<Select
-													onValueChange={
-														field.onChange
-													}
-													defaultValue={
-														field.value
-													}
-												>
-													<FormControl>
-														<SelectTrigger>
-															<SelectValue placeholder="Select gender" />
-														</SelectTrigger>
-													</FormControl>
-													<SelectContent>
-														<SelectItem value="Male">
-															Male
-														</SelectItem>
-														<SelectItem value="Female">
-															Female
-														</SelectItem>
-														<SelectItem value="Other">
+										className="space-y-4"
+									>
+										<div className="grid grid-cols-2 gap-4">
+											<FormField
+												control={
+													form.control
+												}
+												name="surname"
+												render={({
+													field,
+												}) => (
+													<FormItem>
+														<FormLabel>
+															Surname
+														</FormLabel>
+														<FormControl>
+															<Input
+																{...field}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+											<FormField
+												control={
+													form.control
+												}
+												name="firstname"
+												render={({
+													field,
+												}) => (
+													<FormItem>
+														<FormLabel>
+															Firstname
+														</FormLabel>
+														<FormControl>
+															<Input
+																{...field}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+											<FormField
+												control={
+													form.control
+												}
+												name="othername"
+												render={({
+													field,
+												}) => (
+													<FormItem>
+														<FormLabel>
 															Other
-														</SelectItem>
-													</SelectContent>
-												</Select>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-									<FormField
-										control={form.control}
-										name="nationality"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													Nationality
-												</FormLabel>
-												<FormControl>
-													<Input
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-									<FormField
-										control={form.control}
-										name="age"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													Age
-												</FormLabel>
-												<FormControl>
-													<Input
-														type="number"
-														{...field}
-														onChange={(
-															e
-														) =>
-															field.onChange(
-																parseInt(
+															Name
+														</FormLabel>
+														<FormControl>
+															<Input
+																{...field}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+											<FormField
+												control={
+													form.control
+												}
+												name="gender"
+												render={({
+													field,
+												}) => (
+													<FormItem>
+														<FormLabel>
+															Gender
+														</FormLabel>
+														<Select
+															onValueChange={
+																field.onChange
+															}
+															defaultValue={
+																field.value
+															}
+														>
+															<FormControl>
+																<SelectTrigger>
+																	<SelectValue placeholder="Select gender" />
+																</SelectTrigger>
+															</FormControl>
+															<SelectContent>
+																<SelectItem value="Male">
+																	Male
+																</SelectItem>
+																<SelectItem value="Female">
+																	Female
+																</SelectItem>
+																<SelectItem value="Other">
+																	Other
+																</SelectItem>
+															</SelectContent>
+														</Select>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+											<FormField
+												control={
+													form.control
+												}
+												name="nationality"
+												render={({
+													field,
+												}) => (
+													<FormItem>
+														<FormLabel>
+															Nationality
+														</FormLabel>
+														<FormControl>
+															<Input
+																{...field}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+											<FormField
+												control={
+													form.control
+												}
+												name="age"
+												render={({
+													field,
+												}) => (
+													<FormItem>
+														<FormLabel>
+															Age
+														</FormLabel>
+														<FormControl>
+															<Input
+																type="number"
+																{...field}
+																onChange={(
 																	e
-																		.target
-																		.value
-																)
-															)
-														}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
+																) =>
+																	field.onChange(
+																		parseInt(
+																			e
+																				.target
+																				.value
+																		)
+																	)
+																}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+											<FormField
+												control={
+													form.control
+												}
+												name="dob"
+												render={({
+													field,
+												}) => (
+													<FormItem>
+														<FormLabel>
+															Date
+															of
+															Birth
+														</FormLabel>
+														<FormControl>
+															<Input
+																type="date"
+																{...field}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+											<FormField
+												control={
+													form.control
+												}
+												name="telephone"
+												render={({
+													field,
+												}) => (
+													<FormItem>
+														<FormLabel>
+															Telephone
+														</FormLabel>
+														<FormControl>
+															<Input
+																{...field}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+											<FormField
+												control={
+													form.control
+												}
+												name="email"
+												render={({
+													field,
+												}) => (
+													<FormItem>
+														<FormLabel>
+															Email
+														</FormLabel>
+														<FormControl>
+															<Input
+																{...field}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+											<FormField
+												control={
+													form.control
+												}
+												name="nin"
+												render={({
+													field,
+												}) => (
+													<FormItem>
+														<FormLabel>
+															NIN
+														</FormLabel>
+														<FormControl>
+															<Input
+																{...field}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+										</div>
+									</form>
+								</Form>
+								<DialogFooter>
+									<Button
+										type="submit"
+										onClick={form.handleSubmit(
+											onSubmit
 										)}
-									/>
-									<FormField
-										control={form.control}
-										name="dob"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													Date of Birth
-												</FormLabel>
-												<FormControl>
-													<Input
-														type="date"
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-									<FormField
-										control={form.control}
-										name="telephone"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													Telephone
-												</FormLabel>
-												<FormControl>
-													<Input
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-									<FormField
-										control={form.control}
-										name="email"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													Email
-												</FormLabel>
-												<FormControl>
-													<Input
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-									<FormField
-										control={form.control}
-										name="nin"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>
-													NIN
-												</FormLabel>
-												<FormControl>
-													<Input
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-								</div>
-							</form>
-						</Form>
-						<DialogFooter>
-							<Button
-								type="submit"
-								onClick={form.handleSubmit(onSubmit)}
-								disabled={isLoading}
-							>
-								{isLoading ? <Loader /> : null}
-								{isLoading ? "Saving..." : "Save"}
-							</Button>
-						</DialogFooter>
-					</DialogContent>
-				</Dialog>
-			</div>
-			<Table>
-				<TableHeader>
-					<TableRow>
-						<TableHead>Name</TableHead>
-						<TableHead>Gender</TableHead>
-						<TableHead>Nationality</TableHead>
-						<TableHead>Age</TableHead>
-						<TableHead>Email</TableHead>
-						<TableHead>Telephone</TableHead>
-						<TableHead>Actions</TableHead>
-					</TableRow>
-				</TableHeader>
-				<TableBody>
-					{isLoading ? (
-						<TableRow>
-							<TableCell
-								colSpan={7}
-								className="h-24 text-center"
-							>
-								<Loader />
-							</TableCell>
-						</TableRow>
-					) : (
-						customerList?.data.map((customer: Customer) => (
-							<TableRow key={customer.customer_uuid}>
-								<TableCell>
-									{`${customer.surname} ${
-										customer.firstname
-									} ${
-										customer.othername || ""
-									}`.trim()}
-								</TableCell>
-								<TableCell>{customer.gender}</TableCell>
-								<TableCell>
-									{customer.nationality}
-								</TableCell>
-								<TableCell>{customer.age}</TableCell>
-								<TableCell>{customer.email}</TableCell>
-								<TableCell>
-									{customer.telephone}
-								</TableCell>
-								<TableCell>
-									<div className="flex items-center space-x-2">
-										<Button
-											variant="ghost"
-											size="icon"
-											onClick={() => {
-												setEditingCustomer({
-													...customer,
-													ID: 0,
-													CreatedAt: "",
-													UpdatedAt: "",
-													DeletedAt: "",
-													customer_uuid:
-														customer.customer_uuid ||
-														"",
-													othername:
-														customer.othername ||
-														"",
-												});
-												setIsDialogOpen(
-													true
-												);
-											}}
-										>
-											<Edit className="h-4 w-4" />
-										</Button>
-										<AlertDialog>
-											<AlertDialogTrigger
-												asChild
-											>
-												<Button
-													variant="ghost"
-													size="icon"
-												>
-													<Trash2 className="h-4 w-4" />
-												</Button>
-											</AlertDialogTrigger>
-											<AlertDialogContent>
-												<AlertDialogHeader>
-													<AlertDialogTitle>
-														Are you
-														absolutely
-														sure?
-													</AlertDialogTitle>
-													<AlertDialogDescription>
-														This
-														action
-														cannot be
-														undone.
-														This will
-														permanently
-														delete the
-														customer
-														account
-														and remove
-														their data
-														from our
-														servers.
-													</AlertDialogDescription>
-												</AlertDialogHeader>
-												<AlertDialogFooter>
-													<AlertDialogCancel>
-														Cancel
-													</AlertDialogCancel>
-													<AlertDialogAction
-														onClick={() =>
-															console.log(
-																"deleted"
-															)
-														}
-													>
-														Delete
-													</AlertDialogAction>
-												</AlertDialogFooter>
-											</AlertDialogContent>
-										</AlertDialog>
-									</div>
-								</TableCell>
+										disabled={isLoading}
+									>
+										{isLoading ? (
+											<Loader />
+										) : null}
+										{isLoading
+											? "Saving..."
+											: "Save"}
+									</Button>
+								</DialogFooter>
+							</DialogContent>
+						</Dialog>
+					</div>
+					<Table>
+						<TableHeader>
+							<TableRow>
+								<TableHead>Name</TableHead>
+								<TableHead>Gender</TableHead>
+								<TableHead>Nationality</TableHead>
+								<TableHead>Age</TableHead>
+								<TableHead>Email</TableHead>
+								<TableHead>Telephone</TableHead>
+								<TableHead>Actions</TableHead>
 							</TableRow>
-						))
-					)}
-				</TableBody>
-			</Table>
-		</div>
+						</TableHeader>
+						<TableBody>
+							{isLoading ? (
+								<TableRow>
+									<TableCell
+										colSpan={7}
+										className="h-24 text-center"
+									>
+										<Loader />
+									</TableCell>
+								</TableRow>
+							) : (
+								customerList?.data.map(
+									(customer: Customer) => (
+										<TableRow
+											key={
+												customer.customer_uuid
+											}
+										>
+											<TableCell>
+												{`${
+													customer.surname
+												} ${
+													customer.firstname
+												} ${
+													customer.othername ||
+													""
+												}`.trim()}
+											</TableCell>
+											<TableCell>
+												{customer.gender}
+											</TableCell>
+											<TableCell>
+												{
+													customer.nationality
+												}
+											</TableCell>
+											<TableCell>
+												{customer.age}
+											</TableCell>
+											<TableCell>
+												{customer.email}
+											</TableCell>
+											<TableCell>
+												{customer.telephone}
+											</TableCell>
+											<TableCell>
+												<div className="flex items-center space-x-2">
+													<Button
+														variant="ghost"
+														size="icon"
+														onClick={() => {
+															setEditingCustomer(
+																{
+																	...customer,
+																	ID: 0,
+																	CreatedAt:
+																		"",
+																	UpdatedAt:
+																		"",
+																	DeletedAt:
+																		"",
+																	customer_uuid:
+																		customer.customer_uuid ||
+																		"",
+																	othername:
+																		customer.othername ||
+																		"",
+																}
+															);
+															setIsDialogOpen(
+																true
+															);
+														}}
+													>
+														<Edit className="h-4 w-4" />
+													</Button>
+													<AlertDialog>
+														<AlertDialogTrigger
+															asChild
+														>
+															<Button
+																variant="ghost"
+																size="icon"
+															>
+																<Trash2 className="h-4 w-4" />
+															</Button>
+														</AlertDialogTrigger>
+														<AlertDialogContent>
+															<AlertDialogHeader>
+																<AlertDialogTitle>
+																	Are
+																	you
+																	absolutely
+																	sure?
+																</AlertDialogTitle>
+																<AlertDialogDescription>
+																	This
+																	action
+																	cannot
+																	be
+																	undone.
+																	This
+																	will
+																	permanently
+																	delete
+																	the
+																	customer
+																	account
+																	and
+																	remove
+																	their
+																	data
+																	from
+																	our
+																	servers.
+																</AlertDialogDescription>
+															</AlertDialogHeader>
+															<AlertDialogFooter>
+																<AlertDialogCancel>
+																	Cancel
+																</AlertDialogCancel>
+																<AlertDialogAction
+																	onClick={() =>
+																		console.log(
+																			"deleted"
+																		)
+																	}
+																>
+																	Delete
+																</AlertDialogAction>
+															</AlertDialogFooter>
+														</AlertDialogContent>
+													</AlertDialog>
+												</div>
+											</TableCell>
+										</TableRow>
+									)
+								)
+							)}
+						</TableBody>
+					</Table>
+				</div>
+			)}
+		</>
 	);
 }

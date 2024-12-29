@@ -137,7 +137,7 @@ export function UserManagement() {
 	const {
 		data: usersData,
 		error,
-		isValidating,
+		isLoading,
 	} = useSWR(`${BASE_URL}/users`, fetcher);
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -178,7 +178,7 @@ export function UserManagement() {
 			setEditingUser(null);
 			form.reset();
 		} catch (error: any) {
-			toast.error(error.error.message || "An error occurred");
+			toast.error(error?.message || "An error occurred");
 			console.error("Error submitting form:", error);
 		}
 	}
@@ -200,7 +200,7 @@ export function UserManagement() {
 
 	return (
 		<div className="space-y-4">
-			{!usersData ? (
+			{isLoading ? (
 				<Loader />
 			) : (
 				<>

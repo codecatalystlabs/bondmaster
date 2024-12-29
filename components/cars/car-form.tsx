@@ -37,6 +37,9 @@ import { addCar } from "@/apis";
 import { BASE_URL } from "@/constants/baseUrl";
 import { mutate } from "swr";
 
+import { v4 as uuidv4 } from 'uuid';
+
+
 const formSchema = z.object({
     vin_number: z.string().min(17, {
         message: "VIN number must be 17 characters.",
@@ -93,7 +96,7 @@ export function CarForm({ open, onOpenChange, car, onSubmit }: CarFormProps) {
                   make: "",
                   model: "",
                   year: new Date().getFullYear(),
-                  currency: "USD",
+                  currency: "",
                   bid_price: 0,
                   vat_tax: 0,
                   purchase_date: new Date(),
@@ -106,7 +109,7 @@ export function CarForm({ open, onOpenChange, car, onSubmit }: CarFormProps) {
 
     async function handleSubmit(values: z.infer<typeof formSchema>) {
         const submittedCar: Car = {
-            car_uuid: car?.car_uuid || crypto.randomUUID(),
+            car_uuid: car?.car_uuid || uuidv4(),
             ...values,
             to_company_id: values.to_company_id ?? 1,
             from_company_id: values.from_company_id ?? 1,
