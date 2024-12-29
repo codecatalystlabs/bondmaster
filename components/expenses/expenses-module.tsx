@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { format } from "date-fns";
-import { CalendarIcon, Plus } from "lucide-react";
+import { CalendarIcon, FileText, Pencil, Plus } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -47,14 +47,25 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LineChart, CustomTooltipProps } from "@/components/ui/chart";
 import toast from "react-hot-toast";
 import useSWR, { mutate } from "swr";
 import { BASE_URL } from "@/constants/baseUrl";
-import { addCompanyExpenses, fetcher } from "@/apis";
+import { addCompanyExpenses, fetcher, updateExpense } from "@/apis";
 import { Expense, ExpenseResponse } from "@/types/expense";
 import { Loader } from "../ui/loader";
+import { expenseTable } from "@/constants/tableHeaders";
+import { expenseTabs } from "@/constants/tabs";
+import { saveAs } from "file-saver";
 
 interface ITotalExpense {
 	sum: number;
@@ -74,13 +85,13 @@ const formSchema = z.object({
 
 export function ExpensesModule() {
 	const [expenses, setExpenses] = React.useState<Expense[]>([]);
+	const [editingExpense, setEditingExpense] =
+		React.useState<ExpenseResponse | null>(null);
 
 	const { data: expensesData, isLoading } = useSWR(
 		`${BASE_URL}/expenses`,
 		fetcher
 	);
-
-	console.log(expensesData);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -93,25 +104,103 @@ export function ExpensesModule() {
 		},
 	});
 
-	async function onSubmit(values: z.infer<typeof formSchema>) {
-		const newExpense: Expense = {
-			...values,
-			company_id: 1,
-			created_by: "admin",
-			updated_by: "admin",
-		};
-
-		try {
-			const response = await addCompanyExpenses({
-				url: `${BASE_URL}/company/expense`,
-				expense: newExpense,
+	React.useEffect(() => {
+		if (editingExpense) {
+			form.reset({
+				company_id: editingExpense.company_id,
+				description: editingExpense.description,
+				currency: editingExpense.currency,
+				amount: editingExpense.amount,
+				expense_date: new Date(
+					editingExpense.expense_date
+				).toISOString(),
 			});
+		} else {
+			form.reset({
+				company_id: 0,
+				description: "",
+				currency: "USD",
+				amount: 0,
+				expense_date: new Date().toISOString(),
+			});
+		}
+	}, [editingExpense, form]);
 
-			mutate(`${BASE_URL}/company/expenses`);
-			toast.success("Expense added successfully");
-			form.reset();
-		} catch (error) {
-			console.log(error);
+	function generateCSVReport(expenses: Expense[]) {
+		if (!expenses.length) {
+			toast.error("No expenses to generate a report.");
+			return;
+		}
+
+		const csvHeader = ["Description,Amount,Currency,Expense Date"];
+		const csvRows = expenses.map((expense) =>
+			[
+				expense.description,
+				expense.amount.toFixed(2),
+				expense.currency,
+				format(new Date(expense.expense_date), "MMM d, yyyy"),
+			].join(",")
+		);
+		const csvContent = [csvHeader, ...csvRows].join("\n");
+
+		const blob = new Blob([csvContent], {
+			type: "text/csv;charset=utf-8;",
+		});
+		saveAs(
+			blob,
+			`expenses_report_${format(new Date(), "yyyy-MM-dd")}.csv`
+		);
+
+		toast.success("CSV report generated successfully.");
+	}
+
+	async function onSubmit(values: z.infer<typeof formSchema>) {
+		if (editingExpense) {
+			const updatedExpense: Expense = {
+				...editingExpense,
+				...values,
+			};
+
+			try {
+				await updateExpense({
+					url: `${BASE_URL}/company/expense/${editingExpense.ID}`,
+					expense: updatedExpense,
+				});
+
+				mutate(`${BASE_URL}/expenses`);
+
+				toast.success(
+					"Your expense has been successfully updated."
+				);
+				setEditingExpense(null);
+			} catch (error) {
+				console.error("Failed to edit expense:", error);
+				toast.error(
+					"Failed to update the expense. Please try again."
+				);
+			}
+			setEditingExpense(null);
+			toast.success("Your expense has been successfully updated.");
+		} else {
+			const newExpense: Expense = {
+				...values,
+				company_id: 1,
+				created_by: "admin",
+				updated_by: "admin",
+			};
+
+			try {
+				const response = await addCompanyExpenses({
+					url: `${BASE_URL}/company/expense`,
+					expense: newExpense,
+				});
+
+				mutate(`${BASE_URL}/expenses`);
+				toast.success("Expense added successfully");
+				form.reset();
+			} catch (error) {
+				console.log(error);
+			}
 		}
 	}
 
@@ -152,10 +241,16 @@ export function ExpensesModule() {
 			className="space-y-4"
 		>
 			<TabsList>
-				<TabsTrigger value="overview">Overview</TabsTrigger>
-				<TabsTrigger value="add">Add Expense</TabsTrigger>
-				<TabsTrigger value="list">Expense List</TabsTrigger>
+				{expenseTabs?.map((tab) => (
+					<TabsTrigger
+						key={tab.value}
+						value={tab.value}
+					>
+						{tab.name}
+					</TabsTrigger>
+				))}
 			</TabsList>
+
 			<TabsContent value="overview">
 				<Card>
 					<CardHeader>
@@ -199,7 +294,7 @@ export function ExpensesModule() {
 								</CardHeader>
 								<CardContent>
 									<div className="text-2xl font-bold">
-										{expenses.length}
+										{expensesData?.length}
 									</div>
 								</CardContent>
 							</Card>
@@ -281,197 +376,10 @@ export function ExpensesModule() {
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
-						<Form {...form}>
-							<form
-								onSubmit={form.handleSubmit(onSubmit)}
-								className="space-y-8"
-							>
-								<FormField
-									control={form.control}
-									name="description"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>
-												Description
-											</FormLabel>
-											<FormControl>
-												<Input
-													placeholder="Enter expense description"
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="currency"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>
-												Currency
-											</FormLabel>
-											<Select
-												onValueChange={
-													field.onChange
-												}
-												defaultValue={
-													field.value
-												}
-											>
-												<FormControl>
-													<SelectTrigger>
-														<SelectValue placeholder="Select currency" />
-													</SelectTrigger>
-												</FormControl>
-												<SelectContent>
-													<SelectItem value="USD">
-														USD
-													</SelectItem>
-													<SelectItem value="EUR">
-														EUR
-													</SelectItem>
-													<SelectItem value="GBP">
-														GBP
-													</SelectItem>
-													<SelectItem value="JPY">
-														JPY
-													</SelectItem>
-													<SelectItem value="UGX">
-														UGX
-													</SelectItem>
-												</SelectContent>
-											</Select>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="amount"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>
-												Amount
-											</FormLabel>
-											<FormControl>
-												<Input
-													type="number"
-													placeholder="Enter amount"
-													{...field}
-													value={
-														field.value ||
-														""
-													}
-													onChange={(
-														e
-													) => {
-														const value =
-															e
-																.target
-																.value ===
-															""
-																? ""
-																: parseFloat(
-																		e
-																			.target
-																			.value
-																  );
-														field.onChange(
-															value
-														);
-													}}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="expense_date"
-									render={({ field }) => (
-										<FormItem className="flex flex-col">
-											<FormLabel>
-												Expense Date
-											</FormLabel>
-											<Popover>
-												<PopoverTrigger
-													asChild
-												>
-													<FormControl>
-														<Button
-															variant={
-																"outline"
-															}
-															className={cn(
-																"w-[240px] pl-3 text-left font-normal",
-																!field.value &&
-																	"text-muted-foreground"
-															)}
-														>
-															{field.value ? (
-																format(
-																	new Date(
-																		field.value
-																	),
-																	"PPP"
-																)
-															) : (
-																<span>
-																	Pick
-																	a
-																	date
-																</span>
-															)}
-															<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-														</Button>
-													</FormControl>
-												</PopoverTrigger>
-												<PopoverContent
-													className="w-auto p-0"
-													align="start"
-												>
-													<Calendar
-														mode="single"
-														selected={
-															field.value
-																? new Date(
-																		field.value
-																  )
-																: undefined
-														}
-														onSelect={(
-															date
-														) =>
-															field.onChange(
-																date?.toISOString()
-															)
-														} // Convert date to ISO string
-														disabled={(
-															date
-														) =>
-															date >
-																new Date() ||
-															date <
-																new Date(
-																	"1900-01-01"
-																)
-														}
-														initialFocus
-													/>
-												</PopoverContent>
-											</Popover>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<Button type="submit">
-									Add Expense
-								</Button>
-							</form>
-						</Form>
+						<ExpenseForm
+							form={form}
+							onSubmit={onSubmit}
+						/>
 					</CardContent>
 				</Card>
 			</TabsContent>
@@ -490,17 +398,13 @@ export function ExpensesModule() {
 							<Table>
 								<TableHeader>
 									<TableRow>
-										<TableHead>
-											Company ID
-										</TableHead>
-										<TableHead>
-											Description
-										</TableHead>
-										<TableHead>Amount</TableHead>
-										<TableHead>
-											Currency
-										</TableHead>
-										<TableHead>Date</TableHead>
+										{expenseTable?.map(
+											(table) => (
+												<TableHead>
+													{table.name}
+												</TableHead>
+											)
+										)}
 									</TableRow>
 								</TableHeader>
 								<TableBody>
@@ -511,11 +415,6 @@ export function ExpensesModule() {
 											<TableRow
 												key={expense.ID}
 											>
-												<TableCell>
-													{
-														expense.company_id
-													}
-												</TableCell>
 												<TableCell>
 													{
 														expense.description
@@ -539,6 +438,55 @@ export function ExpensesModule() {
 														"MMM d, yyyy"
 													)}
 												</TableCell>
+												<TableCell>
+													<Dialog>
+														<DialogTrigger
+															asChild
+														>
+															<Button
+																variant="outline"
+																size="sm"
+																onClick={() =>
+																	setEditingExpense(
+																		expense
+																	)
+																}
+															>
+																<Pencil className="mr-2 h-4 w-4" />
+																Edit
+															</Button>
+														</DialogTrigger>
+														<DialogContent className="sm:max-w-[425px]">
+															<DialogHeader>
+																<DialogTitle>
+																	Edit
+																	Expense
+																</DialogTitle>
+																<DialogDescription>
+																	Make
+																	changes
+																	to
+																	your
+																	expense
+																	here.
+																	Click
+																	save
+																	when
+																	you're
+																	done.
+																</DialogDescription>
+															</DialogHeader>
+															<ExpenseForm
+																form={
+																	form
+																}
+																onSubmit={
+																	onSubmit
+																}
+															/>
+														</DialogContent>
+													</Dialog>
+												</TableCell>
 											</TableRow>
 										)
 									)}
@@ -548,6 +496,190 @@ export function ExpensesModule() {
 					</Card>
 				)}
 			</TabsContent>
+			<TabsContent value="reports">
+				<Card>
+					<CardHeader>
+						<CardTitle>Generate Reports</CardTitle>
+						<CardDescription>
+							Export your expenses as a CSV file for
+							record-keeping.
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<Button
+							onClick={() =>
+								generateCSVReport(expensesData || [])
+							}
+						>
+							<FileText className="mr-2 h-4 w-4" />
+							Generate CSV Report
+						</Button>
+					</CardContent>
+				</Card>
+			</TabsContent>
 		</Tabs>
+	);
+}
+
+function ExpenseForm({
+	form,
+	onSubmit,
+}: {
+	form: any;
+	onSubmit: (values: any) => void;
+}) {
+	return (
+		<Form {...form}>
+			<form
+				onSubmit={form.handleSubmit(onSubmit)}
+				className="space-y-8"
+			>
+				<FormField
+					control={form.control}
+					name="description"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Description</FormLabel>
+							<FormControl>
+								<Input
+									placeholder="Enter expense description"
+									{...field}
+								/>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				<FormField
+					control={form.control}
+					name="currency"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Currency</FormLabel>
+							<Select
+								onValueChange={field.onChange}
+								defaultValue={field.value}
+							>
+								<FormControl>
+									<SelectTrigger>
+										<SelectValue placeholder="Select currency" />
+									</SelectTrigger>
+								</FormControl>
+								<SelectContent>
+									<SelectItem value="USD">
+										USD
+									</SelectItem>
+									<SelectItem value="EUR">
+										EUR
+									</SelectItem>
+									<SelectItem value="GBP">
+										GBP
+									</SelectItem>
+									<SelectItem value="JPY">
+										JPY
+									</SelectItem>
+								</SelectContent>
+							</Select>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				<FormField
+					control={form.control}
+					name="amount"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Amount</FormLabel>
+							<FormControl>
+								<Input
+									type="number"
+									placeholder="Enter amount"
+									{...field}
+									value={field.value || ""}
+									onChange={(e) => {
+										const value =
+											e.target.value === ""
+												? ""
+												: parseFloat(
+														e.target
+															.value
+												  );
+										field.onChange(value);
+									}}
+								/>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				<FormField
+					control={form.control}
+					name="expense_date"
+					render={({ field }) => (
+						<FormItem className="flex flex-col">
+							<FormLabel>Expense Date</FormLabel>
+							<Popover>
+								<PopoverTrigger asChild>
+									<FormControl>
+										<Button
+											variant={"outline"}
+											className={cn(
+												"w-[240px] pl-3 text-left font-normal",
+												!field.value &&
+													"text-muted-foreground"
+											)}
+										>
+											{field.value ? (
+												format(
+													new Date(
+														field.value
+													).toISOString(),
+													"PPP"
+												)
+											) : (
+												<span>
+													Pick a date
+												</span>
+											)}
+											<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+										</Button>
+									</FormControl>
+								</PopoverTrigger>
+								<PopoverContent
+									className="w-auto p-0"
+									align="start"
+								>
+									<Calendar
+										mode="single"
+										selected={
+											field.value
+												? new Date(
+														field.value
+												  )
+												: undefined
+										}
+										onSelect={(date) =>
+											field.onChange(
+												date?.toISOString()
+											)
+										}
+										disabled={(date) =>
+											date > new Date() ||
+											date <
+												new Date(
+													"1900-01-01"
+												)
+										}
+										initialFocus
+									/>
+								</PopoverContent>
+							</Popover>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				<Button type="submit">Save Expense</Button>
+			</form>
+		</Form>
 	);
 }

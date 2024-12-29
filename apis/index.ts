@@ -128,4 +128,31 @@ const addCompanyExpenses = async ({ url, expense }: IExpense) => {
 }
 
 
-export { createUser, fetcher, editUser, editCustomer, createCustomer, addCar, addCompanyExpenses };
+const updateExpense = async ({ url, expense }: IExpense) => {
+    const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(expense),
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to edit expense');
+    }
+
+    return response.json();
+};
+
+
+
+export {
+    createUser,
+    fetcher,
+    editUser,
+    editCustomer,
+    createCustomer,
+    addCar,
+    addCompanyExpenses,
+    updateExpense
+};
