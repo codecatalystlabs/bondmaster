@@ -65,7 +65,7 @@ const menuItems = [
 				href: "/customer-management",
 			},
 			{
-				title: "Expenses",
+				title: "Company Expenses",
 				icon: <DollarSign size={16} />,
 				href: "/expenses",
 			},
