@@ -228,20 +228,6 @@ export function DashboardMain() {
 									65, 59, 80, 81, 56, 55, 40, 65, 59,
 									80, 81, 56,
 								]}
-								labels={[
-									"Jan",
-									"Feb",
-									"Mar",
-									"Apr",
-									"May",
-									"Jun",
-									"Jul",
-									"Aug",
-									"Sep",
-									"Oct",
-									"Nov",
-									"Dec",
-								]}
 								categories={[
 									"Jan",
 									"Feb",

@@ -137,6 +137,8 @@ export function CustomerManagement() {
 		isLoading,
 	} = useSWR(`${BASE_URL}/customers`, fetcher);
 
+	console.log(customerList);
+
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		const userPayload: Customer = {
 			...values,
@@ -145,10 +147,17 @@ export function CustomerManagement() {
 		};
 
 		try {
+			const updatedCustomer: Customer = {
+				...editCustomer,
+				...values,
+				created_by: "admin",
+				updated_by: "admin",
+			};
 			if (editingCustomer) {
+				console.log(editCustomer, "######");
 				const response = await editCustomer({
 					url: `${BASE_URL}/customer/${editingCustomer.ID}`,
-					customerInfo: userPayload,
+					customerInfo: updatedCustomer,
 				});
 				mutate(`${BASE_URL}/customers`);
 				if (response.data) {
@@ -171,7 +180,7 @@ export function CustomerManagement() {
 			setEditingCustomer(null);
 			form.reset();
 		} catch (error: any) {
-			toast.error(error.error.message || "An error occurred");
+			toast.error(error || "An error occurred");
 			console.error("Error submitting form:", error);
 		}
 	}
@@ -522,7 +531,7 @@ export function CustomerManagement() {
 								</TableRow>
 							) : (
 								customerList?.data.map(
-									(customer: Customer) => (
+									(customer: CustomerResponse) => (
 										<TableRow
 											key={
 												customer.customer_uuid
@@ -564,19 +573,6 @@ export function CustomerManagement() {
 															setEditingCustomer(
 																{
 																	...customer,
-																	ID: 0,
-																	CreatedAt:
-																		"",
-																	UpdatedAt:
-																		"",
-																	DeletedAt:
-																		"",
-																	customer_uuid:
-																		customer.customer_uuid ||
-																		"",
-																	othername:
-																		customer.othername ||
-																		"",
 																}
 															);
 															setIsDialogOpen(
