@@ -29,7 +29,12 @@ export interface ExportReadyCar extends Car {
   complianceChecks: ComplianceCheck[]
   inspectionReport?: InspectionReport
   complianceCertificate?: ComplianceCertificate
+  mileage: number
+  price: number
+  condition: 'good' | 'fair' | 'poor'
   exportStatus: 'pending' | 'flagged' | 'ready'
+  createdAt: string
+  updatedAt: string
 }
 
 
