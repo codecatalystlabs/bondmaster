@@ -14,7 +14,7 @@ export function FinalApproval({ cars, onUpdate }: FinalApprovalProps) {
   const generateComplianceCertificate = (car: ExportReadyCar) => {
     const certificate: ComplianceCertificate = {
       id: Math.random().toString(36).substr(2, 9),
-      carId: car.id,
+      carId: car.ID || '',
       issueDate: new Date().toISOString(),
       expiryDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
       certificateNumber: `CERT-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
@@ -42,10 +42,10 @@ export function FinalApproval({ cars, onUpdate }: FinalApprovalProps) {
       </TableHeader>
       <TableBody>
         {cars.map((car) => (
-          <TableRow key={car.id}>
+          <TableRow key={car.ID}>
             <TableCell>{car.make}</TableCell>
             <TableCell>{car.model}</TableCell>
-            <TableCell>{car.year}</TableCell>
+            <TableCell>{car.maunufacture_year}</TableCell>
             <TableCell>{car.exportStatus}</TableCell>
             <TableCell>
               {car.exportStatus === 'ready' && !car.complianceCertificate ? (

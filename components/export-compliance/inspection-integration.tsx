@@ -15,7 +15,7 @@ export function InspectionIntegration({ cars, onUpdate }: InspectionIntegrationP
     // Simulating an API call to fetch inspection report
     const inspectionReport: InspectionReport = {
       id: Math.random().toString(36).substr(2, 9),
-      carId: car.id,
+      carId: car.ID || "",
       inspectionDate: new Date().toISOString(),
       roadworthiness: Math.random() > 0.2 ? 'pass' : 'fail',
       emissionsCompliance: Math.random() > 0.2 ? 'pass' : 'fail',
@@ -44,10 +44,10 @@ export function InspectionIntegration({ cars, onUpdate }: InspectionIntegrationP
       </TableHeader>
       <TableBody>
         {cars.map((car) => (
-          <TableRow key={car.id}>
+          <TableRow key={car.ID}>
             <TableCell>{car.make}</TableCell>
             <TableCell>{car.model}</TableCell>
-            <TableCell>{car.year}</TableCell>
+            <TableCell>{car.maunufacture_year}</TableCell>
             <TableCell>{car.inspectionReport ? `Inspected on ${new Date(car.inspectionReport.inspectionDate).toLocaleDateString()}` : 'Not Inspected'}</TableCell>
             <TableCell>
               <Button onClick={() => fetchInspectionReport(car)}>Fetch Inspection Report</Button>

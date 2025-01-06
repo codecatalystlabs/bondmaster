@@ -34,7 +34,6 @@ export function AnalyticsReporting() {
             categories={["avgDays"]}
             index="month"
             colors={["blue"]}
-            valueFormatter={(value: number) => `${value} days`}
           />
         </CardContent>
       </Card>
@@ -49,7 +48,6 @@ export function AnalyticsReporting() {
             categories={["avgCost"]}
             index="company"
             colors={["green"]}
-            valueFormatter={(value) => `$${value}`}
           />
         </CardContent>
       </Card>

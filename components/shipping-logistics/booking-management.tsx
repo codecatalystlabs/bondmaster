@@ -35,9 +35,7 @@ const schedules: ShippingSchedule[] = [
 ]
 
 const cars: Car[] = [
-  { id: "1", make: "Toyota", model: "Camry", year: 2020, chassisNumber: "ABC123", engineCapacity: "2.5L", mileage: 50000, condition: "excellent", price: 25000, documents: [], createdAt: "", updatedAt: "" },
-  { id: "2", make: "Honda", model: "Civic", year: 2021, chassisNumber: "DEF456", engineCapacity: "1.8L", mileage: 30000, condition: "good", price: 22000, documents: [], createdAt: "", updatedAt: "" },
-
+  
 ]
 
 export function BookingManagement() {
@@ -104,29 +102,29 @@ export function BookingManagement() {
                     <FormLabel>Select Cars</FormLabel>
                     {cars.map((car) => (
                       <FormField
-                        key={car.id}
+                        key={car.ID}
                         control={form.control}
                         name="carIds"
                         render={({ field }) => {
                           return (
                             <FormItem
-                              key={car.id}
+                              key={car.ID}
                               className="flex flex-row items-start space-x-3 space-y-0"
                             >
                               <FormControl>
                                 <input
                                   type="checkbox"
-                                  checked={field.value?.includes(car.id)}
+                                  // checked={field.value?.includes(car.ID)}
                                   onChange={(event) => {
                                     const updatedValue = event.target.checked
-                                      ? [...field.value, car.id]
-                                      : field.value?.filter((value) => value !== car.id);
+                                      ? [...field.value, car.ID]
+                                      : field.value?.filter((value) => value !== car.ID);
                                     field.onChange(updatedValue);
                                   }}
                                 />
                               </FormControl>
                               <FormLabel className="font-normal">
-                                {`${car.make} ${car.model} (${car.year}) - ${car.chassisNumber}`}
+                                {`${car.make} ${car.model} (${car.maunufacture_year}) - ${car.colour}`}
                               </FormLabel>
                             </FormItem>
                           )
@@ -179,7 +177,7 @@ export function BookingManagement() {
                     {schedules.find(s => s.id === booking.scheduleId)?.vesselName}
                   </TableCell>
                   <TableCell>
-                    {booking.carIds.map(id => cars.find(c => c.id === id)?.chassisNumber).join(", ")}
+                    {booking.carIds.map(id => cars.find(c => c.ID === id)?.vin_number).join(", ")}
                   </TableCell>
                   <TableCell>{booking.containerNumber || "N/A"}</TableCell>
                   <TableCell>{booking.status}</TableCell>

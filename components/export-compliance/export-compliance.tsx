@@ -3,8 +3,8 @@
 import * as React from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { CarEntryForm } from "./car-entry-form"
-import { ComplianceCheckResults } from "./compliance-check-results"
+// import { CarEntryForm } from "./car-entry-form"
+// import { ComplianceCheckResults } from "./compliance-check-results"
 import { ExportReadyCar } from "@/types/export-compliance"
 import { InspectionIntegration } from "./inspection-integration"
 import { FinalApproval } from "./final-approval"
@@ -18,7 +18,7 @@ export function ExportCompliance() {
   }
 
   const updateCar = (updatedCar: ExportReadyCar) => {
-    setCars(cars.map(car => car.id === updatedCar.id ? updatedCar : car))
+    setCars(cars.map(car => car.ID === updatedCar.ID ? updatedCar : car))
   }
 
   return (
@@ -38,10 +38,10 @@ export function ExportCompliance() {
             <TabsTrigger value="approval">Final Approval</TabsTrigger>
           </TabsList>
           <TabsContent value="entry">
-            <CarEntryForm onSubmit={addCar} />
+            {/* <CarEntryForm onSubmit={addCar} /> */}
           </TabsContent>
           <TabsContent value="checks">
-            <ComplianceCheckResults cars={cars} onUpdate={updateCar} />
+            {/* <ComplianceCheckResults cars={cars} onUpdate={updateCar} /> */}
           </TabsContent>
           <TabsContent value="inspection">
             <InspectionIntegration cars={cars} onUpdate={updateCar} />

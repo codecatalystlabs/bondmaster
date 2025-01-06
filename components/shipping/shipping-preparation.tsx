@@ -44,8 +44,7 @@ import { Car } from "@/types/car"
 import { ShippingContainer, ShippingOrder, ShippingOrderItem } from "@/types/shipping"
 
 const cars: Car[] = [
-  { id: "1", make: "Toyota", model: "Camry", year: 2020, chassisNumber: "ABC123", engineCapacity: "2.5L", mileage: 50000, condition: "excellent", price: 25000, documents: [], createdAt: "", updatedAt: "" },
-  { id: "2", make: "Honda", model: "Civic", year: 2021, chassisNumber: "DEF456", engineCapacity: "1.8L", mileage: 30000, condition: "good", price: 22000, documents: [], createdAt: "", updatedAt: "" },
+ 
 ]
 
 const containers: ShippingContainer[] = [
@@ -79,7 +78,7 @@ export function ShippingPreparation() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const selectedItems: ShippingOrderItem[] = values.items.map(item => ({
-      car: cars.find(car => car.id === item.carId)!,
+      car: cars.find(car => car.ID === item.carId)!,
       quantity: item.quantity,
     }))
     const selectedContainer = containers.find(container => container.id === values.container)
@@ -138,9 +137,11 @@ export function ShippingPreparation() {
                         </FormControl>
                         <SelectContent>
                           {cars.map((car) => (
-                            <SelectItem key={car.id} value={car.id}>
-                              {car.make} {car.model} ({car.year})
-                            </SelectItem>
+                            car.ID ? (
+                              <SelectItem key={car.ID} value={car.ID}>
+                                {car.make} {car.model} ({car.maunufacture_year})
+                              </SelectItem>
+                            ) : null
                           ))}
                         </SelectContent>
                       </Select>
