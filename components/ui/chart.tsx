@@ -129,7 +129,7 @@ export function DoughnutChart({
             innerRadius={60}
             outerRadius={80}
           >
-            {chartData.map((entry, index) => (
+            {chartData?.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
             ))}
           </Pie>

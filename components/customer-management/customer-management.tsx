@@ -530,39 +530,39 @@ export function CustomerManagement() {
 									</TableCell>
 								</TableRow>
 							) : (
-								customerList?.data.map(
+								customerList?.data?.map(
 									(customer: CustomerResponse) => (
 										<TableRow
 											key={
-												customer.customer_uuid
+												customer?.customer_uuid
 											}
 										>
 											<TableCell>
 												{`${
-													customer.surname
+													customer?.surname
 												} ${
-													customer.firstname
+													customer?.firstname
 												} ${
-													customer.othername ||
+													customer?.othername ||
 													""
 												}`.trim()}
 											</TableCell>
 											<TableCell>
-												{customer.gender}
+												{customer?.gender}
 											</TableCell>
 											<TableCell>
 												{
-													customer.nationality
+													customer?.nationality
 												}
 											</TableCell>
 											<TableCell>
-												{customer.age}
+												{customer?.age}
 											</TableCell>
 											<TableCell>
-												{customer.email}
+												{customer?.email}
 											</TableCell>
 											<TableCell>
-												{customer.telephone}
+												{customer?.telephone}
 											</TableCell>
 											<TableCell>
 												<div className="flex items-center space-x-2">

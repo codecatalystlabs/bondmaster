@@ -65,7 +65,9 @@ export function CarInventory() {
 	const [showAddForm, setShowAddForm] = React.useState(false);
 	const [showEditForm, setShowEditForm] = React.useState(false);
 	const [showDetailsModal, setShowDetailsModal] = React.useState(false);
-	const [selectedCar, setSelectedCar] = React.useState<Car | null | any>(null);
+	const [selectedCar, setSelectedCar] = React.useState<Car | null | any>(
+		null
+	);
 	const [cars, setCars] = React.useState<Car[]>([]);
 
 	const {
@@ -73,6 +75,14 @@ export function CarInventory() {
 		error,
 		isLoading,
 	} = useSWR(`${BASE_URL}/cars`, fetcher);
+
+	React.useEffect(() => {
+		if (carList?.data) {
+			const flattenedList = carList?.data.map((item: any) => item.car);
+
+			setCars(flattenedList);
+		}
+	}, [carList]);
 
 	const handleViewDetails = (car: Car) => {
 		setSelectedCar(car);
@@ -91,7 +101,7 @@ export function CarInventory() {
 	const handleUpdateCar = (updatedCar: Car) => {
 		setCars(
 			carList?.data.map((car: CarResponse) =>
-				car.car_uuid === updatedCar.car_uuid ? updatedCar : car
+				car?.car_uuid === updatedCar.car_uuid ? updatedCar : car
 			)
 		);
 	};
@@ -133,7 +143,7 @@ export function CarInventory() {
 					</Button>
 				);
 			},
-			cell: ({ row }) => <div>{row.getValue("make")}</div>,
+			cell: ({ row }) => <div className="ml-[30px]">{row.getValue("make")}</div>,
 		},
 		{
 			accessorKey: "model",
@@ -152,10 +162,10 @@ export function CarInventory() {
 					</Button>
 				);
 			},
-			cell: ({ row }) => <div>{row.getValue("model")}</div>,
+			cell: ({ row }) => <div className="ml-[30px]">{row.getValue("model")}</div>,
 		},
 		{
-			accessorKey: "year",
+			accessorKey: "maunufacture_year",
 			header: ({ column }) => {
 				return (
 					<Button
@@ -166,27 +176,47 @@ export function CarInventory() {
 							)
 						}
 					>
-						Year
+						Manufactured Year
 						<CaretSortIcon className="ml-2 h-4 w-4" />
 					</Button>
 				);
 			},
-			cell: ({ row }) => <div>{row.getValue("year")}</div>,
+			cell: ({ row }) => (
+				<div className="ml-[30px]">{row.getValue("maunufacture_year")}</div>
+			),
 		},
+		{
+			accessorKey: "engine_capacity",
+			header: ({ column }) => {
+				return (
+					<Button
+						variant="ghost"
+						onClick={() =>
+							column.toggleSorting(
+								column.getIsSorted() === "asc"
+							)
+						}
+					>
+						Engine Capacity
+						<CaretSortIcon className="ml-2 h-4 w-4" />
+					</Button>
+				);
+			},
+			cell: ({ row }) => <div className="ml-[30px]">{row.getValue("engine_capacity")}</div>,
+		},
+
 		{
 			accessorKey: "bid_price",
 			header: () => <div className="text-right">Bid Price</div>,
 			cell: ({ row }) => {
-				const amount = parseFloat(row.getValue("bid_price"));
-				const formatted = new Intl.NumberFormat("en-US", {
-					style: "currency",
-					currency: row.getValue("currency"),
-				}).format(amount);
+				const amount = parseFloat(row.getValue("bid_price") ?? 0);
+				// const formatted = new Intl.NumberFormat("en-US", {
+				// 	style: "currency",
+				// 	currency: row.getValue("currency") || "USD",
+				// }).format(amount);
 
 				return (
-					<div className="text-right font-medium">
-						{formatted}
-					</div>
+					<div className="text-right font-medium">{amount}</div>
 				);
 			},
 		},
@@ -194,7 +224,9 @@ export function CarInventory() {
 			id: "currency",
 			accessorKey: "currency",
 			header: "Currency",
-			cell: ({ row }) => <div>{row.getValue("currency")}</div>,
+			cell: ({ row }) => (
+				<div>{row.getValue("currency") || "USD"}</div>
+			),
 		},
 		{
 			id: "actions",
@@ -237,7 +269,7 @@ export function CarInventory() {
 							<DropdownMenuItem
 								onClick={() => {
 									console.log("Edit car", car);
-									handleEditCar(car)
+									handleEditCar(car);
 								}}
 							>
 								Edit car
@@ -253,7 +285,7 @@ export function CarInventory() {
 	];
 
 	const table = useReactTable({
-		data: carList?.data || [],
+		data: cars || [],
 		columns,
 		onSortingChange: setSorting,
 		onColumnFiltersChange: setColumnFilters,
@@ -303,6 +335,7 @@ export function CarInventory() {
 								}
 								className="max-w-sm"
 							/>
+
 							<Button onClick={() => setShowAddForm(true)}>
 								<Plus className="mr-2 h-4 w-4" /> Add
 								Car
@@ -459,6 +492,7 @@ export function CarInventory() {
 							</div>
 						</div>
 					</CardContent>
+
 					<CarForm
 						open={showAddForm}
 						onOpenChange={setShowAddForm}

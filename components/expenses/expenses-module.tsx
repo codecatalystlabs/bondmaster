@@ -237,7 +237,7 @@ export function ExpensesModule() {
 	return (
 		<Tabs
 			defaultValue="overview"
-			className="space-y-4"
+			className="space-y-4 overflow-y-auto"
 		>
 			<TabsList>
 				{expenseTabs?.map((tab) => (
