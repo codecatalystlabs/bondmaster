@@ -46,6 +46,7 @@ import { Cost, CostCategory } from "@/types/cost-management";
 import { addCarExpenses } from "@/apis";
 import { BASE_URL } from "@/constants/baseUrl";
 import toast from "react-hot-toast";
+import { mutate } from "swr";
 
 const formSchema = z.object({
 	car_id: z.number().min(0, "Select a car"),
@@ -110,6 +111,7 @@ export function CostForm({
 				expense: cost,
 			});
 
+			mutate(`${BASE_URL}/carExpenses`);
 			if (response.data) {
 				toast.success(response.message);
 			}

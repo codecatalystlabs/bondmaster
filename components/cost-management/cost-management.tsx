@@ -4,7 +4,7 @@ import * as React from "react";
 import { CostForm } from "./cost-form";
 import { InvoiceGenerator } from "./invoice-generator";
 import { Cost, Invoice, CostCategory } from "@/types/cost-management";
-import { Car } from "@/types/car";
+import { Car, CarExpense } from "@/types/car";
 import {
 	Card,
 	CardContent,
@@ -26,7 +26,6 @@ import { BASE_URL } from "@/constants/baseUrl";
 import { fetcher } from "@/apis";
 
 // Mock data
-
 const buyers = [
 	{ id: "1", name: "John Doe" },
 	{ id: "2", name: "Jane Smith" },
@@ -52,20 +51,23 @@ export function CostManagement() {
 	const [cars, setCars] = React.useState<Car[]>([]);
 
 	const {
+		data: carExpensesList,
+		isLoading: carExpensesLoading,
+		error: carExpensesError,
+	} = useSWR(`${BASE_URL}/carExpenses`, fetcher);
+
+	const {
 		data: carList,
-		error,
-		isLoading,
+		error: carListError,
+		isLoading: carListLoading,
 	} = useSWR(`${BASE_URL}/cars`, fetcher);
 
 	React.useEffect(() => {
 		if (carList?.data) {
-			const flattenedList = carList?.data.map((item: any) => item.car);
-
+			const flattenedList = carList.data.map((item: any) => item.car);
 			setCars(flattenedList);
 		}
 	}, [carList]);
-
-	console.log(cars, "cars");
 
 	const handleCostSubmit = (cost: Cost) => {
 		setCosts([...costs, cost]);
@@ -113,62 +115,82 @@ export function CostManagement() {
 								<h3 className="text-lg font-semibold mb-2">
 									Recorded Costs
 								</h3>
-								<Table>
-									<TableHeader>
-										<TableRow>
-											<TableHead>
-												Car
-											</TableHead>
-											<TableHead>
-												Category
-											</TableHead>
-											<TableHead>
-												Amount
-											</TableHead>
-											<TableHead>
-												Description
-											</TableHead>
-											<TableHead>
-												Date
-											</TableHead>
-										</TableRow>
-									</TableHeader>
-									<TableBody>
-										{costs.map((cost) => (
-											<TableRow key={cost.car_id}>
-												<TableCell>
-													{
-														cars.find(
-															(
-																car
-															) =>
-																Number(
-																	car.ID
-																) ===
-																cost.car_id
-														)?.model
-													}
-												</TableCell>
-												<TableCell>
-													{cost.currency}
-												</TableCell>
-												<TableCell>
-													${cost.amount}
-												</TableCell>
-												<TableCell>
-													{
-														cost.description
-													}
-												</TableCell>
-												<TableCell>
-													{new Date(
-														cost.expense_date
-													).toLocaleDateString()}
-												</TableCell>
+								{carExpensesLoading ? (
+									<p>Loading car expenses...</p>
+								) : carExpensesError ? (
+									<p>Error loading car expenses.</p>
+								) : (
+									<Table>
+										<TableHeader>
+											<TableRow>
+												<TableHead>
+													Car
+												</TableHead>
+												<TableHead>
+													Category
+												</TableHead>
+												<TableHead>
+													Amount
+												</TableHead>
+												<TableHead>
+													Description
+												</TableHead>
+												<TableHead>
+													Date
+												</TableHead>
 											</TableRow>
-										))}
-									</TableBody>
-								</Table>
+										</TableHeader>
+										<TableBody>
+											{carExpensesList?.data.map(
+												(
+													expense: CarExpense
+												) => (
+													<TableRow
+														key={
+															expense.ID
+														}
+													>
+														<TableCell>
+															{
+																cars.find(
+																	(
+																		car
+																	) =>
+																		Number(
+																			car.ID
+																		) ===
+																		expense.ID
+																)
+																	?.model
+															}
+														</TableCell>
+
+														<TableCell>
+															{
+																expense.description
+															}
+														</TableCell>
+														<TableCell>
+															{new Date(
+																expense.expense_date
+															).toLocaleDateString()}
+														</TableCell>
+														<TableCell>
+															{
+																expense.amount
+															}
+														</TableCell>
+														<TableCell>
+															{
+																expense.currency
+															}
+														</TableCell>
+													</TableRow>
+												)
+											)}
+										</TableBody>
+									</Table>
+								)}
 							</div>
 						</div>
 					</TabsContent>
@@ -184,61 +206,71 @@ export function CostManagement() {
 								<h3 className="text-lg font-semibold mb-2">
 									Generated Invoices
 								</h3>
-								<Table>
-									<TableHeader>
-										<TableRow>
-											<TableHead>
-												Invoice Number
-											</TableHead>
-											<TableHead>
-												Buyer
-											</TableHead>
-											<TableHead>
-												Total Amount
-											</TableHead>
-											<TableHead>
-												Status
-											</TableHead>
-											<TableHead>
-												Due Date
-											</TableHead>
-										</TableRow>
-									</TableHeader>
-									<TableBody>
-										{invoices.map((invoice) => (
-											<TableRow
-												key={invoice.id}
-											>
-												<TableCell>
-													{
-														invoice.invoiceNumber
-													}
-												</TableCell>
-												<TableCell>
-													{
-														invoice.buyerName
-													}
-												</TableCell>
-												<TableCell>
-													$
-													{
-														invoice.totalAmount
-													}
-												</TableCell>
-												<TableCell>
-													{
-														invoice.status
-													}
-												</TableCell>
-												<TableCell>
-													{new Date(
-														invoice.dueDate
-													).toLocaleDateString()}
-												</TableCell>
+								{carListLoading ? (
+									<p>Loading cars...</p>
+								) : carListError ? (
+									<p>Error loading car list.</p>
+								) : (
+									<Table>
+										<TableHeader>
+											<TableRow>
+												<TableHead>
+													Invoice Number
+												</TableHead>
+												<TableHead>
+													Buyer
+												</TableHead>
+												<TableHead>
+													Total Amount
+												</TableHead>
+												<TableHead>
+													Status
+												</TableHead>
+												<TableHead>
+													Due Date
+												</TableHead>
 											</TableRow>
-										))}
-									</TableBody>
-								</Table>
+										</TableHeader>
+										<TableBody>
+											{invoices.map(
+												(invoice) => (
+													<TableRow
+														key={
+															invoice.id
+														}
+													>
+														<TableCell>
+															{
+																invoice.invoiceNumber
+															}
+														</TableCell>
+														<TableCell>
+															{
+																invoice.buyerName
+															}
+														</TableCell>
+														<TableCell>
+															$
+															{
+																invoice.totalAmount
+															}
+														</TableCell>
+														<TableCell>
+															{
+																invoice.status
+															}
+														</TableCell>
+														<TableCell>
+															{new Date(
+																invoice.dueDate
+															).toLocaleDateString()}
+														</TableCell>
+													</TableRow>
+												)
+											)}
+										</TableBody>
+									</Table>
+								)}
 							</div>
 						</div>
 					</TabsContent>

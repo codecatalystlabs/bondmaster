@@ -73,3 +73,21 @@ export interface CarResponse {
   created_by: string;
   updated_by: string;
 }
+
+
+
+
+export interface CarExpense {
+  ID: number;
+  CreatedAt: string; 
+  UpdatedAt: string; 
+  DeletedAt: string | null; 
+  car_id: number;
+  description: string;
+  currency: string;
+  amount: number;
+  expense_date: string; 
+  created_by: string;
+  updated_by: string;
+  car: Car;
+}
