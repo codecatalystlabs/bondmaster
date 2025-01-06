@@ -3,12 +3,13 @@ import { Car } from './car'
 export type CostType = 'inspection' | 'cleaning' | 'inland_transport' | 'customs' | 'storage' | 'repairs' | 'documentation' | 'other'
 
 export interface Cost {
-  id: string
-  carId: string
-  type: CostType
+  car_id: number
   amount: number
   description: string
-  date: string
+  currency: string
+  expense_date: string
+  created_by: string
+  updated_by: string
 }
 
 export interface Invoice {

@@ -1,4 +1,5 @@
 import { Car } from "@/types/car";
+import { Cost } from "@/types/cost-management";
 import { Customer } from "@/types/customer";
 import { Expense } from "@/types/expense";
 import { UserInfo } from "@/types/user";
@@ -10,6 +11,12 @@ interface ICreateUser {
 interface IExpense {
     url: string;
     expense: Partial<Expense> | any
+}
+
+
+interface ICarExpense {
+    url: string;
+    expense: Partial<Cost> | any
 }
 
 interface ICreateCustomer {
@@ -111,6 +118,22 @@ const addCar = async ({ url, carInfo }: ICreateCar) => {
     return response.json();
 }
 
+const addCarExpenses = async ({ url, expense }: ICarExpense) => {
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(expense)
+    })
+
+    if (!response.ok) {
+        throw new Error('Failed to add expense');
+    }
+
+    return response.json();
+}
+
 const addCompanyExpenses = async ({ url, expense }: IExpense) => {
     const response = await fetch(url, {
         method: 'POST',
@@ -154,5 +177,6 @@ export {
     createCustomer,
     addCar,
     addCompanyExpenses,
-    updateExpense
+    updateExpense,
+    addCarExpenses
 };

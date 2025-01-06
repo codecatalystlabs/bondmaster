@@ -7,6 +7,7 @@ export interface CarDocument {
 }
 
 export interface Car {
+  ID?: string;
   car_uuid: string;
   vin_number: string;
   engine_number: string;
