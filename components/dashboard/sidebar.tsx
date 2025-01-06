@@ -17,7 +17,7 @@ import {
 	DollarOutlined,
 	UserOutlined,
 } from "@ant-design/icons";
-import { DollarSign, FileCheck, Ship, Users } from "lucide-react";
+import { DollarSign, FileCheck, Ship, ShoppingCart, Users } from "lucide-react";
 import Image from "next/image";
 
 const menuItems = [
@@ -73,12 +73,12 @@ const menuItems = [
 		],
 	},
 	{
-		title: "PAGES",
+		title: "SALE MANAGEMENT",
 		items: [
 			{
-				title: "Pages",
-				icon: <FileTextOutlined />,
-				href: "/pages",
+				title: "Sales",
+				 icon: <ShoppingCart size={16} />,
+				href: "/sales",
 				badge: "New",
 			},
 			{
