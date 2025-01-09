@@ -15,7 +15,7 @@ import { SaleForm } from "./sale-form";
 import { SalesTable } from "./sales-table";
 import { SalesVisualization } from "./sales-visualization";
 import { EditSaleForm } from "./edit-sale-form";
-import { Sale } from "@/types/sale";
+import { Sale, Sale2 } from "@/types/sale";
 import { Car } from "@/types/car";
 import { Company } from "@/types/company";
 import { format } from "date-fns";
@@ -23,6 +23,9 @@ import * as XLSX from "xlsx";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import toast from "react-hot-toast";
+import { addSale, fetcher } from "@/apis";
+import useSWR, { mutate } from "swr";
+import { BASE_URL } from "@/constants/baseUrl";
 
 // Mock data for cars and companies
 const mockCars: Car[] = [
@@ -63,35 +66,41 @@ export function SalesModule() {
 	const [sales, setSales] = React.useState<Sale[]>([]);
 	const [showAddForm, setShowAddForm] = React.useState(false);
 	const [editingSale, setEditingSale] = React.useState<Sale | null>(null);
+		const [fetchedSales, setFetchedSales] = React.useState<Sale[]>([]);
 
-	const handleAddSale = (
-		newSale: Omit<
-			Sale,
-			"id" | "car" | "company" | "createdAt" | "updatedAt"
-		>
-	) => {
-		const sale: Sale = {
-			...newSale,
-			id: sales.length + 1,
-			car: mockCars.find(
-				(car) => car.car_uuid === newSale.carId.toString()
-			) as Car,
-			company: mockCompanies.find(
-				(company) => Number(company.id) === newSale.companyId
-			) as Company,
-			installments:
-				newSale.installments?.map((installment, index) => ({
-					id: index + 1,
-					amount: installment.amount,
-					dueDate: format(installment.dueDate, "yyyy-MM-dd"),
-					paid: false,
-				})) || [],
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString(),
-		};
-		setSales([...sales, sale]);
-		setShowAddForm(false);
-		toast.success("New sale has been successfully added");
+	const handleAddSale = async (newSale: any) => {
+		try {
+			const response = await addSale({ url: "sale", sale: newSale });
+
+			if (response.data) {
+				toast.success("New sale has been successfully added");
+			}
+			mutate(`${BASE_URL}/sales`);
+		} catch (error) {
+			toast.error("Error Fetching sales");
+		}
+
+		// const sale: Sale = {
+		// 	...newSale,
+		// 	id: sales.length + 1,
+		// 	car: mockCars.find(
+		// 		(car) => car.car_uuid === newSale.carId.toString()
+		// 	) as Car,
+		// 	company: mockCompanies.find(
+		// 		(company) => Number(company.id) === newSale.companyId
+		// 	) as Company,
+		// 	installments:
+		// 		newSale.installments?.map((installment, index) => ({
+		// 			id: index + 1,
+		// 			amount: installment.amount,
+		// 			dueDate: format(installment.dueDate, "yyyy-MM-dd"),
+		// 			paid: false,
+		// 		})) || [],
+		// 	createdAt: new Date().toISOString(),
+		// 	updatedAt: new Date().toISOString(),
+		// };
+		// setSales([...sales, sale]);
+		// setShowAddForm(false);
 	};
 
 	const handleEditSale = (updatedSale: Sale) => {
@@ -147,14 +156,18 @@ export function SalesModule() {
 			"Company",
 			"Payment Type",
 		];
-		const tableRows = sales.map((sale) => [
-			sale.id,
-			`$${sale.totalPrice.toFixed(2)}`,
-			format(new Date(sale.saleDate), "PPP"),
-			`${sale.car.make} ${sale.car.model}`,
-			sale.company.name,
-			sale.isFullPayment ? "Full Payment" : "Installments",
-		]);
+		const tableRows = fetchedSales?.map((sale) =>
+		
+			[
+			sale.ID,
+			`$${sale.total_price.toFixed(2)}`,
+			format(new Date(sale.sale_date), "PPP"),
+			`${sale.Car.make} ${sale.Car.model}`,
+			sale.Company.name,
+			sale.is_full_payment ? "Full Payment" : "Installments",
+		]
+		);
+			console.log("sale rows ",fetchedSales )
 
 		// @ts-ignore
 		doc.autoTable({
@@ -188,6 +201,26 @@ export function SalesModule() {
 		);
 		toast.success("Sales report has been downloaded as Excel file.");
 	};
+
+
+
+	const {
+		data: salesList,
+		error: salesListError,
+		isLoading: salesListLoading,
+	} = useSWR(`${BASE_URL}/sales`, fetcher);
+
+	React.useEffect(() => {
+		
+		if (salesList?.data) {
+			const flattenedList = salesList.data.map(
+				(item: any) => item.sale
+			);
+			setFetchedSales(flattenedList);
+		}
+	}, [salesList]);
+
+	// console.log("fetched sales ===", fetchedSales);
 
 	return (
 		<Card>
@@ -259,7 +292,7 @@ export function SalesModule() {
 					</TabsContent>
 					<TabsContent value="sales">
 						<SalesTable
-							data={sales}
+							data={fetchedSales}
 							onInstallmentPayment={
 								handleInstallmentPayment
 							}

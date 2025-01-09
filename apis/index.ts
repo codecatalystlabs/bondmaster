@@ -2,6 +2,7 @@ import { Car } from "@/types/car";
 import { Cost } from "@/types/cost-management";
 import { Customer } from "@/types/customer";
 import { Expense } from "@/types/expense";
+import { Sale2 } from "@/types/sale";
 import { UserInfo } from "@/types/user";
 
 interface ICreateUser {
@@ -27,6 +28,11 @@ interface ICreateCustomer {
 interface ICreateCar {
     url: string;
     carInfo: Partial<Car> | any;
+}
+
+interface ISale {
+    url: string;
+    sale: Partial<Sale2> | any
 }
 
 
@@ -169,6 +175,24 @@ const updateExpense = async ({ url, expense }: IExpense) => {
 
 
 
+const addSale = async ({ url, sale }: ISale) => {
+    const response = await fetch(`https://clims.health.go.ug/api/${url}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(sale)
+    })
+
+    if (!response.ok) {
+        throw new Error('Failed to create sale');
+    }
+
+    return response.json();
+}
+
+
+
 export {
     createUser,
     fetcher,
@@ -178,5 +202,6 @@ export {
     addCar,
     addCompanyExpenses,
     updateExpense,
-    addCarExpenses
+    addCarExpenses,
+    addSale
 };
