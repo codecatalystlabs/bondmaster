@@ -156,7 +156,7 @@ export function SalesModule() {
 			"Company",
 			"Payment Type",
 		];
-		const tableRows = fetchedSales?.map((sale) =>
+		const tableRows = fetchedSales?.map((sale:any) =>
 		
 			[
 			sale.ID,

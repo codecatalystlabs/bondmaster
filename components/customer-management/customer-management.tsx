@@ -51,7 +51,7 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Customer, CustomerResponse } from "@/types/customer";
+import { Customer, CustomerResponse, DataItem } from "@/types/customer";
 import { Loader } from "@/components/ui/loader";
 import useSWR, { mutate } from "swr";
 import { createCustomer, editCustomer, fetcher } from "@/apis";
@@ -137,7 +137,7 @@ export function CustomerManagement() {
 		isLoading,
 	} = useSWR(`${BASE_URL}/customers`, fetcher);
 
-	console.log(customerList);
+	console.log(customerList?.data, "customerList");
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		const userPayload: Customer = {
@@ -154,7 +154,7 @@ export function CustomerManagement() {
 				updated_by: "admin",
 			};
 			if (editingCustomer) {
-				console.log(editCustomer, "######");
+				// console.log(editCustomer, "######");
 				const response = await editCustomer({
 					url: `${BASE_URL}/customer/${editingCustomer.ID}`,
 					customerInfo: updatedCustomer,
@@ -531,38 +531,49 @@ export function CustomerManagement() {
 								</TableRow>
 							) : (
 								customerList?.data?.map(
-									(customer: CustomerResponse) => (
+									(item: DataItem) => (
 										<TableRow
-											key={
-												customer?.customer_uuid
-											}
+											key={item.customer.ID}
 										>
 											<TableCell>
 												{`${
-													customer?.surname
+													item.customer
+														?.surname
 												} ${
-													customer?.firstname
+													item.customer
+														?.firstname
 												} ${
-													customer?.othername ||
+													item.customer
+														?.othername ||
 													""
 												}`.trim()}
 											</TableCell>
 											<TableCell>
-												{customer?.gender}
-											</TableCell>
-											<TableCell>
 												{
-													customer?.nationality
+													item.customer
+														?.gender
 												}
 											</TableCell>
 											<TableCell>
-												{customer?.age}
+												{
+													item.customer
+														?.nationality
+												}
 											</TableCell>
 											<TableCell>
-												{customer?.email}
+												{item.customer?.age}
 											</TableCell>
 											<TableCell>
-												{customer?.telephone}
+												{
+													item.customer
+														?.email
+												}
+											</TableCell>
+											<TableCell>
+												{
+													item.customer
+														?.telephone
+												}
 											</TableCell>
 											<TableCell>
 												<div className="flex items-center space-x-2">
@@ -572,7 +583,7 @@ export function CustomerManagement() {
 														onClick={() => {
 															setEditingCustomer(
 																{
-																	...customer,
+																	...item.customer,
 																}
 															);
 															setIsDialogOpen(

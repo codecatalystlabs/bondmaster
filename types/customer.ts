@@ -33,3 +33,10 @@ export interface CustomerResponse {
   created_by: string;
   updated_by: string;
 }
+
+
+export type DataItem = {
+  addresses: any[];
+  customer: CustomerResponse;
+  customer_ports:any[]
+}
