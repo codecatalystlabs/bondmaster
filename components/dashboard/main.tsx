@@ -182,10 +182,10 @@ export function DashboardMain() {
 							<div className="flex items-center justify-between">
 								<div>
 									<p className="text-sm text-gray-500">
-										{stat.title}
+										{stat?.title}
 									</p>
 									<h3 className="mt-1 text-2xl font-semibold">
-										{stat.value}
+										{stat?.value}
 									</h3>
 									<p
 										className={cn(
@@ -197,14 +197,14 @@ export function DashboardMain() {
 												: "text-red-500"
 										)}
 									>
-										{stat.change} this month
+										{stat?.change} this month
 									</p>
 								</div>
 								<div className="text-2xl text-gray-400">
-									{stat.icon}
+									{stat?.icon}
 								</div>
 							</div>
-							<div className="mt-4 h-16">{stat.chart}</div>
+							<div className="mt-4 h-16">{stat?.chart}</div>
 						</Card>
 					))}
 				</div>
@@ -223,7 +223,7 @@ export function DashboardMain() {
 							</Button>
 						</div>
 						<div className="mt-4 h-[300px]">
-							<LineChart
+							{/* <LineChart
 								data={[
 									65, 59, 80, 81, 56, 55, 40, 65, 59,
 									80, 81, 56,
@@ -243,7 +243,7 @@ export function DashboardMain() {
 									"Dec",
 								]}
 								index="0"
-							/>
+							/> */}
 						</div>
 					</Card>
 
@@ -260,7 +260,7 @@ export function DashboardMain() {
 							</Button>
 						</div>
 						<div className="mt-4 h-[300px]">
-							<DoughnutChart
+							{/* <DoughnutChart
 								data={[1624, 1267, 1153, 679]}
 								labels={[
 									"Mobile",
@@ -268,7 +268,7 @@ export function DashboardMain() {
 									"Laptop",
 									"Tablet",
 								]}
-							/>
+							/> */}
 						</div>
 					</Card>
 				</div>
@@ -287,7 +287,7 @@ export function DashboardMain() {
 							</Button>
 						</div>
 						<div className="mt-4 space-y-4">
-							{topDeals.map((deal, i) => (
+							{topDeals?.map((deal, i) => (
 								<div
 									key={i}
 									className="flex items-center justify-between"
@@ -296,15 +296,15 @@ export function DashboardMain() {
 										<div className="h-10 w-10 rounded-full bg-gray-200" />
 										<div>
 											<div className="font-medium">
-												{deal.name}
+												{deal?.name}
 											</div>
 											<div className="text-sm text-gray-500">
-												{deal.email}
+												{deal?.email}
 											</div>
 										</div>
 									</div>
 									<div className="font-medium">
-										{deal.amount}
+										{deal?.amount}
 									</div>
 								</div>
 							))}

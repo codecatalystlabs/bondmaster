@@ -82,6 +82,7 @@ export function CostManagement() {
 	};
 
 	return (
+		<div className="flex-1 overflow-y-auto p-8">
 		<Card>
 			<CardHeader>
 				<CardTitle>Cost Management</CardTitle>
@@ -277,5 +278,6 @@ export function CostManagement() {
 				</Tabs>
 			</CardContent>
 		</Card>
+		</div>
 	);
 }
