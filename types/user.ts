@@ -7,17 +7,23 @@ export interface User {
   password: string;
 }
 
+export interface LoginUser {
+  identity: string;  
+  password: string;
+}
+
 export interface UserInfo {
-  username: string,
-  email: string,
-  password: string,
-  company_id?: number,
-  surname: string,
-  firstname: string,
-  gender: string,
-  title: string,
-  created_by: string,
-  updated_by: string,
+  username: string;
+  email: string;
+  password: string;
+  company_id?: number;
+  surname: string;
+  firstname: string;
+  gender: string;
+  title: string;
+  created_by: string;
+  updated_by: string;
+  user_groups: any;
 }
 
 
@@ -39,6 +45,7 @@ export interface UserResponseInfo {
   company: Company;
   created_by: string;
   updated_by: string;
+  user_groups: any;
 }
 
 export interface Company {

@@ -1,11 +1,15 @@
 "use client";
-import { SignIn } from "@/components/auth/signn-in";
 import { DashboardMain } from "@/components/dashboard/main";
-import { useState } from "react";
+import React, { useState } from "react";
 import { redirect } from "next/navigation";
+import { parseCookies } from "nookies";
 
 export default function DashboardPage() {
-	// const [token, setToken] = useState(false);
+	const cookies = parseCookies();
+	const token = cookies.token
+
+	console.log(token,"====");
+
 	// return token ? <DashboardMain /> : redirect("/signin");
 	return <DashboardMain />;
 }

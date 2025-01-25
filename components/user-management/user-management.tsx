@@ -78,6 +78,7 @@ const formSchema = z.object({
 		message: "Password must be at least 8 characters.",
 	}),
 	company_id: z.number().optional(),
+	user_groups: z.array(z.string()).min(1, "Select at least one user group"),
 });
 
 export function UserManagement() {
@@ -102,6 +103,7 @@ export function UserManagement() {
 			title: "",
 			password: "",
 			company_id: 0,
+			 user_groups: [],
 		},
 	});
 
@@ -116,6 +118,7 @@ export function UserManagement() {
 				title: editingUser.title,
 				password: editingUser.password,
 				company_id: 1,
+				 user_groups: editingUser.user_groups,
 			});
 		} else {
 			form.reset({
@@ -127,6 +130,7 @@ export function UserManagement() {
 				title: "",
 				password: "",
 				company_id: 1,
+				 user_groups: [],
 			});
 		}
 		setShowModalPassword(false);
@@ -463,7 +467,106 @@ export function UserManagement() {
 													</FormItem>
 												)}
 											/>
-										</div>
+											</div>
+											<div className="flex-1 space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="gender"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Gender</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select gender" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Male">Male</SelectItem>
+                            <SelectItem value="Female">Female</SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Mr." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <div className="flex items-center space-x-2">
+                            <Input type={showModalPassword ? "text" : "password"} {...field} />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setShowModalPassword(!showModalPassword)}
+                            >
+                              {showModalPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            </Button>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="company_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Company</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Company ID" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="user_groups"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>User Groups</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={(value) => field.onChange([...field.value, value])}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select user groups" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="admin">Admin</SelectItem>
+                              <SelectItem value="user">User</SelectItem>
+                              <SelectItem value="manager">Manager</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 									</form>
 								</Form>
 								<DialogFooter>

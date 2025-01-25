@@ -3,11 +3,16 @@ import { Cost } from "@/types/cost-management";
 import { Customer } from "@/types/customer";
 import { Expense } from "@/types/expense";
 import { Sale2 } from "@/types/sale";
-import { UserInfo } from "@/types/user";
+import { LoginUser, UserInfo } from "@/types/user";
 
 interface ICreateUser {
     url: string;
     userInfo: Partial<UserInfo> | any;
+}
+
+interface ILoginUser {
+    url: string;
+    userData: Partial<LoginUser> | any;
 }
 interface IExpense {
     url: string;
@@ -85,6 +90,22 @@ const editUser = async ({ url, userInfo }: ICreateUser) => {
 
     if (!response.ok) {
         throw new Error('Failed to edit user');
+    }
+
+    return response.json();
+};
+
+const login = async ({ url, userData }: ILoginUser) => {
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to login user');
     }
 
     return response.json();
@@ -203,5 +224,6 @@ export {
     addCompanyExpenses,
     updateExpense,
     addCarExpenses,
-    addSale
+    addSale,
+    login
 };
