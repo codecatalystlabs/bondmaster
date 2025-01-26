@@ -8,8 +8,6 @@ export default function DashboardPage() {
 	const cookies = parseCookies();
 	const token = cookies.token
 
-	console.log(token,"====");
+	return redirect("/signin");
 
-	// return token ? <DashboardMain /> : redirect("/signin");
-	return <DashboardMain />;
 }
