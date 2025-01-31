@@ -26,8 +26,7 @@ export default function UgandaLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
-			<body
+			<div
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
 				<Toaster />
@@ -38,7 +37,6 @@ export default function UgandaLayout({
 						{children}
 					</div>
 				</div>
-			</body>
-		</html>
+			</div>
 	);
 }

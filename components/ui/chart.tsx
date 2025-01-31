@@ -43,54 +43,74 @@ interface LineChartProps extends React.HTMLAttributes<HTMLDivElement> {
   customTooltip?: (props: CustomTooltipProps) => React.ReactNode
 }
 
+
+
+
 export function LineChart({
-  data,
-  categories,
-  index,
-  colors = ["hsl(var(--primary))"],
-  className,
-  customTooltip,
-  yAxisWidth,
-  ...props
+	data,
+	categories,
+	index,
+	colors = ["hsl(var(--primary))"],
+	className,
+	customTooltip,
+	yAxisWidth,
+	...props
 }: LineChartProps) {
-  return (
-    <div className={cn("h-full w-full", className)} {...props}>
-      <ResponsiveContainer width="100%" height="100%">
-        <RechartsLineChart data={data}>
-          <XAxis
-            dataKey={index}
-            stroke="#888888"
-            fontSize={12}
-            tickLine={false}
-            axisLine={false}
-          />
-          <YAxis
-            width={yAxisWidth}
-            stroke="#888888"
-            fontSize={12}
-            tickLine={false}
-            axisLine={false}
-            tickFormatter={(value) => `$${value}`}
-          />
-          <Tooltip
-            content={({ active, payload, label }) => {
-              if (active && payload && payload.length && customTooltip) {
-                return customTooltip({ label, value: payload[0].value as number });
-              }
-              return null;
-            }}
-          />
-          <Line
-            type="monotone"
-            dataKey={categories[0]}
-            stroke={colors[0]}
-            strokeWidth={2}
-            dot={false}
-          />
-        </RechartsLineChart>
-      </ResponsiveContainer>
-    </div>
-  )
+	const safeData =
+		data && data.length > 0 ? data : [{ [index]: 0, [categories[0]]: 0 }];
+
+	return (
+		<div
+			className={cn("h-full w-full", className)}
+			{...props}
+		>
+			<ResponsiveContainer
+				width="100%"
+				height="100%"
+			>
+				<RechartsLineChart data={safeData}>
+					<XAxis
+						dataKey={index}
+						stroke="#888888"
+						fontSize={12}
+						tickLine={false}
+						axisLine={false}
+					/>
+					<YAxis
+						width={yAxisWidth}
+						stroke="#888888"
+						fontSize={12}
+						tickLine={false}
+						axisLine={false}
+						tickFormatter={(value) => `$${value}`}
+					/>
+					<Tooltip
+						content={({ active, payload, label }) => {
+							if (
+								active &&
+								payload &&
+								payload.length &&
+								customTooltip
+							) {
+								return customTooltip({
+									label,
+									value: payload[0].value as number,
+								});
+							}
+							return null;
+						}}
+					/>
+					<Line
+						type="monotone"
+						dataKey={categories[0]}
+						stroke={colors[0]}
+						strokeWidth={2}
+						dot={false}
+					/>
+				</RechartsLineChart>
+			</ResponsiveContainer>
+		</div>
+	);
 }
 
 interface DoughnutChartProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -100,43 +120,54 @@ interface DoughnutChartProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export function DoughnutChart({
-  data,
-  labels,
-  colors = [
-    "hsl(var(--primary))",
-    "hsl(var(--secondary))",
-    "hsl(var(--accent))",
-    "hsl(var(--muted))",
-  ],
-  className,
-  ...props
+	data,
+	labels,
+	colors = [
+		"hsl(var(--primary))",
+		"hsl(var(--secondary))",
+		"hsl(var(--accent))",
+		"hsl(var(--muted))",
+	],
+	className,
+	...props
 }: DoughnutChartProps) {
-  const chartData = data.map((value, i) => ({
-    value,
-    label: labels[i],
-  }))
+	const safeData = data && data.length > 0 ? data : [0];
+	const safeLabels = labels && labels.length > 0 ? labels : ["Default"];
 
-  return (
-    <div className={cn("h-full w-full", className)} {...props}>
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            data={chartData}
-            dataKey="value"
-            nameKey="label"
-            cx="50%"
-            cy="50%"
-            innerRadius={60}
-            outerRadius={80}
-          >
-            {chartData?.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
-            ))}
-          </Pie>
-          <Tooltip content={<ChartTooltip />} />
-        </PieChart>
-      </ResponsiveContainer>
-    </div>
-  )
+	const chartData = safeData.map((value, i) => ({
+		value,
+		label: safeLabels[i],
+	}));
+
+	return (
+		<div
+			className={cn("h-full w-full", className)}
+			{...props}
+		>
+			<ResponsiveContainer
+				width="100%"
+				height="100%"
+			>
+				<PieChart>
+					<Pie
+						data={chartData}
+						dataKey="value"
+						nameKey="label"
+						cx="50%"
+						cy="50%"
+						innerRadius={60}
+						outerRadius={80}
+					>
+						{chartData?.map((entry, index) => (
+							<Cell
+								key={`cell-${index}`}
+								fill={colors[index % colors.length]}
+							/>
+						))}
+					</Pie>
+					<Tooltip content={<ChartTooltip />} />
+				</PieChart>
+			</ResponsiveContainer>
+		</div>
+	);
 }
-

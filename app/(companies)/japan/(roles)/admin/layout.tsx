@@ -4,8 +4,8 @@ export default function JapanAdminLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="admin-layout">
-      <nav>Japan Admin Navigation</nav>
+    <div className="overflow-y-auto p-8">
+      <nav>Japan </nav>
       {children}
     </div>
   )

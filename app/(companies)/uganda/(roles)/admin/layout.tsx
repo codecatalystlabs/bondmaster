@@ -4,11 +4,11 @@ export default function UgandaAdminLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="admin-layout">
-      <nav className="ml-9 mt-3">Uganda </nav>
-      {children}
-    </div>
-  )
+		<div className="overflow-y-auto p-8">
+			<nav className="ml-9 mt-3">Uganda </nav>
+			{children}
+		</div>
+  );
 }
 
 

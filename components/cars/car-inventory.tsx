@@ -76,6 +76,10 @@ export function CarInventory() {
 		isLoading,
 	} = useSWR(`${BASE_URL}/cars`, fetcher);
 
+	
+
+
+
 	React.useEffect(() => {
 		if (carList?.data) {
 			const flattenedList = carList?.data.map((item: any) => item.car);

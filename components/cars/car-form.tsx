@@ -33,9 +33,9 @@ import {
 } from "@/components/ui/popover";
 import toast from "react-hot-toast";
 import { Car } from "@/types/car";
-import { addCar } from "@/apis";
+import { addCar, fetcher } from "@/apis";
 import { BASE_URL } from "@/constants/baseUrl";
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -94,6 +94,23 @@ interface CarFormProps {
 }
 
 export function CarForm({ open, onOpenChange, car, onSubmit }: CarFormProps) {
+	const {
+			data: weights,
+			error:weightsError,
+			isLoading:idLoadingWeights,
+	} = useSWR(`${BASE_URL}/meta/weights`, fetcher);
+	
+	const {
+		data: currencies,
+		error: currencyError,
+		isLoading: idLoadingCurrency,
+	} = useSWR(`${BASE_URL}/meta/currency`, fetcher);
+	const {
+		data: lengths,
+		error: lengthsError,
+		isLoading: idLoadinglengths,
+	} = useSWR(`${BASE_URL}/meta/lengths`, fetcher);
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: car
@@ -476,6 +493,7 @@ export function CarForm({ open, onOpenChange, car, onSubmit }: CarFormProps) {
 								)}
 							/>
 							{/* Weight Units */}
+
 							<FormField
 								control={form.control}
 								name="weight_units"
@@ -498,40 +516,69 @@ export function CarForm({ open, onOpenChange, car, onSubmit }: CarFormProps) {
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
-												<SelectItem value="kg">
-													kg
-												</SelectItem>
-												<SelectItem value="lbs">
-													lbs
-												</SelectItem>
+												{weights?.data?.map(
+													(
+														weight: any
+													) => (
+														<SelectItem
+															key={
+																weight.ID
+															}
+															value={weight.ID.toString()}
+														>
+															{
+																weight.name
+															}
+														</SelectItem>
+													)
+												)}
 											</SelectContent>
 										</Select>
 										<FormMessage />
 									</FormItem>
 								)}
 							/>
+
+							{/* Weight Units */}
 							{/* Length */}
 							<FormField
 								control={form.control}
-								name="length"
+								name="length_units"
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>Length</FormLabel>
-										<FormControl>
-											<Input
-												type="number"
-												{...field}
-												onChange={(e) =>
-													field.onChange(
-														parseFloat(
-															e
-																.target
-																.value
-														)
+										<Select
+											onValueChange={
+												field.onChange
+											}
+											defaultValue={
+												field.value
+											}
+										>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder="Select length units" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												{lengths?.data?.map(
+													(
+														length: any
+													) => (
+														<SelectItem
+															key={
+																length.ID
+															}
+															value={length.ID.toString()}
+														>
+															{
+																length.name
+															}
+														</SelectItem>
 													)
-												}
-											/>
-										</FormControl>
+												)}
+											</SelectContent>
+										</Select>
 										<FormMessage />
 									</FormItem>
 								)}
@@ -771,6 +818,7 @@ export function CarForm({ open, onOpenChange, car, onSubmit }: CarFormProps) {
 								)}
 							/>
 							{/* Currency */}
+							{/* Currency Dropdown */}
 							<FormField
 								control={form.control}
 								name="currency"
@@ -789,25 +837,31 @@ export function CarForm({ open, onOpenChange, car, onSubmit }: CarFormProps) {
 										>
 											<FormControl>
 												<SelectTrigger>
-													<SelectValue placeholder="Select currency" />
+													<SelectValue placeholder="Select a currency" />
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
-												<SelectItem value="USD">
-													USD
-												</SelectItem>
-												<SelectItem value="EUR">
-													EUR
-												</SelectItem>
-												<SelectItem value="JPY">
-													JPY
-												</SelectItem>
+												{currencies?.data?.map(
+													(
+														currency: any
+													) => (
+														<SelectItem
+															key={
+																currency.ID
+															}
+															value={currency.ID.toString()}
+														>
+															{`${currency.symbol} - ${currency.name}`}
+														</SelectItem>
+													)
+												)}
 											</SelectContent>
 										</Select>
 										<FormMessage />
 									</FormItem>
 								)}
 							/>
+
 							{/* Bid Price */}
 							<FormField
 								control={form.control}

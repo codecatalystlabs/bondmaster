@@ -1,9 +1,15 @@
+'use client';
+
+import useUserStore from "@/app/store/userStore";
 import { Car } from "@/types/car";
 import { Cost } from "@/types/cost-management";
 import { Customer } from "@/types/customer";
 import { Expense } from "@/types/expense";
 import { Sale2 } from "@/types/sale";
 import { LoginUser, UserInfo } from "@/types/user";
+
+
+
 
 interface ICreateUser {
     url: string;
@@ -40,6 +46,19 @@ interface ISale {
     sale: Partial<Sale2> | any
 }
 
+const getAuthHeaders = () => {
+    const token = useUserStore.getState().token;
+
+    if (!token) {
+        throw new Error('Authentication required. Please login.');
+    }
+
+    return {
+        'Content-Type': 'application/json',
+        // Authorization: `Bearer ${token}`
+    };
+};
+
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
@@ -49,6 +68,7 @@ const createUser = async ({ url, userInfo }: ICreateUser) => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${useUserStore.getState().token}`,
         },
         body: JSON.stringify(userInfo),
     })
@@ -66,6 +86,7 @@ const createCustomer = async ({ url, customerInfo }: ICreateCustomer) => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${useUserStore.getState().token}`,
         },
         body: JSON.stringify(customerInfo),
     })
@@ -84,6 +105,7 @@ const editUser = async ({ url, userInfo }: ICreateUser) => {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${useUserStore.getState().token}`,
         },
         body: JSON.stringify(userInfo),
     });
@@ -100,6 +122,7 @@ const login = async ({ url, userData }: ILoginUser) => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+           
         },
         body: JSON.stringify(userData),
     });
@@ -117,6 +140,7 @@ const editCustomer = async ({ url, customerInfo }: ICreateCustomer) => {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${useUserStore.getState().token}`,
         },
         body: JSON.stringify(customerInfo),
     });
@@ -134,6 +158,7 @@ const addCar = async ({ url, carInfo }: ICreateCar) => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            // Authorization: `Bearer ${useUserStore.getState().token}`,
         },
         body: JSON.stringify(carInfo),
     })
@@ -149,7 +174,8 @@ const addCarExpenses = async ({ url, expense }: ICarExpense) => {
     const response = await fetch(url, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${useUserStore.getState().token}`,
         },
         body: JSON.stringify(expense)
     })
@@ -165,7 +191,8 @@ const addCompanyExpenses = async ({ url, expense }: IExpense) => {
     const response = await fetch(url, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${useUserStore.getState().token}`,
         },
         body: JSON.stringify(expense)
     })
@@ -183,6 +210,7 @@ const updateExpense = async ({ url, expense }: IExpense) => {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${useUserStore.getState().token}`,
         },
         body: JSON.stringify(expense),
     });
@@ -200,7 +228,8 @@ const addSale = async ({ url, sale }: ISale) => {
     const response = await fetch(`https://clims.health.go.ug/api/${url}`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${useUserStore.getState().token}`,
         },
         body: JSON.stringify(sale)
     })

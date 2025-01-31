@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Sidebar } from "@/components/dashboard/sidebar";
 import { Header } from "@/components/dashboard/header";
 import { Toaster } from "react-hot-toast";
+import { AdminJapanSidebar } from "@/components/dashboard/admin-sidebar-japan";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -25,19 +25,17 @@ export default function JapanLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
-			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-			>
-				<Toaster />
-				<div className="flex h-screen">
-					<Sidebar />
-					<div className="flex flex-1 flex-col">
-						<Header />
-						{children}
-					</div>
+		<div
+			className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+		>
+			<Toaster />
+			<div className="flex h-screen">
+				<AdminJapanSidebar />
+				<div className="flex flex-1 flex-col">
+					<Header />
+					{children}
 				</div>
-			</body>
-		</html>
+			</div>
+		</div>
 	);
 }

@@ -4,10 +4,10 @@ export default function JapanCashierLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="cashier-layout">
-      <nav>Japan Cashier Navigation</nav>
-      {children}
-    </div>
-  )
+		<div className="overflow-y-auto p-8">
+			<nav>Japan Cashier Navigation</nav>
+			{children}
+		</div>
+  );
 }
 

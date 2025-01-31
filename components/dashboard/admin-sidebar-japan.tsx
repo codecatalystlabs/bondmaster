@@ -27,48 +27,48 @@ const menuItems = [
 			{
 				title: "Dashboards",
 				icon: <AppstoreOutlined />,
-				href: "/uganda/admin/dashboard",
+				href: "/japan/admin/dashboard",
 				badge: "12",
 			},
 			{
 				title: "Car Inventory",
 				icon: <CarOutlined />,
-				href: "/uganda/admin/car-inventory",
+				href: "/japan/admin/car-inventory",
 			},
 			{
 				title: "Shipping Preparation",
 				icon: <ShoppingOutlined />,
-				href: "/uganda/admin/shipping-preparation",
+				href: "/japan/admin/shipping-preparation",
 			},
 			{
 				title: "Cost Management",
 				icon: <DollarOutlined />,
-				href: "/uganda/admin/cost-management",
+				href: "/japan/admin/cost-management",
 			},
 			{
 				title: "Shipping Logistics",
 				icon: <Ship size={16} />,
-				href: "/uganda/admin/shipping-logistics",
+				href: "/japan/admin/shipping-logistics",
 			},
 			{
 				title: "Export Compliance",
 				icon: <FileCheck size={16} />,
-				href: "/uganda/admin/export-compliance",
+				href: "/japan/admin/export-compliance",
 			},
 			{
 				title: "User Management",
 				icon: <UserOutlined />,
-				href: "/uganda/admin/user-management",
+				href: "/japan/admin/user-management",
 			},
 			{
 				title: "Customer Management",
 				icon: <Users size={16} />,
-				href: "/uganda/admin/customer-management",
+				href: "/japan/admin/customer-management",
 			},
 			{
 				title: "Company Expenses",
 				icon: <DollarSign size={16} />,
-				href: "/uganda/admin/expenses",
+				href: "/japan/admin/expenses",
 			},
 		],
 	},
@@ -78,21 +78,44 @@ const menuItems = [
 			{
 				title: "Sales",
 				icon: <ShoppingCart size={16} />,
-				href: "/uganda/admin/sales",
+				href: "/sales",
 				badge: "New",
+			},
+			{
+				title: "Authentication",
+				icon: <TeamOutlined />,
+				href: "/auth",
+			},
+			{
+				title: "Sign Up",
+				icon: <UserAddOutlined />,
+				href: "/signup",
 			},
 		],
 	},
-	
+	{
+		title: "GENERAL",
+		items: [
+			{
+				title: "Settings",
+				icon: <SettingOutlined />,
+				href: "/settings",
+			},
+		],
+	},
 	{
 		title: "ACCOUNT",
 		items: [
 			{
 				title: "Profile",
 				icon: <UserCircle size={16} />,
-				href: "/uganda/profile",
+				href: "/japan/profile",
 			},
-			
+			{
+				title: "Settings",
+				icon: <Settings size={16} />,
+				href: "/settings",
+			},
 			{
 				title: "Sign Out",
 				icon: <LogOut size={16} />,
@@ -102,7 +125,7 @@ const menuItems = [
 	},
 ];
 
-export function AdminSidebar() {
+export function AdminJapanSidebar() {
 	const [collapsed, setCollapsed] = useState(false);
 	const pathname = usePathname();
 
@@ -114,8 +137,14 @@ export function AdminSidebar() {
 			)}
 		>
 			<div className="flex h-20  items-center justify-between px-4 py-4 border-b border-gray-700">
-				<div >
-					<Image width={120} height={50} src="/logo.png" alt="logo" objectFit="cover" />
+				<div>
+					<Image
+						width={120}
+						height={50}
+						src="/logo.png"
+						alt="logo"
+						objectFit="cover"
+					/>
 				</div>
 				<button
 					onClick={() => setCollapsed(!collapsed)}
