@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, JSX } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
 	AppstoreOutlined,
@@ -19,115 +19,129 @@ import {
 } from "@ant-design/icons";
 import { DollarSign, FileCheck, LogOut, Settings, Ship, ShoppingCart, UserCircle, Users } from "lucide-react";
 import Image from "next/image";
+import useUserStore from "@/app/store/userStore";
 
-const menuItems = [
-	{
-		title: "MAIN",
-		items: [
-			{
-				title: "Dashboards",
-				icon: <AppstoreOutlined />,
-				href: "/japan/admin/dashboard",
-				badge: "12",
-			},
-			{
-				title: "Car Inventory",
-				icon: <CarOutlined />,
-				href: "/japan/admin/car-inventory",
-			},
-			{
-				title: "Shipping Preparation",
-				icon: <ShoppingOutlined />,
-				href: "/japan/admin/shipping-preparation",
-			},
-			{
-				title: "Cost Management",
-				icon: <DollarOutlined />,
-				href: "/japan/admin/cost-management",
-			},
-			{
-				title: "Shipping Logistics",
-				icon: <Ship size={16} />,
-				href: "/japan/admin/shipping-logistics",
-			},
-			{
-				title: "Export Compliance",
-				icon: <FileCheck size={16} />,
-				href: "/japan/admin/export-compliance",
-			},
-			{
-				title: "User Management",
-				icon: <UserOutlined />,
-				href: "/japan/admin/user-management",
-			},
-			{
-				title: "Customer Management",
-				icon: <Users size={16} />,
-				href: "/japan/admin/customer-management",
-			},
-			{
-				title: "Company Expenses",
-				icon: <DollarSign size={16} />,
-				href: "/japan/admin/expenses",
-			},
-		],
-	},
-	{
-		title: "SALE MANAGEMENT",
-		items: [
-			{
-				title: "Sales",
-				icon: <ShoppingCart size={16} />,
-				href: "/sales",
-				badge: "New",
-			},
-			{
-				title: "Authentication",
-				icon: <TeamOutlined />,
-				href: "/auth",
-			},
-			{
-				title: "Sign Up",
-				icon: <UserAddOutlined />,
-				href: "/signup",
-			},
-		],
-	},
-	{
-		title: "GENERAL",
-		items: [
-			{
-				title: "Settings",
-				icon: <SettingOutlined />,
-				href: "/settings",
-			},
-		],
-	},
-	{
-		title: "ACCOUNT",
-		items: [
-			{
-				title: "Profile",
-				icon: <UserCircle size={16} />,
-				href: "/japan/profile",
-			},
-			{
-				title: "Settings",
-				icon: <Settings size={16} />,
-				href: "/settings",
-			},
-			{
-				title: "Sign Out",
-				icon: <LogOut size={16} />,
-				href: "/signin",
-			},
-		],
-	},
-];
+type MenuItem = {
+	title: string;
+	icon: JSX.Element;
+	href?: string;
+	badge?: string;
+	onClick?: () => void;
+};
+
+
+
 
 export function AdminJapanSidebar() {
+	const menuItems: { title: string; items: MenuItem[] }[] = [
+		{
+			title: "MAIN",
+			items: [
+				{
+					title: "Dashboards",
+					icon: <AppstoreOutlined />,
+					href: "/japan/admin/dashboard",
+					badge: "12",
+				},
+				{
+					title: "Car Inventory",
+					icon: <CarOutlined />,
+					href: "/japan/admin/car-inventory",
+				},
+				// {
+				// 	title: "Shipping Preparation",
+				// 	icon: <ShoppingOutlined />,
+				// 	href: "/japan/admin/shipping-preparation",
+				// },
+				{
+					title: "Cost Management",
+					icon: <DollarOutlined />,
+					href: "/japan/admin/cost-management",
+				},
+				// {
+				// 	title: "Shipping Logistics",
+				// 	icon: <Ship size={16} />,
+				// 	href: "/japan/admin/shipping-logistics",
+				// },
+				// {
+				// 	title: "Export Compliance",
+				// 	icon: <FileCheck size={16} />,
+				// 	href: "/japan/admin/export-compliance",
+				// },
+				{
+					title: "User Management",
+					icon: <UserOutlined />,
+					href: "/japan/admin/user-management",
+				},
+				{
+					title: "Customer Management",
+					icon: <Users size={16} />,
+					href: "/japan/admin/customer-management",
+				},
+				{
+					title: "Company Expenses",
+					icon: <DollarSign size={16} />,
+					href: "/japan/admin/expenses",
+				},
+			],
+		},
+		{
+			title: "SALE MANAGEMENT",
+			items: [
+				{
+					title: "Sales",
+					icon: <ShoppingCart size={16} />,
+					href: "/sales",
+					badge: "New",
+				},
+				{
+					title: "Authentication",
+					icon: <TeamOutlined />,
+					href: "/auth",
+				},
+				{
+					title: "Sign Up",
+					icon: <UserAddOutlined />,
+					href: "/signup",
+				},
+			],
+		},
+		{
+			title: "GENERAL",
+			items: [
+				{
+					title: "Settings",
+					icon: <SettingOutlined />,
+					href: "/settings",
+				},
+			],
+		},
+		{
+			title: "ACCOUNT",
+			items: [
+				{
+					title: "Profile",
+					icon: <UserCircle size={16} />,
+					href: "/japan/profile",
+				},
+				{
+					title: "Sign Out",
+					icon: <LogOut size={16} />,
+					href: "",
+					onClick: () => {
+						useUserStore.getState().clearUser();
+						useUserStore?.getState().clearToken();
+						router.push("/signin");
+					},
+				},
+			],
+		},
+	];
+
 	const [collapsed, setCollapsed] = useState(false);
 	const pathname = usePathname();
+
+	const router = useRouter();
 
 	return (
 		<div
@@ -173,7 +187,8 @@ export function AdminJapanSidebar() {
 							{section.items.map((item, j) => (
 								<li key={j}>
 									<Link
-										href={item.href}
+									onClick={item.onClick}
+										href={item.href ?? ""}
 										className={cn(
 											"flex items-center gap-x-3 rounded-lg px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white",
 											pathname === item.href &&

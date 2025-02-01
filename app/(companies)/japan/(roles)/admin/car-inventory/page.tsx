@@ -1,6 +1,7 @@
+import withAuth from "@/app/hooks/withAuth";
 import { CarInventory } from "@/components/cars/car-inventory";
 
-export default function CarInventoryPage() {
+ const CarInventoryPage = () => {
 	return (
 		<div className="p-8">
 			<h1 className="text-2xl font-bold mb-6">
@@ -10,3 +11,4 @@ export default function CarInventoryPage() {
 		</div>
 	);
 }
+export default withAuth(CarInventoryPage);

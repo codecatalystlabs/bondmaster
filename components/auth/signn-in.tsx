@@ -75,7 +75,7 @@ async function submit(values: z.infer<typeof formSchema>) {
 							"Redirecting to:",
 							`/uganda/admin/dashboard`
 						);
-						await router.push("/uganda/admin/dashboard");
+						 router.push("/uganda/admin/dashboard");
 						console.log("Redirection complete");
 					} else if (group === "cashier") {
 						console.log("Redirecting to:", `/uganda/cashier`);

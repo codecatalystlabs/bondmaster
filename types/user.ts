@@ -23,7 +23,7 @@ export interface UserInfo {
   title: string;
   created_by: string;
   updated_by: string;
-  user_groups: any;
+  group_id: any;
 }
 
 
@@ -45,7 +45,7 @@ export interface UserResponseInfo {
   company: Company;
   created_by: string;
   updated_by: string;
-  user_groups: any;
+  group_id: any;
 }
 
 export interface Company {

@@ -7,7 +7,7 @@ interface UserState {
       group: string;
       location: string;
    } | null;
-   token: string | null; // Add token field
+   token: string | null; 
    setUser: (user: { username: string; group: string; location: string }) => void;
    setToken: (token: string) => void; 
    clearUser: () => void;

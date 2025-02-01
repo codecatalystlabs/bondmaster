@@ -98,18 +98,18 @@ export function CarForm({ open, onOpenChange, car, onSubmit }: CarFormProps) {
 			data: weights,
 			error:weightsError,
 			isLoading:idLoadingWeights,
-	} = useSWR(`${BASE_URL}/meta/weights`, fetcher);
+	} = useSWR(`/meta/weights`, fetcher);
 	
 	const {
 		data: currencies,
 		error: currencyError,
 		isLoading: idLoadingCurrency,
-	} = useSWR(`${BASE_URL}/meta/currency`, fetcher);
+	} = useSWR(`/meta/currency`, fetcher);
 	const {
 		data: lengths,
 		error: lengthsError,
 		isLoading: idLoadinglengths,
-	} = useSWR(`${BASE_URL}/meta/lengths`, fetcher);
+	} = useSWR(`/meta/lengths`, fetcher);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
