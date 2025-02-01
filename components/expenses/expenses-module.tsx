@@ -93,6 +93,8 @@ export function ExpensesModule() {
 		fetcher
 	);
 
+	console.log(expensesData,"====================expensesData=====================");
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -203,14 +205,14 @@ export function ExpensesModule() {
 		}
 	}
 
-	const totalExpenses = expensesData?.reduce(
+	const totalExpenses = expensesData?.data.reduce(
 		(sum: any, expense: Expense) => sum + expense.amount,
 		0
 	);
 	const averageExpense =
-		expensesData?.length > 0 ? totalExpenses / expensesData?.length : 0;
+		expensesData?.data.length > 0 ? totalExpenses / expensesData?.data.length : 0;
 
-	const expensesByMonth = expensesData?.reduce(
+	const expensesByMonth = expensesData?.data?.reduce(
 		(acc: any, expense: Expense) => {
 			const month = format(new Date(expense.expense_date), "MMM yyyy");
 			if (!acc[month]) {
@@ -293,7 +295,7 @@ export function ExpensesModule() {
 								</CardHeader>
 								<CardContent>
 									<div className="text-2xl font-bold">
-										{expensesData?.length}
+										{expensesData?.data.length}
 									</div>
 								</CardContent>
 							</Card>
@@ -305,11 +307,11 @@ export function ExpensesModule() {
 								</CardHeader>
 								<CardContent>
 									<div className="text-2xl font-bold">
-										{expensesData?.length > 0
+										{expensesData?.data.length > 0
 											? format(
 													new Date(
 														Math.max(
-															...expensesData.map(
+															...expensesData?.data.map(
 																(
 																	e: ExpenseResponse
 																) =>
@@ -407,7 +409,7 @@ export function ExpensesModule() {
 									</TableRow>
 								</TableHeader>
 								<TableBody>
-									{expensesData?.map(
+									{expensesData?.data.map(
 										(
 											expense: ExpenseResponse
 										) => (

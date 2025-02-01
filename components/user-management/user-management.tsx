@@ -58,6 +58,7 @@ import { createUser, editUser, fetcher } from "@/apis";
 import { BASE_URL } from "@/constants/baseUrl";
 import { Loader } from "../ui/loader";
 import toast, { Toaster } from "react-hot-toast";
+import { Group, ICompany } from "@/types/company";
 
 const formSchema = z.object({
 	username: z.string().min(2, {
@@ -77,8 +78,8 @@ const formSchema = z.object({
 	password: z.string().min(8, {
 		message: "Password must be at least 8 characters.",
 	}),
-	company_id: z.number().optional(),
-	user_groups: z.array(z.string()).min(1, "Select at least one user group"),
+	company_id: z.number(),
+	group_id: z.number(),
 });
 
 export function UserManagement() {
@@ -103,7 +104,7 @@ export function UserManagement() {
 			title: "",
 			password: "",
 			company_id: 0,
-			 user_groups: [],
+			group_id: 0,
 		},
 	});
 
@@ -116,9 +117,9 @@ export function UserManagement() {
 				firstname: editingUser.firstname,
 				gender: editingUser.gender as "Male" | "Female" | "Other",
 				title: editingUser.title,
-				password: editingUser.password,
+				password: "",
 				company_id: 1,
-				 user_groups: editingUser.user_groups,
+				group_id: editingUser.group_id,
 			});
 		} else {
 			form.reset({
@@ -129,25 +130,38 @@ export function UserManagement() {
 				gender: "Male",
 				title: "",
 				password: "",
-				company_id: 1,
-				 user_groups: [],
+				company_id: 0,
+				 group_id: 0,
 			});
 		}
 		setShowModalPassword(false);
 	}, [editingUser, form]);
 
-	console.log(editingUser, "editingUser");
 
 	const {
 		data: usersData,
 		error,
 		isLoading,
-	} = useSWR(`${BASE_URL}/users`, fetcher);
+	} = useSWR(`/users`, fetcher);
+
+		const {
+			data: companiesData,
+			error:getCompanyError,
+			isLoading:isLoadingCompanies,
+		} = useSWR(`/companies`, fetcher);
+	
+	const {
+		data: groupsData,
+		error: getGroupError,
+		isLoading: isLoadinggroups,
+	} = useSWR(`/groups`, fetcher);
+	
+	console.log(groupsData,"====groupsData");
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		const userPayload: UserInfo = {
 			...values,
-			company_id: 1,
+			company_id: values.company_id || 1,
 			title: values.title || "",
 			created_by: "admin",
 			updated_by: "admin",
@@ -223,7 +237,7 @@ export function UserManagement() {
 									}
 								>
 									<Plus className="mr-2 h-4 w-4" />{" "}
-									Add User
+									Register User
 								</Button>
 							</DialogTrigger>
 							<DialogContent className="sm:max-w-[700px]">
@@ -231,7 +245,7 @@ export function UserManagement() {
 									<DialogTitle>
 										{editingUser
 											? "Edit User"
-											: "Add New User"}
+											: "Register New User"}
 									</DialogTitle>
 									<DialogDescription>
 										{editingUser
@@ -270,28 +284,7 @@ export function UserManagement() {
 													</FormItem>
 												)}
 											/>
-											<FormField
-												control={
-													form.control
-												}
-												name="email"
-												render={({
-													field,
-												}) => (
-													<FormItem>
-														<FormLabel>
-															Email
-														</FormLabel>
-														<FormControl>
-															<Input
-																placeholder="roland@example.com"
-																{...field}
-															/>
-														</FormControl>
-														<FormMessage />
-													</FormItem>
-												)}
-											/>
+
 											<FormField
 												control={
 													form.control
@@ -306,7 +299,7 @@ export function UserManagement() {
 														</FormLabel>
 														<FormControl>
 															<Input
-																placeholder="Doe"
+																placeholder="e.g bukenya"
 																{...field}
 															/>
 														</FormControl>
@@ -342,39 +335,20 @@ export function UserManagement() {
 												control={
 													form.control
 												}
-												name="gender"
+												name="email"
 												render={({
 													field,
 												}) => (
 													<FormItem>
 														<FormLabel>
-															Gender
+															Email
 														</FormLabel>
-														<Select
-															onValueChange={
-																field.onChange
-															}
-															defaultValue={
-																field.value
-															}
-														>
-															<FormControl>
-																<SelectTrigger>
-																	<SelectValue placeholder="Select gender" />
-																</SelectTrigger>
-															</FormControl>
-															<SelectContent>
-																<SelectItem value="Male">
-																	Male
-																</SelectItem>
-																<SelectItem value="Female">
-																	Female
-																</SelectItem>
-																<SelectItem value="Other">
-																	Other
-																</SelectItem>
-															</SelectContent>
-														</Select>
+														<FormControl>
+															<Input
+																placeholder="e.g roland@example.com"
+																{...field}
+															/>
+														</FormControl>
 														<FormMessage />
 													</FormItem>
 												)}
@@ -393,7 +367,7 @@ export function UserManagement() {
 														</FormLabel>
 														<FormControl>
 															<Input
-																placeholder="Mr."
+																placeholder="e.g admin"
 																{...field}
 															/>
 														</FormControl>
@@ -445,6 +419,46 @@ export function UserManagement() {
 													</FormItem>
 												)}
 											/>
+										</div>
+										<div className="flex-1 space-y-4">
+											<FormField
+												control={
+													form.control
+												}
+												name="gender"
+												render={({
+													field,
+												}) => (
+													<FormItem>
+														<FormLabel>
+															Gender
+														</FormLabel>
+														<Select
+															onValueChange={
+																field.onChange
+															}
+															defaultValue={
+																field.value
+															}
+														>
+															<FormControl>
+																<SelectTrigger>
+																	<SelectValue placeholder="Select gender" />
+																</SelectTrigger>
+															</FormControl>
+															<SelectContent>
+																<SelectItem value="Male">
+																	Male
+																</SelectItem>
+																<SelectItem value="Female">
+																	Female
+																</SelectItem>
+															</SelectContent>
+														</Select>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
 											<FormField
 												control={
 													form.control
@@ -458,115 +472,106 @@ export function UserManagement() {
 															Company
 														</FormLabel>
 														<FormControl>
-															<Input
-																placeholder="Company ID"
-																{...field}
-															/>
+															<Select
+																onValueChange={(
+																	value
+																) => {
+																	const numberValue =
+																		Number(
+																			value
+																		);
+																	field.onChange(
+																		numberValue
+																	);
+																}}
+															>
+																<FormControl>
+																	<SelectTrigger>
+																		<SelectValue placeholder="Select  company" />
+																	</SelectTrigger>
+																</FormControl>
+																<SelectContent>
+																	{companiesData?.data.map(
+																		(
+																			company: ICompany
+																		) => (
+																			<SelectItem
+																				key={
+																					company.ID
+																				}
+																				value={company.ID.toString()}
+																			>
+																				{
+																					company.name
+																				}
+																			</SelectItem>
+																		)
+																	)}
+																</SelectContent>
+															</Select>
 														</FormControl>
 														<FormMessage />
 													</FormItem>
 												)}
 											/>
-											</div>
-											<div className="flex-1 space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="gender"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Gender</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select gender" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="Male">Male</SelectItem>
-                            <SelectItem value="Female">Female</SelectItem>
-                            <SelectItem value="Other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Mr." {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <div className="flex items-center space-x-2">
-                            <Input type={showModalPassword ? "text" : "password"} {...field} />
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => setShowModalPassword(!showModalPassword)}
-                            >
-                              {showModalPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                            </Button>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="company_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Company</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Company ID" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="user_groups"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>User Groups</FormLabel>
-                        <FormControl>
-                          <Select
-                            onValueChange={(value) => field.onChange([...field.value, value])}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select user groups" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="admin">Admin</SelectItem>
-                              <SelectItem value="user">User</SelectItem>
-                              <SelectItem value="manager">Manager</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+
+											<FormField
+												control={
+													form.control
+												}
+												name="group_id"
+												render={({
+													field,
+												}) => (
+													<FormItem>
+														<FormLabel>
+															User
+															Groups
+														</FormLabel>
+														<FormControl>
+															<Select
+																onValueChange={(
+																	value
+																) => {
+																	const numberValue =
+																		Number(
+																			value
+																		);
+																	field.onChange(
+																		numberValue
+																	);
+																}}
+															>
+																<FormControl>
+																	<SelectTrigger>
+																		<SelectValue placeholder="Select user groups" />
+																	</SelectTrigger>
+																</FormControl>
+																<SelectContent>
+																	{groupsData?.map(
+																		(
+																			group: Group
+																		) => (
+																			<SelectItem
+																				key={
+																					group.ID
+																				}
+																				value={group.ID.toString()}
+																			>
+																				{
+																					group.Name
+																				}
+																			</SelectItem>
+																		)
+																	)}
+																</SelectContent>
+															</Select>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+										</div>
 									</form>
 								</Form>
 								<DialogFooter>

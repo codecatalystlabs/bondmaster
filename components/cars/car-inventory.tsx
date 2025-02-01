@@ -74,7 +74,11 @@ export function CarInventory() {
 		data: carList,
 		error,
 		isLoading,
-	} = useSWR(`${BASE_URL}/cars`, fetcher);
+	} = useSWR(`/cars`, fetcher);
+
+	
+
+
 
 	React.useEffect(() => {
 		if (carList?.data) {

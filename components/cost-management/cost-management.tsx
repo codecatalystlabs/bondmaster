@@ -142,7 +142,7 @@ export function CostManagement() {
 											</TableRow>
 										</TableHeader>
 										<TableBody>
-											{carExpensesList?.data.map(
+											{carExpensesList?.data?.map(
 												(
 													expense: CarExpense
 												) => (
