@@ -93,27 +93,7 @@ export function AdminJapanSidebar() {
 					icon: <ShoppingCart size={16} />,
 					href: "/sales",
 					badge: "New",
-				},
-				{
-					title: "Authentication",
-					icon: <TeamOutlined />,
-					href: "/auth",
-				},
-				{
-					title: "Sign Up",
-					icon: <UserAddOutlined />,
-					href: "/signup",
-				},
-			],
-		},
-		{
-			title: "GENERAL",
-			items: [
-				{
-					title: "Settings",
-					icon: <SettingOutlined />,
-					href: "/settings",
-				},
+				},			
 			],
 		},
 		{
