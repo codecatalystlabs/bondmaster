@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { Button } from "@/components/ui/button";
+import * as React from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -12,50 +12,50 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { cn } from "@/lib/utils";
-import { CheckIcon } from "lucide-react";
-import type { Car } from "@/types/car";
+} from '@/components/ui/select';
+import { cn } from '@/lib/utils';
+import { CheckIcon } from 'lucide-react';
+import type { Car } from '@/types/car';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog";
-import { addCar, fetcher } from "@/apis";
-import { BASE_URL } from "@/constants/baseUrl";
-import useSWR, { mutate } from "swr";
-import toast from "react-hot-toast";
+} from '@/components/ui/dialog';
+import { addCar, fetcher } from '@/apis';
+import { BASE_URL } from '@/constants/baseUrl';
+import useSWR, { mutate } from 'swr';
+import toast from 'react-hot-toast';
 
 const formSchema = z.object({
-  vin_number: z.string().min(17, "VIN must be at least 17 characters"),
-  engine_number: z.string().min(1, "Engine number is required"),
-  engine_capacity: z.string().min(1, "Engine capacity is required"),
-  make: z.string().min(1, "Make is required"),
-  model: z.string().min(1, "Model is required"),
-  maxim_carry: z.number().min(0, "Maximum carry must be 0 or greater"),
-  weight: z.number().min(0, "Weight must be 0 or greater"),
-  gross_weight: z.number().min(0, "Gross weight must be 0 or greater"),
-  length: z.number().min(0, "Length must be 0 or greater"),
-  width: z.number().min(0, "Width must be 0 or greater"),
-  height: z.number().min(0, "Height must be 0 or greater"),
-  maunufacture_year: z.number().min(1900, "Year must be 1900 or later"),
-  first_registration_year: z.number().min(1900, "Year must be 1900 or later"),
-  transmission: z.string().min(1, "Transmission is required"),
-  body_type: z.string().min(1, "Body type is required"),
-  colour: z.string().min(1, "Colour is required"),
+  vin_number: z.string().min(17, 'VIN must be at least 17 characters'),
+  engine_number: z.string().min(1, 'Engine number is required'),
+  engine_capacity: z.string().min(1, 'Engine capacity is required'),
+  make: z.string().min(1, 'Make is required'),
+  model: z.string().min(1, 'Model is required'),
+  maxim_carry: z.number().min(0, 'Maximum carry must be 0 or greater'),
+  weight: z.number().min(0, 'Weight must be 0 or greater'),
+  gross_weight: z.number().min(0, 'Gross weight must be 0 or greater'),
+  length: z.number().min(0, 'Length must be 0 or greater'),
+  width: z.number().min(0, 'Width must be 0 or greater'),
+  height: z.number().min(0, 'Height must be 0 or greater'),
+  maunufacture_year: z.number().min(1900, 'Year must be 1900 or later'),
+  first_registration_year: z.number().min(1900, 'Year must be 1900 or later'),
+  transmission: z.string().min(1, 'Transmission is required'),
+  body_type: z.string().min(1, 'Body type is required'),
+  colour: z.string().min(1, 'Colour is required'),
   auction: z.string().optional(),
-  currency: z.string().min(1, "Currency is required"),
-  millage: z.number().min(0, "Mileage must be 0 or greater"),
+  currency: z.string().min(1, 'Currency is required'),
+  millage: z.number().min(0, 'Mileage must be 0 or greater'),
   fuel_consumption: z.string().optional(),
   ps: z.boolean(),
   pw: z.boolean(),
@@ -65,12 +65,12 @@ const formSchema = z.object({
   sw: z.boolean(),
   navigation: z.boolean(),
   ac: z.boolean(),
-  bid_price: z.number().min(0, "Bid price must be 0 or greater"),
-  purchase_date: z.string().min(1, "Purchase date is required"),
-  from_company_id: z.number().min(1, "From company ID is required"),
-  to_company_id: z.number().min(1, "To company ID is required"),
-  destination: z.string().min(1, "Destination is required"),
-  port: z.string().min(1, "Port is required"),
+  bid_price: z.number().min(0, 'Bid price must be 0 or greater'),
+  purchase_date: z.string().min(1, 'Purchase date is required'),
+  from_company_id: z.number().min(1, 'From company ID is required'),
+  to_company_id: z.number().min(1, 'To company ID is required'),
+  destination: z.string().min(1, 'Destination is required'),
+  port: z.string().min(1, 'Port is required'),
   broker_name: z.string().optional(),
   broker_number: z.string().optional(),
   vat_tax: z.number().nullable(),
@@ -91,12 +91,12 @@ interface StepperCarFormProps {
 }
 
 const steps = [
-  { id: 1, name: "Basic Information" },
-  { id: 2, name: "Technical Details" },
-  { id: 3, name: "Dimensions" },
-  { id: 4, name: "Features" },
-  { id: 5, name: "Purchase Information" },
-  { id: 6, name: "Additional Details" },
+  { id: 1, name: 'Basic Information' },
+  { id: 2, name: 'Technical Details' },
+  { id: 3, name: 'Dimensions' },
+  { id: 4, name: 'Features' },
+  { id: 5, name: 'Purchase Information' },
+  { id: 6, name: 'Additional Details' },
 ];
 
 export function AddCarForm({
@@ -110,18 +110,18 @@ export function AddCarForm({
 
   const {
     data: companiesData,
-    error:getCompanyError,
-    isLoading:isLoadingCompanies,
-} = useSWR(`/companies`, fetcher);
+    error: getCompanyError,
+    isLoading: isLoadingCompanies,
+  } = useSWR(`/companies`, fetcher);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
-      vin_number: "",
-      engine_number: "",
-      engine_capacity: "",
-      make: "",
-      model: "",
+      vin_number: '',
+      engine_number: '',
+      engine_capacity: '',
+      make: '',
+      model: '',
       maxim_carry: 0,
       weight: 0,
       gross_weight: 0,
@@ -130,13 +130,13 @@ export function AddCarForm({
       height: 0,
       maunufacture_year: new Date().getFullYear(),
       first_registration_year: new Date().getFullYear(),
-      transmission: "",
-      body_type: "",
-      colour: "",
-      auction: "",
-      currency: "USD",
+      transmission: '',
+      body_type: '',
+      colour: '',
+      auction: '',
+      currency: 'USD',
       millage: 0,
-      fuel_consumption: "",
+      fuel_consumption: '',
       ps: false,
       pw: false,
       abs: false,
@@ -146,25 +146,25 @@ export function AddCarForm({
       navigation: false,
       ac: false,
       bid_price: 0,
-      purchase_date: "",
+      purchase_date: '',
       from_company_id: 0,
       to_company_id: 0,
-      destination: "",
-      port: "",
-      broker_name: "",
-      broker_number: "",
+      destination: '',
+      port: '',
+      broker_name: '',
+      broker_number: '',
       vat_tax: null,
-      number_plate: "",
+      number_plate: '',
       customer_id: null,
-      car_status: "",
-      car_payment_status: "",
-      created_by: "",
-      updated_by: "",
+      car_status: '',
+      car_payment_status: '',
+      created_by: '',
+      updated_by: '',
     },
   });
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
-    console.log("Form submitted with values:", values);
+    console.log('Form submitted with values:', values);
 
     try {
       const response = await addCar({
@@ -173,15 +173,15 @@ export function AddCarForm({
       });
 
       if (response?.data) {
-        toast.success("Car added successfully");
+        toast.success('Car added successfully');
         onOpenChange(false); // Close modal
         setStep(1); // Reset step
         // Refetch user data if needed
         mutate(`${BASE_URL}/users`);
       }
     } catch (error) {
-      console.error("Error adding car:", error);
-      toast.error("Failed to add car. Please try again.");
+      console.error('Error adding car:', error);
+      toast.error('Failed to add car. Please try again.');
     }
   }
 
@@ -215,35 +215,34 @@ export function AddCarForm({
     }
   }, [open]);
 
-  console.log("Form state:", form.getValues());
-  console.log("Current step:", step);
+  console.log('Form state:', form.getValues());
+  console.log('Current step:', step);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[800px] p-6">
-        <DialogHeader>
-          <DialogTitle>{initialData ? "Edit Car" : "Add New Car"}</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="sm:max-w-[850px] p-6">
+        <DialogHeader className="border-b border-gray-600">
+          <DialogTitle className="text-xl">
+            {initialData ? 'Edit Car' : 'Add New Car'}
+          </DialogTitle>
+          <DialogDescription className="pb-2 text-xs">
             {initialData
-              ? "Edit the car details."
-              : "Enter the details for the new car."}
+              ? 'Edit the car details.'
+              : 'Enter the details for the new car.'}
           </DialogDescription>
         </DialogHeader>
-        <div className="w-full max-w-3xl mx-auto">
-          <nav aria-label="Progress" className="mb-8">
-            <ol role="list" className="flex items-center justify-between">
+        <div className="w-full mx-auto">
+          <nav aria-label="Progress" className="mb-14 px-2">
+            <ol role="list" className="w-full flex items-center justify-around">
               {steps.map((stepItem, stepIdx) => (
                 <li
                   key={stepItem.name}
-                  className={cn(
-                    "relative",
-                    stepIdx !== steps.length - 1 && "pr-8 sm:pr-20"
-                  )}
+                  className={cn('relative', stepIdx !== steps.length - 1 && '')}
                 >
                   {stepItem.id < step ? (
                     <>
                       <div
-                        className="absolute inset-0 flex items-center"
+                        className="absolute inset-0 flex items-center justify-start"
                         aria-hidden="true"
                       >
                         <div className="h-0.5 w-full bg-primary" />
@@ -257,27 +256,29 @@ export function AddCarForm({
                           className="w-6 h-6 text-white"
                           aria-hidden="true"
                         />
-                        <span className="sr-only">{stepItem.name}</span>
+                        <span className="sr-only text-xs">{stepItem.name}</span>
                       </button>
                     </>
                   ) : stepItem.id === step ? (
                     <>
                       <div
-                        className="absolute inset-0 flex items-center"
+                        className="absolute inset-0 flex items-center justify-start"
                         aria-hidden="true"
                       >
-                        <div className="h-0.5 w-full bg-gray-200" />
+                        <div className="w-full bg-gray-200" />
                       </div>
                       <button
                         type="button"
-                        className="relative w-10 h-10 flex items-center justify-center bg-white border-2 border-primary rounded-full"
+                        className="relative w-8 h-8 flex items-center justify-center bg-white border-2 border-primary rounded-full"
                         aria-current="step"
                       >
                         <span
-                          className="h-2.5 w-2.5 bg-primary rounded-full"
+                          className="h-2.5 w-2.5 bg-primary items-center rounded-full"
                           aria-hidden="true"
                         />
-                        <span className="sr-only">{stepItem.name}</span>
+                        <span className="sr-only text-xs text-left">
+                          {stepItem.name}
+                        </span>
                       </button>
                     </>
                   ) : (
@@ -290,25 +291,20 @@ export function AddCarForm({
                       </div>
                       <button
                         type="button"
-                        className="group relative w-10 h-10 flex items-center justify-center bg-white border-2 border-gray-300 rounded-full hover:border-gray-400"
+                        className="group relative w-8 h-8 flex items-center justify-center bg-white border-2 border-gray-300 rounded-full hover:border-gray-400"
                       >
                         <span
                           className="h-2.5 w-2.5 bg-transparent rounded-full group-hover:bg-gray-300"
                           aria-hidden="true"
                         />
-                        <span className="sr-only">{stepItem.name}</span>
+                        <span className="sr-only text-xs">{stepItem.name}</span>
                       </button>
                     </>
                   )}
-                  <div
-                    className={cn(
-                      "absolute top-14 text-sm font-medium text-center ",
-                      stepIdx === 0 && "left-0 w-full",
-                      stepIdx === 1 && "left-1/2 -translate-x-1/2 w-full",
-                      stepIdx === 2 && "right-8 w-full"
-                    )}
-                  >
-                    {stepItem.name}
+                  <div className="absolute pt-2 w-full justify-center mx-auto top-8 leading-tight ">
+                    <span className="text-xs items-center justify-center text-center mx-auto">
+                      {stepItem.name}
+                    </span>
                   </div>
                 </li>
               ))}
@@ -318,9 +314,9 @@ export function AddCarForm({
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(handleSubmit)}
-              className="space-y-6"
+              className="gap-4 pt-3 border border-gray-500 rounded-md pb-4"
             >
-              <div className="grid gap-6 overflow-auto h-[300px]">
+              <div className="p-2 grid gap-4 overflow-auto h-[300px]">
                 {step === 1 && (
                   <>
                     <FormField
@@ -660,10 +656,12 @@ export function AddCarForm({
                       control={form.control}
                       name="ps"
                       render={({ field }) => (
-                        <FormItem className="col-span-full">
-                          <FormLabel>Power Steering</FormLabel>
+                        <FormItem className="flex col-span-full items-center">
+                          <FormLabel className="w-full">
+                            Power Steering
+                          </FormLabel>
                           <FormControl>
-                            <Input type="checkbox" {...field} />
+                            <Input className="h-4" type="checkbox" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -673,10 +671,12 @@ export function AddCarForm({
                       control={form.control}
                       name="pw"
                       render={({ field }) => (
-                        <FormItem className="col-span-full">
-                          <FormLabel>Power Windows</FormLabel>
+                        <FormItem className="flex col-span-full items-center">
+                          <FormLabel className="w-full">
+                            Power Windows
+                          </FormLabel>
                           <FormControl>
-                            <Input type="checkbox" {...field} />
+                            <Input className="h-4" type="checkbox" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -686,10 +686,10 @@ export function AddCarForm({
                       control={form.control}
                       name="abs"
                       render={({ field }) => (
-                        <FormItem className="col-span-full">
-                          <FormLabel>ABS</FormLabel>
+                        <FormItem className="flex col-span-full items-center">
+                          <FormLabel className="w-full">ABS</FormLabel>
                           <FormControl>
-                            <Input type="checkbox" {...field} />
+                            <Input className="h-4" type="checkbox" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -699,10 +699,10 @@ export function AddCarForm({
                       control={form.control}
                       name="ads"
                       render={({ field }) => (
-                        <FormItem className="col-span-full">
-                          <FormLabel>ADS</FormLabel>
+                        <FormItem className="flex col-span-full items-center">
+                          <FormLabel className="w-full">ADS</FormLabel>
                           <FormControl>
-                            <Input type="checkbox" {...field} />
+                            <Input className="h-4" type="checkbox" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -712,10 +712,10 @@ export function AddCarForm({
                       control={form.control}
                       name="aw"
                       render={({ field }) => (
-                        <FormItem className="col-span-full">
-                          <FormLabel>AW</FormLabel>
+                        <FormItem className="flex col-span-full items-center">
+                          <FormLabel className="w-full">AW</FormLabel>
                           <FormControl>
-                            <Input type="checkbox" {...field} />
+                            <Input className="h-4" type="checkbox" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -725,10 +725,10 @@ export function AddCarForm({
                       control={form.control}
                       name="sw"
                       render={({ field }) => (
-                        <FormItem className="col-span-full">
-                          <FormLabel>SW</FormLabel>
+                        <FormItem className="flex col-span-full items-center">
+                          <FormLabel className="w-full">SW</FormLabel>
                           <FormControl>
-                            <Input type="checkbox" {...field} />
+                            <Input className="h-4" type="checkbox" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -738,10 +738,10 @@ export function AddCarForm({
                       control={form.control}
                       name="navigation"
                       render={({ field }) => (
-                        <FormItem className="col-span-full">
-                          <FormLabel>Navigation</FormLabel>
+                        <FormItem className="flex col-span-full items-center">
+                          <FormLabel className="w-full">Navigation</FormLabel>
                           <FormControl>
-                            <Input type="checkbox" {...field} />
+                            <Input className="h-4" type="checkbox" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -751,10 +751,10 @@ export function AddCarForm({
                       control={form.control}
                       name="ac"
                       render={({ field }) => (
-                        <FormItem className="col-span-full">
-                          <FormLabel>AC</FormLabel>
+                        <FormItem className="flex col-span-full items-center">
+                          <FormLabel className="w-full">AC</FormLabel>
                           <FormControl>
-                            <Input type="checkbox" {...field} />
+                            <Input className="h-4" type="checkbox" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -1073,7 +1073,7 @@ export function AddCarForm({
                   </>
                 )}
               </div>
-              <div className="flex justify-between pt-6">
+              <div className="flex justify-between pt-6 px-2">
                 <Button
                   type="button"
                   variant="outline"
