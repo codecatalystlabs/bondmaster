@@ -37,49 +37,51 @@ import useSWR, { mutate } from "swr";
 import toast from "react-hot-toast";
 
 const formSchema = z.object({
-  vin_number: z.string().min(17, "VIN must be at least 17 characters"),
-  engine_number: z.string().min(1, "Engine number is required"),
-  engine_capacity: z.string().min(1, "Engine capacity is required"),
-  make: z.string().min(1, "Make is required"),
-  model: z.string().min(1, "Model is required"),
-  maxim_carry: z.number().min(0, "Maximum carry must be 0 or greater"),
-  weight: z.number().min(0, "Weight must be 0 or greater"),
-  gross_weight: z.number().min(0, "Gross weight must be 0 or greater"),
-  length: z.number().min(0, "Length must be 0 or greater"),
-  width: z.number().min(0, "Width must be 0 or greater"),
-  height: z.number().min(0, "Height must be 0 or greater"),
-  maunufacture_year: z.number().min(1900, "Year must be 1900 or later"),
-  first_registration_year: z.number().min(1900, "Year must be 1900 or later"),
-  transmission: z.string().min(1, "Transmission is required"),
-  body_type: z.string().min(1, "Body type is required"),
-  colour: z.string().min(1, "Colour is required"),
-  auction: z.string().optional(),
-  currency: z.string().min(1, "Currency is required"),
-  millage: z.number().min(0, "Mileage must be 0 or greater"),
-  fuel_consumption: z.string().optional(),
-  ps: z.boolean(),
-  pw: z.boolean(),
-  abs: z.boolean(),
-  ads: z.boolean(),
-  aw: z.boolean(),
-  sw: z.boolean(),
-  navigation: z.boolean(),
-  ac: z.boolean(),
-  bid_price: z.number().min(0, "Bid price must be 0 or greater"),
-  purchase_date: z.string().min(1, "Purchase date is required"),
-  from_company_id: z.number().min(1, "From company ID is required"),
-  to_company_id: z.number().min(1, "To company ID is required"),
-  destination: z.string().min(1, "Destination is required"),
-  port: z.string().min(1, "Port is required"),
-  broker_name: z.string().optional(),
-  broker_number: z.string().optional(),
-  vat_tax: z.number().nullable(),
-  number_plate: z.string().optional(),
-  customer_id: z.number().nullable(),
-  car_status: z.string().optional(),
-  car_payment_status: z.string().optional(),
-  created_by: z.string().optional(),
-  updated_by: z.string().optional(),
+	vin_number: z.string().min(17, "VIN must be at least 17 characters"),
+	engine_number: z.string().min(1, "Engine number is required"),
+	engine_capacity: z.string().min(1, "Engine capacity is required"),
+	make: z.string().min(1, "Make is required"),
+	model: z.string().min(1, "Model is required"),
+	maxim_carry: z.number().min(0, "Maximum carry must be 0 or greater"),
+	weight: z.number().min(0, "Weight must be 0 or greater"),
+	gross_weight: z.number().min(0, "Gross weight must be 0 or greater"),
+	length: z.number().min(0, "Length must be 0 or greater"),
+	width: z.number().min(0, "Width must be 0 or greater"),
+	height: z.number().min(0, "Height must be 0 or greater"),
+	maunufacture_year: z.number().min(1900, "Year must be 1900 or later"),
+	first_registration_year: z
+		.number()
+		.min(1900, "Year must be 1900 or later"),
+	transmission: z.string().min(1, "Transmission is required"),
+	body_type: z.string().min(1, "Body type is required"),
+	colour: z.string().min(1, "Colour is required"),
+	auction: z.string().optional(),
+	currency: z.string().min(1, "Currency is required"),
+	millage: z.number().min(0, "Mileage must be 0 or greater"),
+	fuel_consumption: z.string().optional(),
+	ps: z.boolean(),
+	pw: z.boolean(),
+	abs: z.boolean(),
+	ads: z.boolean(),
+	aw: z.boolean(),
+	sw: z.boolean(),
+	navigation: z.boolean(),
+	ac: z.boolean(),
+	bid_price: z.number().min(0, "Bid price must be 0 or greater"),
+	purchase_date: z.string().min(1, "Purchase date is required"),
+	from_company_id: z.number().min(1, "From company is required"),
+	to_company_id: z.number().min(1, "To company  is required"),
+	destination: z.string().optional(),
+	port: z.string().optional(),
+	broker_name: z.string().optional(),
+	broker_number: z.string().optional(),
+	vat_tax: z.number().nullable(),
+	number_plate: z.string().optional(),
+	customer_id: z.number().nullable(),
+	car_status: z.string().optional(),
+	car_payment_status: z.string().optional(),
+	created_by: z.string().optional(),
+	updated_by: z.string().optional(),
 });
 
 interface StepperCarFormProps {
@@ -95,8 +97,8 @@ const steps = [
   { id: 2, name: "Technical Details" },
   { id: 3, name: "Dimensions" },
   { id: 4, name: "Features" },
-  { id: 5, name: "Purchase Information" },
-  { id: 6, name: "Additional Details" },
+  { id: 5, name: " Information" },
+  { id: 6, name: " Details" },
 ];
 
 export function AddCarForm({
@@ -164,7 +166,6 @@ export function AddCarForm({
   });
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
-    console.log("Form submitted with values:", values);
 
     try {
       const response = await addCar({
@@ -219,7 +220,7 @@ export function AddCarForm({
   console.log("Current step:", step);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open}  onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[800px] p-6">
         <DialogHeader>
           <DialogTitle>{initialData ? "Edit Car" : "Add New Car"}</DialogTitle>
@@ -229,7 +230,7 @@ export function AddCarForm({
               : "Enter the details for the new car."}
           </DialogDescription>
         </DialogHeader>
-        <div className="w-full max-w-3xl mx-auto">
+        <div className="w-full max-w-4xl mx-auto p-5">
           <nav aria-label="Progress" className="mb-8">
             <ol role="list" className="flex items-center justify-between">
               {steps.map((stepItem, stepIdx) => (
@@ -315,12 +316,12 @@ export function AddCarForm({
             </ol>
           </nav>
 
-          <Form {...form}>
+          <Form {...form} >
             <form
               onSubmit={form.handleSubmit(handleSubmit)}
               className="space-y-6"
             >
-              <div className="grid gap-6 overflow-auto h-[300px]">
+              <div className="grid gap-6 overflow-auto h-[400px] p-5">
                 {step === 1 && (
                   <>
                     <FormField
@@ -874,7 +875,7 @@ export function AddCarForm({
                       name="from_company_id"
                       render={({ field }) => (
                         <FormItem className="col-span-full">
-                          <FormLabel>From Company ID</FormLabel>
+                          <FormLabel>From Company</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -894,7 +895,7 @@ export function AddCarForm({
                       name="to_company_id"
                       render={({ field }) => (
                         <FormItem className="col-span-full">
-                          <FormLabel>To Company ID</FormLabel>
+                          <FormLabel>To Company</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -935,133 +936,6 @@ export function AddCarForm({
                           <FormControl>
                             <Input
                               placeholder="Enter port"
-                              {...field}
-                              className="w-full"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="broker_name"
-                      render={({ field }) => (
-                        <FormItem className="col-span-full">
-                          <FormLabel>Broker Name</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter broker name"
-                              {...field}
-                              className="w-full"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="broker_number"
-                      render={({ field }) => (
-                        <FormItem className="col-span-full">
-                          <FormLabel>Broker Number</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter broker number"
-                              {...field}
-                              className="w-full"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="vat_tax"
-                      render={({ field }) => (
-                        <FormItem className="col-span-full">
-                          <FormLabel>VAT Tax</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              {...field}
-                              onChange={(e) =>
-                                field.onChange(
-                                  Number.parseFloat(e.target.value)
-                                )
-                              }
-                              className="w-full"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="number_plate"
-                      render={({ field }) => (
-                        <FormItem className="col-span-full">
-                          <FormLabel>Number Plate</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter number plate"
-                              {...field}
-                              className="w-full"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="customer_id"
-                      render={({ field }) => (
-                        <FormItem className="col-span-full">
-                          <FormLabel>Customer ID</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              {...field}
-                              onChange={(e) =>
-                                field.onChange(Number.parseInt(e.target.value))
-                              }
-                              className="w-full"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="car_status"
-                      render={({ field }) => (
-                        <FormItem className="col-span-full">
-                          <FormLabel>Car Status</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter car status"
-                              {...field}
-                              className="w-full"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="car_payment_status"
-                      render={({ field }) => (
-                        <FormItem className="col-span-full">
-                          <FormLabel>Car Payment Status</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter car payment status"
                               {...field}
                               className="w-full"
                             />
