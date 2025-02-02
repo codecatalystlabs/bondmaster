@@ -1,7 +1,7 @@
 "use client";
 import useUserStore from "@/app/store/userStore";
-import { DashboardMain } from "@/components/dashboard/main";
-import React, { useState } from "react";
+import { JapanDashboard } from "@/components/dashboard/JapanDashboard";
+import React from "react";
 
 
 export default function AdminDashboardPage() {
@@ -9,6 +9,6 @@ export default function AdminDashboardPage() {
 	console.log(user)
 
 
-	return <DashboardMain/>
+	return <JapanDashboard />;
 
 }
