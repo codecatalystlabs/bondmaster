@@ -156,7 +156,6 @@ export function UserManagement() {
 		isLoading: isLoadinggroups,
 	} = useSWR(`/groups`, fetcher);
 	
-	console.log(groupsData,"====groupsData");
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		const userPayload: UserInfo = {
@@ -200,6 +199,8 @@ export function UserManagement() {
 			console.error("Error submitting form:", error);
 		}
 	}
+
+	async function deleteUserFunction(userId: string) { }
 
 	const toggleUserStatus = (userId: string) => {
 		// setUsers(users.map(user =>
