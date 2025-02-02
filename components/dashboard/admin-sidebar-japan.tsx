@@ -33,55 +33,42 @@ type MenuItem = {
 
 
 export function AdminJapanSidebar() {
+	const user = useUserStore((state) => state.user)
 	const menuItems: { title: string; items: MenuItem[] }[] = [
 		{
 			title: "MAIN",
 			items: [
-				{
-					title: "Dashboards",
-					icon: <AppstoreOutlined />,
-					href: "/japan/admin/dashboard",
-					badge: "12",
-				},
+				...(user?.group !== "user"
+					? [
+							{
+								title: "Dashboards",
+								icon: <AppstoreOutlined />,
+								href: "/japan/admin/dashboard",
+								badge: "12",
+							},
+					  ]
+					: []),
 				{
 					title: "Car Inventory",
 					icon: <CarOutlined />,
 					href: "/japan/admin/car-inventory",
 				},
-				// {
-				// 	title: "Shipping Preparation",
-				// 	icon: <ShoppingOutlined />,
-				// 	href: "/japan/admin/shipping-preparation",
-				// },
+
 				{
 					title: "Cost Management",
 					icon: <DollarOutlined />,
 					href: "/japan/admin/cost-management",
 				},
-				// {
-				// 	title: "Shipping Logistics",
-				// 	icon: <Ship size={16} />,
-				// 	href: "/japan/admin/shipping-logistics",
-				// },
-				// {
-				// 	title: "Export Compliance",
-				// 	icon: <FileCheck size={16} />,
-				// 	href: "/japan/admin/export-compliance",
-				// },
-				{
-					title: "User Management",
-					icon: <UserOutlined />,
-					href: "/japan/admin/user-management",
-				},
-				{
-					title: "Customer Management",
-					icon: <Users size={16} />,
-					href: "/japan/admin/customer-management",
-				},
+
 				{
 					title: "Company Expenses",
 					icon: <DollarSign size={16} />,
 					href: "/japan/admin/expenses",
+				},
+				{
+					title: "User Management",
+					icon: <UserOutlined />,
+					href: "/japan/admin/user-management",
 				},
 			],
 		},
@@ -93,7 +80,7 @@ export function AdminJapanSidebar() {
 					icon: <ShoppingCart size={16} />,
 					href: "/sales",
 					badge: "New",
-				},			
+				},
 			],
 		},
 		{
@@ -117,6 +104,7 @@ export function AdminJapanSidebar() {
 			],
 		},
 	];
+	
 
 	const [collapsed, setCollapsed] = useState(false);
 	const pathname = usePathname();
