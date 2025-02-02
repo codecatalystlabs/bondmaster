@@ -85,12 +85,13 @@ export function CarInventory() {
     setShowDetailsModal(true);
   };
 
-  const handleEditCar = (car: Car) => {
+  const handleEditCar = (car: any) => {
     setSelectedCar(car);
     setShowEditForm(true);
   };
 
   const handleAddCar = (car: Car) => {
+	console.log("form -----")
     setCars([...carList?.data, car]);
   };
 
