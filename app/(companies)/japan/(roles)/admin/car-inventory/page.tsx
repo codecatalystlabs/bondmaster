@@ -9,4 +9,4 @@ const CarInventoryPage: React.FC = () => {
     </div>
   );
 };
-export default withAuth(CarInventoryPage);
+export default CarInventoryPage;
