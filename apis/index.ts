@@ -45,6 +45,11 @@ interface ISale {
     sale: Partial<Sale2>;
 }
 
+interface IDeleteUser {
+    url: string;
+    password: string;
+}
+
 // Generic Fetcher for GET requests
 const fetcher = async (url: string) => {
     try {
@@ -107,6 +112,11 @@ const addSale = async ({ url, sale }: ISale) => {
     return data;
 };
 
+const deleteUser = async ({ url, password }: IDeleteUser) => {
+    const { data } = await apiClient.delete(url, { data: { password } });
+    return data;
+}
+
 // Export API functions
 export {
     createUser,
@@ -120,4 +130,5 @@ export {
     addCarExpenses,
     addSale,
     login,
+    deleteUser
 };
