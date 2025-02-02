@@ -66,6 +66,7 @@ import { Loader } from "../ui/loader";
 import { expenseTable } from "@/constants/tableHeaders";
 import { expenseTabs } from "@/constants/tabs";
 import { saveAs } from "file-saver";
+import { ICurrency } from "@/types/cost-management";
 
 interface ITotalExpense {
 	sum: number;
@@ -88,6 +89,12 @@ export function ExpensesModule() {
 	const [editingExpense, setEditingExpense] =
 		React.useState<ExpenseResponse | null>(null);
 
+	const {
+		data: currencies,
+		error: currencyError,
+		isLoading: idLoadingCurrency,
+	} = useSWR(`/meta/currency`, fetcher);
+	console.log(currencies, "====================currencies=====================");
 	const { data: expensesData, isLoading } = useSWR(
 		`${BASE_URL}/expenses`,
 		fetcher
@@ -185,7 +192,7 @@ export function ExpensesModule() {
 		} else {
 			const newExpense: Expense = {
 				...values,
-				company_id: 1,
+				company_id: values.company_id,
 				created_by: "admin",
 				updated_by: "admin",
 			};
@@ -528,7 +535,13 @@ function ExpenseForm({
 }: {
 	form: any;
 	onSubmit: (values: any) => void;
-}) {
+	}) {
+	
+	const {
+		data: currencies,
+		error: currencyError,
+		isLoading: idLoadingCurrency,
+	} = useSWR(`/meta/currency`, fetcher);
 	return (
 		<Form {...form}>
 			<form
@@ -567,18 +580,18 @@ function ExpenseForm({
 									</SelectTrigger>
 								</FormControl>
 								<SelectContent>
-									<SelectItem value="USD">
-										USD
-									</SelectItem>
-									<SelectItem value="EUR">
-										EUR
-									</SelectItem>
-									<SelectItem value="GBP">
-										GBP
-									</SelectItem>
-									<SelectItem value="JPY">
-										JPY
-									</SelectItem>
+									{currencies?.data.map(
+										(currency: ICurrency) => (
+											<SelectItem
+												key={currency.ID}
+												value={
+													currency.name
+												}
+											>
+												{currency.name}
+											</SelectItem>
+										)
+									)}
 								</SelectContent>
 							</Select>
 							<FormMessage />
