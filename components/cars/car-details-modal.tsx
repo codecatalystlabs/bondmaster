@@ -1,4 +1,3 @@
-import React from "react";
 import {
 	Dialog,
 	DialogContent,
@@ -6,8 +5,9 @@ import {
 	DialogTitle,
 	DialogDescription,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Car } from "@/types/car";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Car } from "@/types/car";
+import { CarIcon, Info, DollarSign, Truck, User } from "lucide-react";
 
 interface CarDetailsModalProps {
 	car: Car | null;
@@ -20,87 +20,190 @@ export function CarDetailsModal({
 	open,
 	onOpenChange,
 }: CarDetailsModalProps) {
-  const [selectedCar, setSelectedCar] = React.useState<Car | null>(null);
-  console.log(car, "car");
- 
 	if (!car) return null;
 
 	return (
-	 <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[625px]">
-        <DialogHeader>
-          <DialogTitle>
-            {car.make} {car.model} ({car.maunufacture_year || "N/A"})
-          </DialogTitle>
-          <DialogDescription>
-            Detailed information about the vehicle.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-2 gap-4">
-            {/* Fields already in the table */}
-            <div>
-              <h4 className="font-semibold">VIN Number</h4>
-              <p>{car.vin_number}</p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Engine Capacity</h4>
-              <p>{car.engine_capacity || "N/A"}</p>
-            </div>
+		<Dialog
+			open={open}
+			onOpenChange={onOpenChange}
+		>
+			<DialogContent className="sm:max-w-[700px]">
+				<DialogHeader>
+					<DialogTitle className="text-2xl">
+						{car.make} {car.model} (
+						{car.maunufacture_year || "N/A"})
+					</DialogTitle>
+					<DialogDescription>
+						Detailed information about the vehicle.
+					</DialogDescription>
+				</DialogHeader>
+				<Tabs
+					defaultValue="basic"
+					className="w-full"
+				>
+					<TabsList className="grid w-full grid-cols-4">
+						<TabsTrigger value="basic">
+							<CarIcon className="w-4 h-4 mr-2" />
+							Basic Info
+						</TabsTrigger>
+						<TabsTrigger value="technical">
+							<Info className="w-4 h-4 mr-2" />
+							Technical
+						</TabsTrigger>
+						<TabsTrigger value="financial">
+							<DollarSign className="w-4 h-4 mr-2" />
+							Financial
+						</TabsTrigger>
+						<TabsTrigger value="logistics">
+							<Truck className="w-4 h-4 mr-2" />
+							Logistics
+						</TabsTrigger>
+					</TabsList>
+					<TabsContent
+						value="basic"
+						className="mt-4"
+					>
+						<div className="grid grid-cols-2 gap-4">
+							<InfoItem
+								label="VIN Number"
+								value={car.vin_number}
+							/>
+							<InfoItem
+								label="Make"
+								value={car.make}
+							/>
+							<InfoItem
+								label="Model"
+								value={car.model}
+							/>
+							<InfoItem
+								label="Year"
+								value={car.maunufacture_year}
+							/>
+							<InfoItem
+								label="Color"
+								value={car.colour}
+							/>
+							<InfoItem
+								label="Body Type"
+								value={car.body_type}
+							/>
+						</div>
+					</TabsContent>
+					<TabsContent
+						value="technical"
+						className="mt-4"
+					>
+						<div className="grid grid-cols-2 gap-4">
+							<InfoItem
+								label="Engine Number"
+								value={car.engine_number}
+							/>
+							<InfoItem
+								label="Engine Capacity"
+								value={car.engine_capacity}
+							/>
+							<InfoItem
+								label="Transmission"
+								value={car.transmission}
+							/>
+							<InfoItem
+								label="Weight"
+								value={`${car.weight || "N/A"} ${
+									car.weight_units
+								}`}
+							/>
+							<InfoItem
+								label="Length"
+								value={`${car.length || "N/A"} ${
+									car.length_units
+								}`}
+							/>
+							<InfoItem
+								label="First Registration Year"
+								value={car.first_registration_year}
+							/>
+						</div>
+					</TabsContent>
+					<TabsContent
+						value="financial"
+						className="mt-4"
+					>
+						<div className="grid grid-cols-2 gap-4">
+							<InfoItem
+								label="Bid Price"
+								value={`${car.currency} ${car.bid_price}`}
+							/>
+							<InfoItem
+								label="VAT Tax"
+								value={`${car.currency} ${car.vat_tax}`}
+							/>
+							<InfoItem
+								label="Purchase Date"
+								value={new Date(
+									car.purchase_date
+								).toLocaleDateString()}
+							/>
+						</div>
+					</TabsContent>
+					<TabsContent
+						value="logistics"
+						className="mt-4"
+					>
+						<div className="grid grid-cols-2 gap-4">
+							<InfoItem
+								label="Destination"
+								value={car.destination}
+							/>
+							<InfoItem
+								label="Broker Name"
+								value={car.broker_name}
+							/>
+							<InfoItem
+								label="Broker Number"
+								value={car.broker_number}
+							/>
+							<InfoItem
+								label="Number Plate"
+								value={car.number_plate}
+							/>
+							<InfoItem
+								label="From Company ID"
+								value={car.from_company_id}
+							/>
+							<InfoItem
+								label="To Company ID"
+								value={car.to_company_id}
+							/>
+						</div>
+					</TabsContent>
+				</Tabs>
+				<div className="mt-6 pt-4 border-t flex justify-between items-center text-sm text-gray-500">
+					<div className="flex items-center">
+						<User className="w-4 h-4 mr-2" />
+						<span>Created by: {car.created_by || "N/A"}</span>
+					</div>
+					<div className="flex items-center">
+						<User className="w-4 h-4 mr-2" />
+						<span>Updated by: {car.updated_by || "N/A"}</span>
+					</div>
+				</div>
+			</DialogContent>
+		</Dialog>
+	);
+}
 
-            {/* Fields not in the table */}
-            <div>
-              <h4 className="font-semibold">First Registration Year</h4>
-              <p>{car.first_registration_year || "N/A"}</p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Transmission</h4>
-              <p>{car.transmission || "N/A"}</p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Body Type</h4>
-              <p>{car.body_type || "N/A"}</p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Colour</h4>
-              <p>{car.colour || "N/A"}</p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Weight</h4>
-              <p>{car.weight || "N/A"} {car.weight_units}</p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Length</h4>
-              <p>{car.length || "N/A"} {car.length_units}</p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Destination</h4>
-              <p>{car.destination || "N/A"}</p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Broker Name</h4>
-              <p>{car.broker_name || "N/A"}</p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Broker Number</h4>
-              <p>{car.broker_number || "N/A"}</p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Number Plate</h4>
-              <p>{car.number_plate || "N/A"}</p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Created By</h4>
-              <p>{car.created_by || "N/A"}</p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Updated By</h4>
-              <p>{car.updated_by || "N/A"}</p>
-            </div>
-           
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+function InfoItem({
+	label,
+	value,
+}: {
+	label: string;
+	value: string | number | undefined;
+}) {
+	return (
+		<div className="space-y-1">
+			<h4 className="text-sm font-medium text-gray-500">{label}</h4>
+			<p className="text-base">{value || "N/A"}</p>
+		</div>
 	);
 }
