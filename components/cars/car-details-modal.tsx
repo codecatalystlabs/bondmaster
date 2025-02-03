@@ -1,3 +1,4 @@
+import { fetcher } from "@/apis";
 import {
 	Dialog,
 	DialogContent,
@@ -8,6 +9,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Car } from "@/types/car";
 import { CarIcon, Info, DollarSign, Truck, User } from "lucide-react";
+import useSWR from "swr";
 
 interface CarDetailsModalProps {
 	car: Car | null;
@@ -22,6 +24,16 @@ export function CarDetailsModal({
 }: CarDetailsModalProps) {
 	if (!car) return null;
 
+	const { data: tottalCar } = useSWR(`/total-car-expense/${car?.ID}`, fetcher)
+
+
+	const { data: carExpenseData } = useSWR(`/car/${car?.ID}/expenses`, fetcher);
+
+	
+	console.log(carExpenseData?.data,"=====")
+	
+// /car/1/expenses
+
 	return (
 		<Dialog
 			open={open}
@@ -31,7 +43,7 @@ export function CarDetailsModal({
 				<DialogHeader>
 					<DialogTitle className="text-2xl">
 						{car.make} {car.model} (
-						{car.maunufacture_year || "N/A"})
+						{car.manufacture_year || "N/A"})
 					</DialogTitle>
 					<DialogDescription>
 						Detailed information about the vehicle.
@@ -54,6 +66,10 @@ export function CarDetailsModal({
 							<DollarSign className="w-4 h-4 mr-2" />
 							Financial
 						</TabsTrigger>
+						{/* <TabsTrigger value="financial">
+							<DollarSign className="w-4 h-4 mr-2" />
+							Car Expense
+						</TabsTrigger> */}
 						<TabsTrigger value="logistics">
 							<Truck className="w-4 h-4 mr-2" />
 							Logistics
@@ -78,7 +94,7 @@ export function CarDetailsModal({
 							/>
 							<InfoItem
 								label="Year"
-								value={car.maunufacture_year}
+								value={car.manufacture_year}
 							/>
 							<InfoItem
 								label="Color"
@@ -108,16 +124,14 @@ export function CarDetailsModal({
 								value={car.transmission}
 							/>
 							<InfoItem
-								label="Weight"
-								value={`${car.weight || "N/A"} ${
-									car.weight_units
+								label="Height"
+								value={`${car.height || "N/A"} ${
+									car.height
 								}`}
 							/>
 							<InfoItem
 								label="Length"
-								value={`${car.length || "N/A"} ${
-									car.length_units
-								}`}
+								value={`${car.length || "N/A"} mm `}
 							/>
 							<InfoItem
 								label="First Registration Year"
@@ -130,6 +144,18 @@ export function CarDetailsModal({
 						className="mt-4"
 					>
 						<div className="grid grid-cols-2 gap-4">
+							
+								{
+									carExpenseData?.data?.map(
+										(car: any,i:any) => (
+											<InfoItem
+												key={i}
+												label="Car expense"
+												value={`${car?.currency} ${car?.total}`}
+											/>
+										)
+									)}
+							
 							<InfoItem
 								label="Bid Price"
 								value={`${car.currency} ${car.bid_price}`}
@@ -146,6 +172,7 @@ export function CarDetailsModal({
 							/>
 						</div>
 					</TabsContent>
+
 					<TabsContent
 						value="logistics"
 						className="mt-4"

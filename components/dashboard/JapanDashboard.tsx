@@ -55,7 +55,7 @@ export function JapanDashboard() {
 		{
 			title: "Total Cars",
 			value: data?.data?.length,
-			change: "+40%",
+			change: "100%",
 			icon: <TeamOutlined />,
 			chart: (
 				<LineChart
@@ -76,7 +76,7 @@ export function JapanDashboard() {
 			),
 		},
 		{
-			title: "Total Revenue",
+			title: "Total Car Expenditure",
 			value: "$56,562",
 			change: "+25%",
 			icon: <DollarOutlined />,
