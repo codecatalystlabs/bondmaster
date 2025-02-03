@@ -77,7 +77,7 @@ async function submit(values: z.infer<typeof formSchema>) {
 						);
 						 router.push("/uganda/admin/dashboard");
 						console.log("Redirection complete");
-					} else if (group === "cashier") {
+					} else if (group === "user") {
 						console.log("Redirecting to:", `/uganda/cashier`);
 						 router.push("/uganda/cashier");
 						console.log("Redirection complete");
@@ -90,9 +90,9 @@ async function submit(values: z.infer<typeof formSchema>) {
 						);
 						 router.push("/japan/admin/dashboard");
 						console.log("Redirection complete");
-					} else if (group === "cashier") {
-						console.log("Redirecting to:", `/japan/cashier`);
-						 router.push("/japan/cashier");
+					} else if (group === "user") {
+						console.log("Redirecting to:", `/japan/cashier/car-inventory`);
+						 router.push("/japan/cashier/car-inventory");
 						console.log("Redirection complete");
 					}
 				}

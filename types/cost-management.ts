@@ -30,3 +30,15 @@ export interface CostCategory {
   name: string
 }
 
+
+export interface ICurrency {
+  ID: number;
+  CreatedAt?: string; 
+  UpdatedAt?: string; 
+  DeletedAt?: string | null;
+  name: string;
+  symbol: string;
+  created_by?: string;
+  updated_by?: string;
+}
+
