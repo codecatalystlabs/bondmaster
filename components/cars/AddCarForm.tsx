@@ -178,7 +178,7 @@ export function AddCarForm({
         onOpenChange(false); // Close modal
         setStep(1); // Reset step
         // Refetch user data if needed
-        mutate(`${BASE_URL}/users`);
+        mutate(`${BASE_URL}/cars`);
       }
     } catch (error) {
       console.error('Error adding car:', error);
