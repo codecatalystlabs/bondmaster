@@ -50,15 +50,32 @@ import {
 import { CarForm } from './car-form';
 import { CarDetailsModal } from './car-details-modal';
 import { Car, CarResponse } from '@/types/car';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { BASE_URL } from '@/constants/baseUrl';
-import { fetcher } from '@/apis';
+import { addCarExpenses, fetcher } from '@/apis';
 import { Loader } from '../ui/loader';
 import { AddCarForm } from './AddCarForm';
 import toast from 'react-hot-toast';
 import { CarExpenseModal } from './car-expense-modal';
+import * as z from "zod";
+import useUserStore from '@/app/store/userStore';
+
+
+const formSchema = z.object({
+	car_id: z.number(),
+	description: z.string().min(1, "Description is required"),
+	currency: z.string().min(1, "Currency is required"),
+	amount: z.union([
+		z.number().min(1, "Amount is required"),
+		z.number().positive("Amount must be positive"),
+	]),
+	expense_date: z.string(),
+	
+});
 
 export function CarInventory() {
+    const { data: carList, error, isLoading } = useSWR(`/cars`, fetcher);
+const user = useUserStore((state) => state.user);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -74,8 +91,9 @@ export function CarInventory() {
  const [showExpenseModal, setShowExpenseModal] = React.useState(false);
  const [selectedCarForExpense, setSelectedCarForExpense] = React.useState<
 		string | null
- >(null);
-  const { data: carList, error, isLoading } = useSWR(`/cars`, fetcher);
+	 >(null);
+	
+	console.log(selectedCar,"here===")
 
   React.useEffect(() => {
     if (carList?.data) {
@@ -96,13 +114,34 @@ export function CarInventory() {
   };
 
   const handleAddCar = (car: Car) => {
-    console.log('form -----');
     setCars([...carList?.data, car]);
   };
 
-    const handleCarExpenseSubmit = (data: any) => {
-		console.log("Car expense submitted:", data);
-		// Here you would typically send this data to your API
+	const handleCarExpenseSubmit = async (data: any) => {
+		console.log(selectedCar)
+		
+		const newExpense: any = {
+			...data,
+			car_id: selectedCar?.ID || 1,
+			created_by: user?.username,
+			updated_by: "admin",
+		};
+
+
+
+		try {
+			const response = await addCarExpenses({
+				url: `${BASE_URL}/car/expense`,
+				expense: newExpense,
+			});
+
+			mutate(`${BASE_URL}/expenses`);
+			toast.success("Expense added successfully");
+			
+		} catch (error) {
+			console.log(error);
+		}
+		
 		toast.success(
 			"Car expense has been successfully added."
 		);
@@ -125,7 +164,7 @@ export function CarInventory() {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            VIN
+            Chasis Number
             <CaretSortIcon className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -240,11 +279,14 @@ export function CarInventory() {
 				<DropdownMenuContent align="end">
 					<DropdownMenuLabel>Actions</DropdownMenuLabel>
 					<DropdownMenuItem
-						onClick={() =>
-							navigator.clipboard.writeText(car.car_uuid)
+                onClick={() => {
+                  navigator.clipboard.writeText(car.vin_number);
+                  toast.success("Chasis number copied to clipboard")
+            }
+						
 						}
 					>
-						Copy car ID
+						Copy car Chasis Number
 					</DropdownMenuItem>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem
@@ -266,7 +308,7 @@ export function CarInventory() {
 
 					<DropdownMenuItem
 						onClick={() => {
-							setSelectedCarForExpense(car.car_uuid);
+							setSelectedCar(car)
 							setShowExpenseModal(true);
 						}}
 					>
@@ -314,16 +356,16 @@ export function CarInventory() {
 					<CardContent>
 						<div className="mb-4 flex items-center gap-4">
 							<Input
-								placeholder="Filter makes..."
+								placeholder="Filter chasis number..."
 								value={
 									(table
-										.getColumn("make")
+										.getColumn("vin_number")
 										?.getFilterValue() as string) ??
 									""
 								}
 								onChange={(event) =>
 									table
-										.getColumn("make")
+										.getColumn("vin_number")
 										?.setFilterValue(
 											event.target.value
 										)
@@ -508,7 +550,7 @@ export function CarInventory() {
 					/>
 
 					<CarExpenseModal
-						carId={selectedCarForExpense || ""}
+						carId={selectedCar?.ID || ""}
 						open={showExpenseModal}
 						onOpenChange={setShowExpenseModal}
 						onSubmit={handleCarExpenseSubmit}

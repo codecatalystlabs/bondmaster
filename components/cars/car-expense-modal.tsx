@@ -25,8 +25,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import useSWR from "swr";
-import { fetcher } from "@/apis";
+import useSWR, { mutate } from "swr";
+import { addCarExpenses, fetcher } from "@/apis";
+import { ICurrency } from "@/types/cost-management";
+import { BASE_URL } from "@/constants/baseUrl";
+import toast from "react-hot-toast";
+import useUserStore from "@/app/store/userStore";
 
 const formSchema = z.object({
 	description: z.string().min(1, "Description is required"),
@@ -48,12 +52,13 @@ export function CarExpenseModal({
 	onOpenChange,
 	onSubmit,
 }: CarExpenseModalProps) {
-   const {
+	const {
 		data: currencies,
 		error: currencyError,
 		isLoading: idLoadingCurrency,
-   } = useSWR(`/meta/currency`, fetcher);
-    
+	} = useSWR(`/meta/currency`, fetcher);
+
+	const user = useUserStore((state) => state.user)
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -65,7 +70,11 @@ export function CarExpenseModal({
 		},
 	});
 
-	const handleSubmit = (values: z.infer<typeof formSchema>) => {
+
+	const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+		console.log(values)
+
+		
 		onSubmit({ ...values });
 		form.reset();
 		onOpenChange(false);
@@ -121,17 +130,23 @@ export function CarExpenseModal({
 										</FormControl>
 										<SelectContent>
 											{currencies?.data.map(
-                                                                                    (currency: ICurrency) => (
-                                                                                        <SelectItem
-                                                                                            key={currency.ID}
-                                                                                            value={
-                                                                                                currency.name
-                                                                                            }
-                                                                                        >
-                                                                                            {currency.name}
-                                                                                        </SelectItem>
-                                                                                    )
-                                                                                )}
+												(
+													currency: ICurrency
+												) => (
+													<SelectItem
+														key={
+															currency.ID
+														}
+														value={
+															currency.name
+														}
+													>
+														{
+															currency.name
+														}
+													</SelectItem>
+												)
+											)}
 										</SelectContent>
 									</Select>
 									<FormMessage />

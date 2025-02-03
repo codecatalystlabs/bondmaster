@@ -59,6 +59,7 @@ import { BASE_URL } from "@/constants/baseUrl";
 import { Loader } from "../ui/loader";
 import toast, { Toaster } from "react-hot-toast";
 import { Group, ICompany } from "@/types/company";
+import useUserStore from "@/app/store/userStore";
 
 const formSchema = z.object({
 	username: z.string().min(2, {
@@ -83,6 +84,7 @@ const formSchema = z.object({
 });
 
 export function UserManagement() {
+	const storedUser = useUserStore((state) => state.user)
 	const [users, setUsers] = React.useState<UserInfo[]>([]);
 	const [user, setUser] = React.useState<UserInfo | null>(null);
 	const [isDialogOpen, setIsDialogOpen] = React.useState(false);
@@ -143,6 +145,16 @@ export function UserManagement() {
 		error,
 		isLoading,
 	} = useSWR(`/users`, fetcher);
+
+	const filteredUsers = usersData?.data.filter(
+		(user: any) => user.company_d === 1
+		
+
+	);
+
+	console.log(filteredUsers,"filtered")
+
+	console.log(usersData, "''''");
 
 		const {
 			data: companiesData,

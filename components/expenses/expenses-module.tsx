@@ -7,9 +7,8 @@ import * as z from "zod";
 import { format } from "date-fns";
 import { CalendarIcon, FileText, Pencil, Plus } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
 	Card,
 	CardContent,
@@ -17,28 +16,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import {
-	Form,
-	FormControl,
-	FormDescription,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
+
 import {
 	Table,
 	TableBody,
@@ -67,6 +45,8 @@ import { expenseTable } from "@/constants/tableHeaders";
 import { expenseTabs } from "@/constants/tabs";
 import { saveAs } from "file-saver";
 import { ICurrency } from "@/types/cost-management";
+import { ExpenseForm } from "./expense-form";
+import useUserStore from "@/app/store/userStore";
 
 interface ITotalExpense {
 	sum: number;
@@ -85,6 +65,8 @@ const formSchema = z.object({
 });
 
 export function ExpensesModule() {
+	  const user = useUserStore((state) => state.user);
+		console.log(user);
 	const [expenses, setExpenses] = React.useState<Expense[]>([]);
 	const [editingExpense, setEditingExpense] =
 		React.useState<ExpenseResponse | null>(null);
@@ -94,13 +76,11 @@ export function ExpensesModule() {
 		error: currencyError,
 		isLoading: idLoadingCurrency,
 	} = useSWR(`/meta/currency`, fetcher);
-	console.log(currencies, "====================currencies=====================");
 	const { data: expensesData, isLoading } = useSWR(
 		`${BASE_URL}/expenses`,
 		fetcher
 	);
 
-	console.log(expensesData,"====================expensesData=====================");
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -168,6 +148,7 @@ export function ExpensesModule() {
 			const updatedExpense: Expense = {
 				...editingExpense,
 				...values,
+				
 			};
 
 			try {
@@ -192,7 +173,7 @@ export function ExpensesModule() {
 		} else {
 			const newExpense: Expense = {
 				...values,
-				company_id: values.company_id,
+				company_id: user?.company_id,
 				created_by: "admin",
 				updated_by: "admin",
 			};
@@ -529,171 +510,4 @@ export function ExpensesModule() {
 	);
 }
 
-function ExpenseForm({
-	form,
-	onSubmit,
-}: {
-	form: any;
-	onSubmit: (values: any) => void;
-	}) {
-	
-	const {
-		data: currencies,
-		error: currencyError,
-		isLoading: idLoadingCurrency,
-	} = useSWR(`/meta/currency`, fetcher);
-	return (
-		<Form {...form}>
-			<form
-				onSubmit={form.handleSubmit(onSubmit)}
-				className="space-y-8"
-			>
-				<FormField
-					control={form.control}
-					name="description"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Description</FormLabel>
-							<FormControl>
-								<Input
-									placeholder="Enter expense description"
-									{...field}
-								/>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name="currency"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Currency</FormLabel>
-							<Select
-								onValueChange={field.onChange}
-								defaultValue={field.value}
-							>
-								<FormControl>
-									<SelectTrigger>
-										<SelectValue placeholder="Select currency" />
-									</SelectTrigger>
-								</FormControl>
-								<SelectContent>
-									{currencies?.data.map(
-										(currency: ICurrency) => (
-											<SelectItem
-												key={currency.ID}
-												value={
-													currency.name
-												}
-											>
-												{currency.name}
-											</SelectItem>
-										)
-									)}
-								</SelectContent>
-							</Select>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name="amount"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Amount</FormLabel>
-							<FormControl>
-								<Input
-									type="number"
-									placeholder="Enter amount"
-									{...field}
-									value={field.value || ""}
-									onChange={(e) => {
-										const value =
-											e.target.value === ""
-												? ""
-												: parseFloat(
-														e.target
-															.value
-												  );
-										field.onChange(value);
-									}}
-								/>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name="expense_date"
-					render={({ field }) => (
-						<FormItem className="flex flex-col">
-							<FormLabel>Expense Date</FormLabel>
-							<Popover>
-								<PopoverTrigger asChild>
-									<FormControl>
-										<Button
-											variant={"outline"}
-											className={cn(
-												"w-[240px] pl-3 text-left font-normal",
-												!field.value &&
-													"text-muted-foreground"
-											)}
-										>
-											{field.value ? (
-												format(
-													new Date(
-														field.value
-													).toISOString(),
-													"PPP"
-												)
-											) : (
-												<span>
-													Pick a date
-												</span>
-											)}
-											<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-										</Button>
-									</FormControl>
-								</PopoverTrigger>
-								<PopoverContent
-									className="w-auto p-0"
-									align="start"
-								>
-									<Calendar
-										mode="single"
-										selected={
-											field.value
-												? new Date(
-														field.value
-												  )
-												: undefined
-										}
-										onSelect={(date) =>
-											field.onChange(
-												date?.toISOString()
-											)
-										}
-										disabled={(date) =>
-											date > new Date() ||
-											date <
-												new Date(
-													"1900-01-01"
-												)
-										}
-										initialFocus
-									/>
-								</PopoverContent>
-							</Popover>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<Button type="submit">Save Expense</Button>
-			</form>
-		</Form>
-	);
-}
+

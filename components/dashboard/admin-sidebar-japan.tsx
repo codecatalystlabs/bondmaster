@@ -96,9 +96,13 @@ export function AdminJapanSidebar() {
 					icon: <LogOut size={16} />,
 					href: "",
 					onClick: () => {
-						useUserStore.getState().clearUser();
-						useUserStore?.getState().clearToken();
 						router.push("/signin");
+
+						localStorage.removeItem("user-details")
+						 setTimeout(() => {
+								window.location.reload();
+							}, 500);
+
 					},
 				},
 			],
