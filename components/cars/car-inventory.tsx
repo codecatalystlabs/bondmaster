@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { Plus } from "lucide-react";
+import * as React from 'react';
+import { Plus } from 'lucide-react';
 import {
   CaretSortIcon,
   ChevronDownIcon,
   DotsHorizontalIcon,
-} from "@radix-ui/react-icons";
+} from '@radix-ui/react-icons';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -18,16 +18,16 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -36,8 +36,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -45,16 +45,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 
-import { CarForm } from "./car-form";
-import { CarDetailsModal } from "./car-details-modal";
-import { Car, CarResponse } from "@/types/car";
-import useSWR from "swr";
-import { BASE_URL } from "@/constants/baseUrl";
-import { fetcher } from "@/apis";
-import { Loader } from "../ui/loader";
-import { AddCarForm } from "./AddCarForm";
+import { CarForm } from './car-form';
+import { CarDetailsModal } from './car-details-modal';
+import { Car, CarResponse } from '@/types/car';
+import useSWR from 'swr';
+import { BASE_URL } from '@/constants/baseUrl';
+import { fetcher } from '@/apis';
+import { Loader } from '../ui/loader';
+import { AddCarForm } from './AddCarForm';
+import { EditCarForm } from './EditCarForm';
 
 export function CarInventory() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -91,7 +92,7 @@ export function CarInventory() {
   };
 
   const handleAddCar = (car: Car) => {
-	console.log("form -----")
+    console.log('form -----');
     setCars([...carList?.data, car]);
   };
 
@@ -105,27 +106,27 @@ export function CarInventory() {
 
   const columns: ColumnDef<Car>[] = [
     {
-      accessorKey: "vin_number",
+      accessorKey: 'vin_number',
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             VIN
             <CaretSortIcon className="ml-2 h-4 w-4" />
           </Button>
         );
       },
-      cell: ({ row }) => <div>{row.getValue("vin_number")}</div>,
+      cell: ({ row }) => <div>{row.getValue('vin_number')}</div>,
     },
     {
-      accessorKey: "make",
+      accessorKey: 'make',
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             Make
             <CaretSortIcon className="ml-2 h-4 w-4" />
@@ -133,16 +134,16 @@ export function CarInventory() {
         );
       },
       cell: ({ row }) => (
-        <div className="ml-[30px]">{row.getValue("make")}</div>
+        <div className="ml-[30px]">{row.getValue('make')}</div>
       ),
     },
     {
-      accessorKey: "model",
+      accessorKey: 'model',
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             Model
             <CaretSortIcon className="ml-2 h-4 w-4" />
@@ -150,16 +151,16 @@ export function CarInventory() {
         );
       },
       cell: ({ row }) => (
-        <div className="ml-[30px]">{row.getValue("model")}</div>
+        <div className="ml-[30px]">{row.getValue('model')}</div>
       ),
     },
     {
-      accessorKey: "maunufacture_year",
+      accessorKey: 'maunufacture_year',
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             Manufactured Year
             <CaretSortIcon className="ml-2 h-4 w-4" />
@@ -167,16 +168,16 @@ export function CarInventory() {
         );
       },
       cell: ({ row }) => (
-        <div className="ml-[30px]">{row.getValue("maunufacture_year")}</div>
+        <div className="ml-[30px]">{row.getValue('maunufacture_year')}</div>
       ),
     },
     {
-      accessorKey: "engine_capacity",
+      accessorKey: 'engine_capacity',
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             Engine Capacity
             <CaretSortIcon className="ml-2 h-4 w-4" />
@@ -184,15 +185,15 @@ export function CarInventory() {
         );
       },
       cell: ({ row }) => (
-        <div className="ml-[30px]">{row.getValue("engine_capacity")}</div>
+        <div className="ml-[30px]">{row.getValue('engine_capacity')}</div>
       ),
     },
 
     {
-      accessorKey: "bid_price",
+      accessorKey: 'bid_price',
       header: () => <div className="text-right">Bid Price</div>,
       cell: ({ row }) => {
-        const amount = parseFloat(row.getValue("bid_price") ?? 0);
+        const amount = parseFloat(row.getValue('bid_price') ?? 0);
         // const formatted = new Intl.NumberFormat("en-US", {
         // 	style: "currency",
         // 	currency: row.getValue("currency") || "USD",
@@ -202,13 +203,13 @@ export function CarInventory() {
       },
     },
     {
-      id: "currency",
-      accessorKey: "currency",
-      header: "Currency",
-      cell: ({ row }) => <div>{row.getValue("currency") || "USD"}</div>,
+      id: 'currency',
+      accessorKey: 'currency',
+      header: 'Currency',
+      cell: ({ row }) => <div>{row.getValue('currency') || 'USD'}</div>,
     },
     {
-      id: "actions",
+      id: 'actions',
       enableHiding: false,
       cell: ({ row }) => {
         const car = row.original;
@@ -234,7 +235,7 @@ export function CarInventory() {
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
-                  console.log("Edit car", car);
+                  console.log('Edit car', car);
                   handleEditCar(car);
                 }}
               >
@@ -287,10 +288,10 @@ export function CarInventory() {
               <Input
                 placeholder="Filter makes..."
                 value={
-                  (table.getColumn("make")?.getFilterValue() as string) ?? ""
+                  (table.getColumn('make')?.getFilterValue() as string) ?? ''
                 }
                 onChange={(event) =>
-                  table.getColumn("make")?.setFilterValue(event.target.value)
+                  table.getColumn('make')?.setFilterValue(event.target.value)
                 }
                 className="max-w-sm"
               />
@@ -347,7 +348,7 @@ export function CarInventory() {
                     table.getRowModel().rows.map((row) => (
                       <TableRow
                         key={row.id}
-                        data-state={row.getIsSelected() && "selected"}
+                        data-state={row.getIsSelected() && 'selected'}
                       >
                         {row.getVisibleCells().map((cell) => (
                           <TableCell key={cell.id}>
@@ -374,7 +375,7 @@ export function CarInventory() {
             </div>
             <div className="flex items-center justify-end space-x-2 py-4">
               <div className="text-muted-foreground flex-1 text-sm">
-                {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                {table.getFilteredSelectedRowModel().rows.length} of{' '}
                 {table.getFilteredRowModel().rows.length} row(s) selected.
               </div>
               <div className="space-x-2">
@@ -402,13 +403,14 @@ export function CarInventory() {
             open={showAddForm}
             onOpenChange={setShowAddForm}
             onSubmit={handleAddCar}
-			onCancel={()=>setShowAddForm(false)}
+            onCancel={() => setShowAddForm(false)}
           />
-          <CarForm
+          <AddCarForm
             open={showEditForm}
             onOpenChange={setShowEditForm}
-            car={selectedCar}
+            initialData={selectedCar}
             onSubmit={handleUpdateCar}
+            onCancel={() => setShowEditForm(false)}
           />
           <CarDetailsModal
             open={showDetailsModal}

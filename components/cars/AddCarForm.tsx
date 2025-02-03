@@ -185,29 +185,11 @@ export function AddCarForm({
     }
   }
 
-  //   const  handleSubmit= async (values: z.infer<typeof formSchema>) =>{
-  //     console.log("Form submitted with values:", values)
-
-  //     try {
-  //         const response = await addCar({
-  //             url: `${BASE_URL}/car`,
-  //             carInfo: values,
-  //         });
-
-  //         onOpenChange(false)
-  //         setStep(1)
-
-  //         // mutate(`${BASE_URL}/users`);
-  //         // if (response.data) {
-  //         //     toast.success("User updated successfully");
-  //         // }
-
-  //     } catch (error) {
-  //         console.log("Error", error)
-  //     }
-  //     // onSubmit(values as Car)
-
-  //   }
+  React.useEffect(() => {
+    if (initialData) {
+      form.reset(initialData);
+    }
+  }, [initialData, form.reset]);
 
   React.useEffect(() => {
     if (!open) {
