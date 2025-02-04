@@ -27,21 +27,8 @@ import { addSale, fetcher } from "@/apis";
 import useSWR, { mutate } from "swr";
 import { BASE_URL } from "@/constants/baseUrl";
 
-// Mock data for cars and companies
-const mockCars: Car[] = [
-	{
-		car_uuid: "1",
-		make: "Toyota",
-		model: "Camry",
-		maunufacture_year: 2022,
-	} as Car,
-	{
-		car_uuid: "2",
-		make: "Honda",
-		model: "Civic",
-		maunufacture_year: 2021,
-	} as Car,
-];
+
+
 
 const mockCompanies: Company[] = [
 	{
@@ -66,7 +53,17 @@ export function SalesModule() {
 	const [sales, setSales] = React.useState<Sale[]>([]);
 	const [showAddForm, setShowAddForm] = React.useState(false);
 	const [editingSale, setEditingSale] = React.useState<Sale | null>(null);
-		const [fetchedSales, setFetchedSales] = React.useState<Sale[]>([]);
+	const [fetchedSales, setFetchedSales] = React.useState<Sale[]>([]);
+	
+	const { data: companies } = useSWR("/companies", fetcher);
+
+	const {
+		data: carList,
+		error: carListError,
+		isLoading: carListLoading,
+	} = useSWR(`${BASE_URL}/cars`, fetcher);
+
+	console.log(fetchedSales,"sales data")
 
 	const handleAddSale = async (newSale: any) => {
 		try {
@@ -261,8 +258,9 @@ export function SalesModule() {
 									<CardContent>
 										<SaleForm
 											onSubmit={handleAddSale}
-											cars={mockCars}
-											companies={mockCompanies}
+											companies={
+												companies?.data
+											}
 										/>
 									</CardContent>
 								</Card>
@@ -278,7 +276,7 @@ export function SalesModule() {
 										<EditSaleForm
 											sale={editingSale}
 											onSubmit={handleEditSale}
-											cars={mockCars}
+											cars={carList?.data}
 											companies={mockCompanies}
 											onCancel={() =>
 												setEditingSale(null)

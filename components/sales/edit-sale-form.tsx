@@ -172,7 +172,7 @@ export function EditSaleForm({ sale, onSubmit, onCancel, cars, companies }: Edit
                 <SelectContent>
                   {cars.map((car) => (
                     <SelectItem key={car.car_uuid} value={car.car_uuid}>
-                      {car.make} {car.model} ({car.maunufacture_year})
+                      {car.make} {car.model} ({car.manufacture_year})
                     </SelectItem>
                   ))}
                 </SelectContent>

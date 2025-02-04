@@ -78,7 +78,7 @@ export function AdminJapanSidebar() {
 				{
 					title: "Sales",
 					icon: <ShoppingCart size={16} />,
-					href: "/sales",
+					href: "/japan/admin/sales",
 					badge: "New",
 				},
 			],

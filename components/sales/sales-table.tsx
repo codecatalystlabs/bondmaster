@@ -70,8 +70,8 @@ export function SalesTable({
 		{
 			accessorKey: "total_price",
 			header: "Total Price",
-			cell: ({ row }) => {
-				const isEditing = editingRow === row.original.id;
+			cell: ({ row }: any) => {
+				const isEditing = editingRow === row.original.ID;
 				const amount = parseFloat(row.getValue("total_price"));
 				const formatted = new Intl.NumberFormat("en-US", {
 					style: "currency",
@@ -98,37 +98,15 @@ export function SalesTable({
 		{
 			accessorKey: "sale_date",
 			header: "Sale Date",
-			cell: ({ row }) => {
-				const carName = row.original.car;
-				console.log(row, "car name");
-			},
+			cell: ({ row }) =>
+				new Date(row.getValue("sale_date")).toLocaleDateString(),
 		},
 		{
-			accessorKey: "make",
+			accessorKey: "Car.make",
 			header: "Car Make",
-			cell: ({ row }) => {
-				const isEditing = editingRow === row.original.id;
-				const car = row.getValue("make");
-
-				return isEditing ? (
-					<Input
-						type="text"
-						defaultValue={car as string}
-						onChange={(e) => {
-							const updatedSale = {
-								...row.original,
-								total_price: parseFloat(e.target.value),
-							};
-							onInlineEdit(updatedSale);
-						}}
-					/>
-				) : (
-					<div className="font-medium">{car as string}</div>
-				);
-			},
 		},
 		{
-			accessorKey: "model",
+			accessorKey: "Car.model",
 			header: "Car Model",
 		},
 		{
@@ -138,8 +116,8 @@ export function SalesTable({
 		{
 			accessorKey: "is_full_payment",
 			header: "Payment Type",
-			cell: ({ row }) => {
-				const isEditing = editingRow === row.original.id;
+			cell: ({ row }: any) => {
+				const isEditing = editingRow === row.original.ID;
 				const is_full_payment = row.getValue(
 					"is_full_payment"
 				) as boolean;
@@ -176,67 +154,11 @@ export function SalesTable({
 				);
 			},
 		},
-		// {
-		//   accessorKey: "installments",
-		//   header: "Installments",
-		//   cell: ({ row }) => {
-		//     const sale = row.original;
-		//     const installments = sale.installments || [];
-		//     const [isOpen, setIsOpen] = React.useState(false);
-
-		//     return (
-		//       <div>
-		//         <Button variant="outline" size="sm" onClick={() => setIsOpen(true)}>
-		//           View Installments ({installments.length})
-		//         </Button>
-		//         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-		//           <DialogContent>
-		//             <DialogHeader>
-		//               <DialogTitle>Installments for Sale #{sale.id}</DialogTitle>
-		//             </DialogHeader>
-		//             <Table>
-		//               <TableHeader>
-		//                 <TableRow>
-		//                   <TableHead>Amount</TableHead>
-		//                   <TableHead>Due Date</TableHead>
-		//                   <TableHead>Status</TableHead>
-		//                   <TableHead>Actions</TableHead>
-		//                 </TableRow>
-		//               </TableHeader>
-		//               <TableBody>
-		//                 {installments.map((installment, index) => (
-		//                   <TableRow key={installment.id}>
-		//                     <TableCell>{installment.amount}</TableCell>
-		//                     <TableCell>{format(new Date(installment.dueDate), "PPP")}</TableCell>
-		//                     <TableCell>{installment.paid ? "Paid" : "Pending"}</TableCell>
-		//                     <TableCell>
-		//                       <Button
-		//                         variant="outline"
-		//                         size="sm"
-		//                         onClick={() => {
-		//                           onInstallmentPayment(sale.id, installment.id);
-		//                           setIsOpen(false);
-		//                         }}
-		//                         disabled={installment.paid}
-		//                       >
-		//                         Mark as Paid
-		//                       </Button>
-		//                     </TableCell>
-		//                   </TableRow>
-		//                 ))}
-		//               </TableBody>
-		//             </Table>
-		//           </DialogContent>
-		//         </Dialog>
-		//       </div>
-		//     );
-		//   },
-		// },
 		{
 			accessorKey: "payment_period",
 			header: "Payment Period",
-			cell: ({ row }) => {
-				const isEditing = editingRow === row.original.id;
+			cell: ({ row }: any) => {
+				const isEditing = editingRow === row.original.ID;
 				const payment_period = row.getValue(
 					"payment_period"
 				) as number;
@@ -262,8 +184,8 @@ export function SalesTable({
 		},
 		{
 			id: "actions",
-			cell: ({ row }) => {
-				const isEditing = editingRow === row.original.id;
+			cell: ({ row }: any) => {
+				const isEditing = editingRow === row.original.ID;
 
 				return isEditing ? (
 					<div className="flex space-x-2">
@@ -288,7 +210,7 @@ export function SalesTable({
 							variant="outline"
 							size="sm"
 							onClick={() =>
-								setEditingRow(row.original.id)
+								setEditingRow(row.original.ID)
 							}
 						>
 							<Edit2 className="h-4 w-4" />

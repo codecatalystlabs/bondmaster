@@ -58,6 +58,14 @@ export function CarExpenseModal({
 		isLoading: idLoadingCurrency,
 	} = useSWR(`/meta/currency`, fetcher);
 
+		const {
+			data: expenses,
+			error: expenseError,
+			isLoading: idLoadingExpense,
+		} = useSWR(`/meta/expenses`, fetcher);
+	
+	console.log(expenses, "??????");
+
 	const user = useUserStore((state) => state.user)
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -72,7 +80,6 @@ export function CarExpenseModal({
 
 
 	const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-		console.log(values)
 
 		
 		onSubmit({ ...values });
@@ -97,18 +104,40 @@ export function CarExpenseModal({
 						onSubmit={form.handleSubmit(handleSubmit)}
 						className="space-y-4"
 					>
+					
+
 						<FormField
 							control={form.control}
 							name="description"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Description</FormLabel>
-									<FormControl>
-										<Input
-											placeholder="Enter expense description"
-											{...field}
-										/>
-									</FormControl>
+									<FormLabel>Expense Type</FormLabel>
+									<Select
+										onValueChange={field.onChange}
+										defaultValue={field.value}
+									>
+										<FormControl>
+											<SelectTrigger>
+												<SelectValue placeholder="Select expense" />
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											{expenses?.data.map(
+												(exp: any) => (
+													<SelectItem
+														key={
+															exp.ID
+														}
+														value={
+															exp.name
+														}
+													>
+														{exp.name}
+													</SelectItem>
+												)
+											)}
+										</SelectContent>
+									</Select>
 									<FormMessage />
 								</FormItem>
 							)}

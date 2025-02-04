@@ -13,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import useSWR from "swr";
 import { fetcher } from "@/apis";
+import { Car } from "lucide-react";
 
 
 
@@ -49,14 +50,15 @@ const topDeals = [
 export function JapanDashboard() {
 
     const { data, error, isLoading } = useSWR('/cars', fetcher)
-    console.log(data,"data")
+	
+	const totalCarExpenditure = data?.data.reduce((sum: any, item: any) => sum + item?.car.bid_price, 0)
 
     const stats = [
 		{
-			title: "Total Cars",
+			title: "Total Cars Purchased",
 			value: data?.data?.length,
 			change: "100%",
-			icon: <TeamOutlined />,
+			icon: <Car />,
 			chart: (
 				<LineChart
 					data={[30, 40, 35, 50, 49, 60, 70, 91, 125]}
@@ -77,8 +79,8 @@ export function JapanDashboard() {
 		},
 		{
 			title: "Total Car Expenditure",
-			value: "$56,562",
-			change: "+25%",
+			value: isLoading ? "loading" : totalCarExpenditure,
+			
 			icon: <DollarOutlined />,
 			chart: (
 				<LineChart
@@ -97,9 +99,9 @@ export function JapanDashboard() {
 			),
 		},
 		{
-			title: "Conversion Ratio",
-			value: "12.08%",
-			change: "-12%",
+			title: "Total Cars Dispatched",
+			value: data?.data?.length,
+			
 			icon: <SwapOutlined />,
 			chart: (
 				<LineChart
@@ -118,9 +120,9 @@ export function JapanDashboard() {
 			),
 		},
 		{
-			title: "Total Deals",
+			title: "Total Revenue",
 			value: "2,543",
-			change: "+19%",
+			
 			icon: <FileTextOutlined />,
 			chart: (
 				<LineChart
@@ -145,7 +147,7 @@ export function JapanDashboard() {
 				<Card className="bg-primary p-6">
 					<div className="flex justify-between items-center">
 						<h3 className="text-xl font-semibold text-white">
-							Your Progress Overview
+							Japan Dashboard Overview
 						</h3>
 						<span className="text-sm text-primary-foreground/80">
 							{new Date().toLocaleString("ja-JP", {
@@ -177,10 +179,10 @@ export function JapanDashboard() {
 							></div>
 						</div>
 					</div>
-					<p className="mt-2 text-primary-foreground/80">
+					{/* <p className="mt-2 text-primary-foreground/80">
 						You have completed 48% of your target. Keep up the
 						good work!
-					</p>
+					</p> */}
 				</Card>
 
 				<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -197,7 +199,7 @@ export function JapanDashboard() {
 									<h3 className="mt-1 text-2xl font-semibold">
 										{stat?.value}
 									</h3>
-									<p
+									{/* <p
 										className={cn(
 											"mt-1 text-sm",
 											stat.change.startsWith(
@@ -208,7 +210,7 @@ export function JapanDashboard() {
 										)}
 									>
 										{stat?.change} this month
-									</p>
+									</p> */}
 								</div>
 								<div className="text-2xl text-gray-400">
 									{stat?.icon}
@@ -235,7 +237,7 @@ export function JapanDashboard() {
 							</Button>
 						</div>
 						<div className="mt-4 h-[300px]">
-							{/* <LineChart
+							<LineChart
 								data={[
 									65, 59, 80, 81, 56, 55, 40, 65, 59,
 									80, 81, 56,
@@ -255,7 +257,7 @@ export function JapanDashboard() {
 									"Dec",
 								]}
 								index="0"
-							/> */}
+							/>
 						</div>
 					</Card>
 
@@ -272,19 +274,18 @@ export function JapanDashboard() {
 							</Button>
 						</div>
 						<div className="mt-4 h-[300px]">
-							{/* <DoughnutChart
-								data={[1624, 1267, 1153, 679]}
+							<DoughnutChart
+								data={[1624, 1000]}
 								labels={[
-									"Mobile",
-									"Desktop",
-									"Laptop",
-									"Tablet",
+									"Total Car Stock Available",
+									"Total Cars Sold",
+								
 								]}
-							/> */}
+							/>
 						</div>
 					</Card>
 				</div>
-
+{/* 
 				<div className="grid gap-6 lg:grid-cols-2">
 					<Card className="p-6">
 						<div className="flex items-center justify-between">
@@ -359,7 +360,7 @@ export function JapanDashboard() {
 							<Progress value={25} />
 						</div>
 					</Card>
-				</div>
+				</div> */}
 			</div>
 		</div>
 	);

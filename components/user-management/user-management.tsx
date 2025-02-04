@@ -95,6 +95,9 @@ export function UserManagement() {
 	}>({});
 	const [showModalPassword, setShowModalPassword] = React.useState(false);
 
+	const page = 1;
+	const limit = 10;
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -144,15 +147,25 @@ export function UserManagement() {
 		data: usersData,
 		error,
 		isLoading,
-	} = useSWR(`/users`, fetcher);
-
-	const filteredUsers = usersData?.data.filter(
-		(user: any) => user.company_d === 1
-		
-
+	} = useSWR(
+		`/users/${storedUser?.company_id}?page=${page}&limit=${limit}`,
+		fetcher
 	);
 
-	console.log(filteredUsers,"filtered")
+
+// previous way
+	// const {
+	// 	data: usersData,
+	// 	error,
+	// 	isLoading,
+	// } = useSWR(
+	// 	`/users`,
+	// 	fetcher
+	// );
+
+	
+
+	// console.log(filteredUsers,"filtered")
 
 	console.log(usersData, "''''");
 

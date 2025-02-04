@@ -6,9 +6,11 @@ interface UserState {
       username: string;
       group: string;
       location: string;
+      email: string;
+      company_id: number
    } | null;
    token: string | null; 
-   setUser: (user: { username: string; group: string; location: string }) => void;
+   setUser: (user: { username: string; group: string; location: string,email:string,company_id:number }) => void;
    setToken: (token: string) => void; 
    clearUser: () => void;
    clearToken: () => void; 
