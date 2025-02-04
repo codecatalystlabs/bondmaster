@@ -59,6 +59,10 @@ export function ElegantCostManagement() {
 	const [selectedCar, setSelectedCar] = useState<Car | null>(null);
 	const [totalCost, setTotalCost] = useState<number>(0);
 
+	console.log(selectedCar,"<<<>>>")
+
+	// const {data:TotalCarCost} = useSWR(`/car/${}/expenses`)
+
 	useEffect(() => {
 		if (selectedCar) {
 			const carCost = selectedCar.bid_price;
@@ -68,9 +72,14 @@ export function ElegantCostManagement() {
 		}
 	}, [selectedCar]);
 
-	const handleCarSelect = (carId: string) => {
-		const car = mockCars.find((c) => c.car_uuid === carId);
-		setSelectedCar(car || null);
+	const handleCarSelect = (carJson: string) => {
+		try {
+			const car = JSON.parse(carJson); // Convert string back to object
+			console.log("Selected Car:", car); // Debugging log
+			setSelectedCar(car);
+		} catch (error) {
+			console.error("Error parsing selected car:", error);
+		}
 	};
 
 	const generatePDF = () => {
@@ -90,17 +99,26 @@ export function ElegantCostManagement() {
 						<SelectTrigger className="w-full">
 							<SelectValue placeholder="Select a car" />
 						</SelectTrigger>
-						<SelectContent>
-							{carList?.data.map((car) => (
-								<SelectItem
-									key={car?.car?.car_id}
-									value={car?.car?.var_id}
-								>
-									{car?.car?.make} {car?.car?.model}{" "}
-									({car?.car?.maunufacture_year})
-								</SelectItem>
-							))}
-						</SelectContent>
+						<Select onValueChange={handleCarSelect}>
+							<SelectTrigger className="w-full">
+								<SelectValue placeholder="Select a car" />
+							</SelectTrigger>
+							<SelectContent>
+								{carList?.data.map((car:any) => (
+									<SelectItem
+										key={car?.car?.car_id}
+										value={JSON.stringify(
+											car?.car
+										)} 
+									>
+										{car?.car?.make}{" "}
+										{car?.car?.model} (
+										{car?.car?.manufacture_year})
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+						;
 					</Select>
 				</CardContent>
 			</Card>
