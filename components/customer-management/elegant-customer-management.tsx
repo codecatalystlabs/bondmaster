@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import type { Car } from "@/types/car";
+import useSWR from "swr";
+import { fetcher } from "@/apis";
 
 // This would typically come from an API or database
 const mockCars: Car[] = [
@@ -48,7 +50,12 @@ const mockCars: Car[] = [
 	// Add more mock cars here...
 ];
 
+
+
 export function ElegantCostManagement() {
+    const { data: carList } = useSWR('/cars', fetcher)
+    
+    console.log(carList,"list===")
 	const [selectedCar, setSelectedCar] = useState<Car | null>(null);
 	const [totalCost, setTotalCost] = useState<number>(0);
 
@@ -84,13 +91,13 @@ export function ElegantCostManagement() {
 							<SelectValue placeholder="Select a car" />
 						</SelectTrigger>
 						<SelectContent>
-							{mockCars.map((car) => (
+							{carList?.data.map((car) => (
 								<SelectItem
-									key={car.car_uuid}
-									value={car.car_uuid}
+									key={car?.car?.car_id}
+									value={car?.car?.var_id}
 								>
-									{car.make} {car.model} (
-									{car.manufacture_year})
+									{car?.car?.make} {car?.car?.model}{" "}
+									({car?.car?.maunufacture_year})
 								</SelectItem>
 							))}
 						</SelectContent>
