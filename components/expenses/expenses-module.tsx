@@ -388,8 +388,8 @@ export function ExpensesModule() {
 								<TableHeader>
 									<TableRow>
 										{expenseTable?.map(
-											(table) => (
-												<TableHead>
+											(table,i) => (
+												<TableHead key={i}>
 													{table.name}
 												</TableHead>
 											)
