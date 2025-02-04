@@ -54,38 +54,43 @@ export function AdminJapanSidebar() {
 					href: "/japan/admin/car-inventory",
 				},
 
-				{
-					title: "Cost Management",
-					icon: <DollarOutlined />,
-					href: "/japan/admin/cost-management",
-				},
+				...(user?.group !== "user"
+					? [
+							{
+								title: "Cost Management",
+								icon: <DollarOutlined />,
+								href: "/japan/admin/cost-management",
+							},
+					  ]
+					: []),
 
 				{
 					title: "Company Expenses",
 					icon: <DollarSign size={16} />,
 					href: "/japan/admin/expenses",
 				},
-				...(user?.group !== "user" ? [
-                       {
-					title: "User Management",
-					icon: <UserOutlined />,
-					href: "/japan/admin/user-management",
-				},
-				]:[])
-				
+				...(user?.group !== "user"
+					? [
+							{
+								title: "User Management",
+								icon: <UserOutlined />,
+								href: "/japan/admin/user-management",
+							},
+					  ]
+					: []),
 			],
 		},
-		{
-			title: "SALE MANAGEMENT",
-			items: [
-				{
-					title: "Sales",
-					icon: <ShoppingCart size={16} />,
-					href: "/japan/admin/sales",
-					badge: "New",
-				},
-			],
-		},
+		// {
+		// 	title: "SALE MANAGEMENT",
+		// 	items: [
+		// 		{
+		// 			title: "Sales",
+		// 			icon: <ShoppingCart size={16} />,
+		// 			href: "/japan/admin/sales",
+		// 			badge: "New",
+		// 		},
+		// 	],
+		// },
 		{
 			title: "ACCOUNT",
 			items: [
@@ -101,11 +106,10 @@ export function AdminJapanSidebar() {
 					onClick: () => {
 						router.push("/signin");
 
-						localStorage.removeItem("user-details")
-						 setTimeout(() => {
-								window.location.reload();
-							}, 500);
-
+						localStorage.removeItem("user-details");
+						setTimeout(() => {
+							window.location.reload();
+						}, 500);
 					},
 				},
 			],
