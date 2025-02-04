@@ -35,7 +35,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Car } from "@/types/car";
 import { Sale } from "@/types/sale";
-import { Company } from "@/types/company";
+import { Company, ICompany } from "@/types/company";
 import { BASE_URL } from "@/constants/baseUrl";
 import useSWR from "swr";
 import { fetcher } from "@/apis";
@@ -43,8 +43,8 @@ import { fetcher } from "@/apis";
 const formSchema = z.object({
 	totalPrice: z.number().positive("Total price must be positive"),
 	saleDate: z.date(),
-	carId: z.number().positive("Please select a car"),
-	companyId: z.number().positive("Please select a company"),
+	car_id: z.number().positive("Please select a car"),
+	company_id: z.number().positive("Please select a company"),
 	isFullPayment: z.boolean(),
 	paymentPeriod: z.number().min(0, "Payment period must be 0 or greater"),
 	installments: z
@@ -63,8 +63,8 @@ interface SaleFormProps {
 	onSubmit: (sale: {
 		total_price: number;
 		sale_date: string;
-		carId: number;
-		companyId: number;
+		car_id: number;
+		company_id: number;
 		is_full_payment: boolean;
 		payment_period: number;
 		created_by: string;
@@ -76,8 +76,8 @@ interface SaleFormProps {
 			due_date: string;
 		}[];
 	}) => void;
-	cars: Car[];
-	companies: Company[];
+
+	companies: ICompany[];
 }
 
 function InstallmentFields({
@@ -204,39 +204,35 @@ function InstallmentFields({
 
 
 
-export function SaleForm({ onSubmit, cars, companies }: SaleFormProps) {
+export function SaleForm({ onSubmit,  companies }: SaleFormProps) {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			totalPrice: 0, // Corresponds to `total_price` in the Sale object
-			saleDate: new Date(), // Default to the current date
-			carId: 0, // Default Car ID to 0
-			companyId: 0, // Default Company ID to 0
-			isFullPayment: true, // Default to full payment
-			paymentPeriod: 0, // Default to no payment period
-			installments: [], // Default to an empty list of installments
+			totalPrice: 0,
+			saleDate: new Date(),
+			car_id: 0,
+			company_id: 0,
+			isFullPayment: true,
+			paymentPeriod: 0,
+			installments: [],
 		},
 	});
 
 	function handleSubmit(values: z.infer<typeof formSchema>) {
-	// 	const newSale: any = {
-	// 		...values,
-	// 		created_by: "admin", 
-	// 		updated_by: "admin",
-	//  }
+	
 
 		onSubmit({
-			total_price: values.totalPrice, // Match `totalPrice` from form to `total_price` in the Sale object
-			sale_date: format(values.saleDate, "yyyy-MM-dd"), // Format `saleDate` for the database
-			carId: values.carId, // Match `carId` to `car_id`
-			companyId: 1, // Match `companyId` to `company_id`
-			is_full_payment: true, // Match `isFullPayment` directly
-			payment_period: values.paymentPeriod ?? 0, // Ensure a default value for `payment_period`
-			created_by: "admin", // Hardcoded for now
-			updated_by: "admin", // Hardcoded for now
+			total_price: values.totalPrice,
+			sale_date: format(values.saleDate, "yyyy-MM-dd"),
+			car_id: values.car_id,
+			company_id: values.company_id,
+			is_full_payment: values?.isFullPayment,
+			payment_period: values.paymentPeriod ?? 0,
+			created_by: "admin",
+			updated_by: "admin",
 		});
 
-		form.reset(); // Reset the form after submission
+		form.reset(); 
 	}
 
 	const [finalCars, setFinalCars] = React.useState<Car[]>([]);
@@ -340,7 +336,7 @@ export function SaleForm({ onSubmit, cars, companies }: SaleFormProps) {
 				/>
 				<FormField
 					control={form.control}
-					name="carId"
+					name="car_id"
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Car</FormLabel>
@@ -359,10 +355,13 @@ export function SaleForm({ onSubmit, cars, companies }: SaleFormProps) {
 									{finalCars?.map((car) => (
 										<SelectItem
 											key={car.car_uuid}
-											value={car.ID?.toString() || ""}
+											value={
+												car.ID?.toString() ||
+												""
+											}
 										>
 											{car.make} {car.model} (
-											{car.maunufacture_year})
+											{car.manufacture_year})
 										</SelectItem>
 									))}
 								</SelectContent>
@@ -373,32 +372,39 @@ export function SaleForm({ onSubmit, cars, companies }: SaleFormProps) {
 				/>
 				<FormField
 					control={form.control}
-					name="companyId"
+					name="company_id"
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Company</FormLabel>
-							<Select
-								onValueChange={(value) =>
-									field.onChange(parseInt(value))
-								}
-								value={field.value.toString()}
-							>
-								<FormControl>
-									<SelectTrigger>
-										<SelectValue placeholder="Select a company" />
-									</SelectTrigger>
-								</FormControl>
-								<SelectContent>
-									{companies.map((company) => (
-										<SelectItem
-											key={company.id}
-											value={company.id.toString()}
-										>
-											{company.name}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
+							<FormControl>
+								<Select
+									onValueChange={(value) => {
+										const numberValue =
+											Number(value);
+										field.onChange(numberValue);
+									}}
+								>
+									<FormControl>
+										<SelectTrigger>
+											<SelectValue placeholder="Select  company" />
+										</SelectTrigger>
+									</FormControl>
+									<SelectContent>
+										{companies?.map(
+											(company: ICompany) => (
+												<SelectItem
+													key={
+														company.ID
+													}
+													value={company.ID.toString()}
+												>
+													{company.name}
+												</SelectItem>
+											)
+										)}
+									</SelectContent>
+								</Select>
+							</FormControl>
 							<FormMessage />
 						</FormItem>
 					)}
