@@ -65,11 +65,14 @@ export function AdminJapanSidebar() {
 					icon: <DollarSign size={16} />,
 					href: "/japan/admin/expenses",
 				},
-				{
+				...(user?.group !== "user" ? [
+                       {
 					title: "User Management",
 					icon: <UserOutlined />,
 					href: "/japan/admin/user-management",
 				},
+				]:[])
+				
 			],
 		},
 		{
