@@ -114,7 +114,9 @@ async function submit(values: z.infer<typeof formSchema>) {
   return (
 		<>
 			{loading ? (
-				<p className='text-white text-bold animate-pulse text-xl transition-colors'>redirecting please wait.....</p>
+				<p className="text-white text-bold animate-pulse text-xl transition-colors">
+					redirecting please wait.....
+				</p>
 			) : (
 				<div className="flex items-center w-[90%] md:w-[60%] lg:w-[30%] justify-center shadow-black shadow-xl rounded-md bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
 					<div className="w-full max-w-xl space-y-8">
@@ -135,9 +137,15 @@ async function submit(values: z.infer<typeof formSchema>) {
 								<span className="w-full border-t" />
 							</div>
 							<div className="relative flex justify-center text-sm">
-								<span className="bg-gray-50 px-2 text-gray-500">
-									LOGIN
-								</span>
+								{loading ? (
+									<span className="bg-gray-50 px-2 animate-ping text-green-500">
+										AUTHENTICATING...
+									</span>
+								) : (
+									<span className="bg-gray-50 px-2 text-gray-500">
+										LOGIN
+									</span>
+								)}
 							</div>
 						</div>
 
@@ -241,7 +249,7 @@ async function submit(values: z.infer<typeof formSchema>) {
 								className="w-full"
 								disabled={loading}
 							>
-								{loading ? "Signing In..." : "Sign In"}
+								{loading ? "loading..." : "Sign In"}
 							</Button>
 
 							<p className="text-center text-sm text-gray-500">

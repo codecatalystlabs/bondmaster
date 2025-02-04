@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Plus } from 'lucide-react';
+import { FileSpreadsheet, Plus } from 'lucide-react';
 import {
   CaretSortIcon,
   ChevronDownIcon,
@@ -59,6 +59,7 @@ import toast from 'react-hot-toast';
 import { CarExpenseModal } from './car-expense-modal';
 import * as z from "zod";
 import useUserStore from '@/app/store/userStore';
+import { handleDownloadExcel } from '@/lib/utils';
 
 
 const formSchema = z.object({
@@ -93,7 +94,6 @@ const user = useUserStore((state) => state.user);
 		string | null
 	 >(null);
 	
-	console.log(selectedCar,"here===")
 
   React.useEffect(() => {
     if (carList?.data) {
@@ -118,7 +118,6 @@ const user = useUserStore((state) => state.user);
   };
 
 	const handleCarExpenseSubmit = async (data: any) => {
-		console.log(selectedCar)
 		
 		const newExpense: any = {
 			...data,
@@ -126,7 +125,6 @@ const user = useUserStore((state) => state.user);
 			created_by: user?.username,
 			updated_by: "admin",
 		};
-
 
 
 		try {
@@ -142,9 +140,7 @@ const user = useUserStore((state) => state.user);
 			console.log(error);
 		}
 		
-		toast.success(
-			"Car expense has been successfully added."
-		);
+		
     };
 
   const handleUpdateCar = (updatedCar: Car) => {
@@ -348,6 +344,13 @@ const user = useUserStore((state) => state.user);
 				<Card>
 					<CardHeader>
 						<CardTitle>Car Inventory</CardTitle>
+						<div className="flex gap-2">
+							
+							{/* <Button onClick={handleDownloadPDF}>
+								<FileText className="mr-2 h-4 w-4" />{" "}
+								Download PDF
+							</Button> */}
+						</div>
 						<CardDescription>
 							Manage your car inventory, upload documents,
 							and track vehicle details.
@@ -410,6 +413,18 @@ const user = useUserStore((state) => state.user);
 										})}
 								</DropdownMenuContent>
 							</DropdownMenu>
+
+							<Button
+								onClick={() =>
+									handleDownloadExcel(
+										cars,
+										"Car Data"
+									)
+								}
+							>
+								<FileSpreadsheet className="mr-2 h-4 w-4" />{" "}
+								Download Excel
+							</Button>
 						</div>
 						<div className="rounded-md border">
 							<Table>

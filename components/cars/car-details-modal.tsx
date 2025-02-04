@@ -1,40 +1,25 @@
-import { fetcher } from "@/apis";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogDescription,
-} from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Car } from "@/types/car";
-import { CarIcon, Info, DollarSign, Truck, User } from "lucide-react";
-import useSWR from "swr";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import type { Car } from "@/types/car"
+import { CarIcon, Info, DollarSign, Truck, User, Receipt } from "lucide-react"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import useSWR from "swr"
+import { fetcher } from "@/apis"
 
 interface CarDetailsModalProps {
-	car: Car | null;
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
+  car: Car | null
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
-export function CarDetailsModal({
-	car,
-	open,
-	onOpenChange,
-}: CarDetailsModalProps) {
-	if (!car) return null;
-
-	const { data: tottalCar } = useSWR(`/total-car-expense/${car?.ID}`, fetcher)
-
-
-	const { data: carExpenseData } = useSWR(`/car/${car?.ID}/expenses`, fetcher);
-
+export function CarDetailsModal({ car, open, onOpenChange }: CarDetailsModalProps) {
+	if (!car) return null
 	
-	console.log(carExpenseData?.data,"=====")
-	
-// /car/1/expenses
+	const { data: expenseData } = useSWR(`/car/${car?.ID}/expenses`,fetcher)
 
-	return (
+  
+
+  return (
 		<Dialog
 			open={open}
 			onOpenChange={onOpenChange}
@@ -53,7 +38,7 @@ export function CarDetailsModal({
 					defaultValue="basic"
 					className="w-full"
 				>
-					<TabsList className="grid w-full grid-cols-4">
+					<TabsList className="grid w-full grid-cols-5">
 						<TabsTrigger value="basic">
 							<CarIcon className="w-4 h-4 mr-2" />
 							Basic Info
@@ -66,13 +51,10 @@ export function CarDetailsModal({
 							<DollarSign className="w-4 h-4 mr-2" />
 							Financial
 						</TabsTrigger>
-						{/* <TabsTrigger value="financial">
-							<DollarSign className="w-4 h-4 mr-2" />
-							Car Expense
-						</TabsTrigger> */}
-						<TabsTrigger value="logistics">
-							<Truck className="w-4 h-4 mr-2" />
-							Logistics
+						
+						<TabsTrigger value="expenses">
+							<Receipt className="w-4 h-4 mr-2" />
+							Expenses
 						</TabsTrigger>
 					</TabsList>
 					<TabsContent
@@ -81,7 +63,7 @@ export function CarDetailsModal({
 					>
 						<div className="grid grid-cols-2 gap-4">
 							<InfoItem
-								label="VIN Number"
+								label="Chasis Number"
 								value={car.vin_number}
 							/>
 							<InfoItem
@@ -131,7 +113,7 @@ export function CarDetailsModal({
 							/>
 							<InfoItem
 								label="Length"
-								value={`${car.length || "N/A"} mm `}
+								value={`${car.length || "N/A"} mm`}
 							/>
 							<InfoItem
 								label="First Registration Year"
@@ -144,18 +126,6 @@ export function CarDetailsModal({
 						className="mt-4"
 					>
 						<div className="grid grid-cols-2 gap-4">
-							
-								{
-									carExpenseData?.data?.map(
-										(car: any,i:any) => (
-											<InfoItem
-												key={i}
-												label="Car expense"
-												value={`${car?.currency} ${car?.total}`}
-											/>
-										)
-									)}
-							
 							<InfoItem
 								label="Bid Price"
 								value={`${car.currency} ${car.bid_price}`}
@@ -172,7 +142,6 @@ export function CarDetailsModal({
 							/>
 						</div>
 					</TabsContent>
-
 					<TabsContent
 						value="logistics"
 						className="mt-4"
@@ -204,6 +173,38 @@ export function CarDetailsModal({
 							/>
 						</div>
 					</TabsContent>
+					<TabsContent
+						value="expenses"
+						className="mt-4"
+					>
+						<Table>
+							<TableHeader>
+								<TableRow>
+									<TableHead>Description</TableHead>
+									<TableHead>Amount</TableHead>
+									<TableHead>Date</TableHead>
+								</TableRow>
+							</TableHeader>
+							<TableBody>
+								{expenseData?.data.map((expense:any) => (
+									<TableRow key={expense.id}>
+										<TableCell>
+											{expense.description}
+										</TableCell>
+										<TableCell>
+											{car.currency}{" "}
+											{expense.amount}
+										</TableCell>
+										<TableCell>
+											{new Date(
+												expense.expense_date
+											).toLocaleDateString()}
+										</TableCell>
+									</TableRow>
+								))}
+							</TableBody>
+						</Table>
+					</TabsContent>
 				</Tabs>
 				<div className="mt-6 pt-4 border-t flex justify-between items-center text-sm text-gray-500">
 					<div className="flex items-center">
@@ -217,20 +218,15 @@ export function CarDetailsModal({
 				</div>
 			</DialogContent>
 		</Dialog>
-	);
+  );
 }
 
-function InfoItem({
-	label,
-	value,
-}: {
-	label: string;
-	value: string | number | undefined;
-}) {
-	return (
-		<div className="space-y-1">
-			<h4 className="text-sm font-medium text-gray-500">{label}</h4>
-			<p className="text-base">{value || "N/A"}</p>
-		</div>
-	);
+function InfoItem({ label, value }: { label: string; value: string | number | undefined }) {
+  return (
+    <div className="space-y-1">
+      <h4 className="text-sm font-medium text-gray-500">{label}</h4>
+      <p className="text-base">{value || "N/A"}</p>
+    </div>
+  )
 }
+

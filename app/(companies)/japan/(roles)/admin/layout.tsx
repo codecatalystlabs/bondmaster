@@ -5,7 +5,7 @@ export default function JapanAdminLayout({
 }) {
   return (
     <div className="overflow-y-auto p-8">
-      <nav>Japan </nav>
+    
       {children}
     </div>
   )
