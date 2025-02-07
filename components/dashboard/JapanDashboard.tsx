@@ -51,12 +51,12 @@ export function JapanDashboard() {
 
     const { data, error, isLoading } = useSWR('/cars', fetcher)
 	
-	const totalCarExpenditure = data?.data.reduce((sum: any, item: any) => sum + item?.car.bid_price, 0)
+	const totalCarExpenditure = data?.data?.reduce((sum: any, item: any) => sum + item?.car.bid_price, 0)
 
     const stats = [
 		{
 			title: "Total Cars Purchased",
-			value: data?.data?.length,
+			value: data?.data?.length || 0,
 			change: "100%",
 			icon: <Car />,
 			chart: (
@@ -79,8 +79,8 @@ export function JapanDashboard() {
 		},
 		{
 			title: "Total Car Expenditure",
-			value: isLoading ? "loading" : totalCarExpenditure,
-			
+			value: isLoading ? "loading" : totalCarExpenditure || 0,
+
 			icon: <DollarOutlined />,
 			chart: (
 				<LineChart
@@ -100,8 +100,8 @@ export function JapanDashboard() {
 		},
 		{
 			title: "Total Cars Dispatched",
-			value: data?.data?.length,
-			
+			value: data?.data?.length || 0,
+
 			icon: <SwapOutlined />,
 			chart: (
 				<LineChart
@@ -119,27 +119,7 @@ export function JapanDashboard() {
 				/>
 			),
 		},
-		{
-			title: "Total Revenue",
-			value: "2,543",
-			
-			icon: <FileTextOutlined />,
-			chart: (
-				<LineChart
-					data={[65, 59, 80, 81, 56, 55, 40]}
-					categories={[
-						"Jan",
-						"Feb",
-						"Mar",
-						"Apr",
-						"May",
-						"Jun",
-						"Jul",
-					]}
-					index="0"
-				/>
-			),
-		},
+		
     ];
 	return (
 		<div className="flex-1 overflow-y-auto p-8">
@@ -163,30 +143,12 @@ export function JapanDashboard() {
 						</span>
 					</div>
 
-					<div className="mt-2">
-						<div className="flex justify-between items-center mb-1">
-							<span className="text-sm font-medium text-primary-foreground/80">
-								Target Progress
-							</span>
-							<span className="text-sm font-medium text-primary-foreground/80">
-								48%
-							</span>
-						</div>
-						<div className="w-full bg-gray-700 rounded-full h-2.5">
-							<div
-								className="bg-green-600 h-2.5 rounded-full"
-								style={{ width: "48%" }}
-							></div>
-						</div>
-					</div>
-					{/* <p className="mt-2 text-primary-foreground/80">
-						You have completed 48% of your target. Keep up the
-						good work!
-					</p> */}
+					
+					
 				</Card>
 
 				<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-					{stats.map((stat, i) => (
+					{stats?.map((stat, i) => (
 						<Card
 							key={i}
 							className="p-6"
@@ -223,43 +185,8 @@ export function JapanDashboard() {
 					))}
 				</div>
 
-				<div className="grid gap-6 lg:grid-cols-3">
-					<Card className="col-span-2 p-6">
-						<div className="flex items-center justify-between">
-							<h3 className="text-lg font-semibold">
-								Revenue Analytics
-							</h3>
-							<Button
-								variant="outline"
-								size="sm"
-							>
-								View All
-							</Button>
-						</div>
-						<div className="mt-4 h-[300px]">
-							<LineChart
-								data={[
-									65, 59, 80, 81, 56, 55, 40, 65, 59,
-									80, 81, 56,
-								]}
-								categories={[
-									"Jan",
-									"Feb",
-									"Mar",
-									"Apr",
-									"May",
-									"Jun",
-									"Jul",
-									"Aug",
-									"Sep",
-									"Oct",
-									"Nov",
-									"Dec",
-								]}
-								index="0"
-							/>
-						</div>
-					</Card>
+				<div className="grid gap-6 lg:grid-cols-2">
+					
 
 					<Card className="p-6">
 						<div className="flex items-center justify-between">

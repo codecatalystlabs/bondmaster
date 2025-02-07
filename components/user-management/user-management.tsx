@@ -165,9 +165,6 @@ export function UserManagement() {
 
 	
 
-	// console.log(filteredUsers,"filtered")
-
-	console.log(usersData, "''''");
 
 		const {
 			data: companiesData,

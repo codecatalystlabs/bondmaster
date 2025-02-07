@@ -59,7 +59,6 @@ export function ElegantCostManagement() {
 	const [selectedCar, setSelectedCar] = useState<Car | null>(null);
 	const [totalCost, setTotalCost] = useState<number>(0);
 
-	console.log(selectedCar,"<<<>>>")
 
 	// const {data:TotalCarCost} = useSWR(`/car/${}/expenses`)
 
@@ -178,3 +177,7 @@ export function ElegantCostManagement() {
 		</div>
 	);
 }
+
+
+
+

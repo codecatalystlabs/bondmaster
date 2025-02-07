@@ -113,9 +113,7 @@ const user = useUserStore((state) => state.user);
     setShowEditForm(true);
   };
 
-  const handleAddCar = (car: Car) => {
-    setCars([...carList?.data, car]);
-  };
+ 
 
 	const handleCarExpenseSubmit = async (data: any) => {
 		
@@ -548,14 +546,14 @@ const user = useUserStore((state) => state.user);
 					<AddCarForm
 						open={showAddForm}
 						onOpenChange={setShowAddForm}
-						onSubmit={handleAddCar}
+					
 						onCancel={() => setShowAddForm(false)}
 					/>
 					<AddCarForm
 						open={showEditForm}
 						onOpenChange={setShowEditForm}
 						initialData={selectedCar}
-						onSubmit={handleUpdateCar}
+						
 						onCancel={() => setShowEditForm(false)}
 					/>
 					<CarDetailsModal
