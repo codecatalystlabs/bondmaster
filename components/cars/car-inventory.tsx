@@ -151,7 +151,7 @@ const user = useUserStore((state) => state.user);
 
   const columns: ColumnDef<Car>[] = [
     {
-      accessorKey: 'vin_number',
+      accessorKey: 'chasis_number',
       header: ({ column }) => {
         return (
           <Button
@@ -163,7 +163,7 @@ const user = useUserStore((state) => state.user);
           </Button>
         );
       },
-      cell: ({ row }) => <div>{row.getValue('vin_number')}</div>,
+      cell: ({ row }) => <div>{row.getValue('chasis_number')}</div>,
     },
     {
       accessorKey: 'make',
@@ -546,14 +546,12 @@ const user = useUserStore((state) => state.user);
 					<AddCarForm
 						open={showAddForm}
 						onOpenChange={setShowAddForm}
-					
 						onCancel={() => setShowAddForm(false)}
 					/>
 					<AddCarForm
 						open={showEditForm}
 						onOpenChange={setShowEditForm}
 						initialData={selectedCar}
-						
 						onCancel={() => setShowEditForm(false)}
 					/>
 					<CarDetailsModal
