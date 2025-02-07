@@ -40,7 +40,7 @@ import  {useDropzone}  from "react-dropzone";
 import { addCar, fetcher, updateCar } from "@/apis";
 import { BASE_URL } from "@/constants/baseUrl";
 import toast from "react-hot-toast";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import { ICurrency } from "@/types/cost-management";
 import useUserStore from "@/app/store/userStore";
 
@@ -213,10 +213,8 @@ export function AddCarForm({
   });
 
 
-  console.log(initialData,"am initial")
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
-	console.log(values, "values===>>>>");
   
 	try {
 	  const formData = new FormData();
@@ -245,7 +243,9 @@ export function AddCarForm({
 		response = await updateCar({
 		  url: `${BASE_URL}/car/${initialData.ID}/details`,
 		  carInfo: formData,
-		});
+    });
+      
+      mutate(`${BASE_URL}/cars`)
 	  } else {
 		// Add new car
 		response = await addCar({
@@ -1164,110 +1164,10 @@ export function AddCarForm({
                           </FormItem>
                         )}
                       />
-                      <FormField
-                        control={form.control}
-                        name="broker_name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Broker Name</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Enter broker name"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="broker_number"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Broker Number</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Enter broker number"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="number_plate"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Number Plate</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Enter number plate"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      {/* <FormField
-                        control={form.control}
-                        name="customer_id"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Customer ID</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                {...field}
-                                value={field.value === null ? "" : field.value}
-                                onChange={(e) => {
-                                  const value =
-                                    e.target.value === ""
-                                      ? null
-                                      : Number(e.target.value);
-                                  field.onChange(value);
-                                }}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      /> */}
-                      <FormField
-                        control={form.control}
-                        name="car_status"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Car Status</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Enter car status"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="car_payment_status"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Car Payment Status</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Enter car payment status"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                     
+                     
+               
+                    
                     </div>
                   </>
                 )}

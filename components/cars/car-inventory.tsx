@@ -150,7 +150,6 @@ const user = useUserStore((state) => state.user);
   };
 
 
-   console.log(selectedCar,"am selected=>>")
 
   const columns: ColumnDef<Car>[] = [
     {
@@ -203,7 +202,7 @@ const user = useUserStore((state) => state.user);
       ),
     },
     {
-      accessorKey: 'maunufacture_year',
+      accessorKey: 'manufacture_year',
       header: ({ column }) => {
         return (
           <Button
@@ -363,13 +362,13 @@ const user = useUserStore((state) => state.user);
 								placeholder="Filter chasis number..."
 								value={
 									(table
-										.getColumn("vin_number")
+										.getColumn("chasis_number")
 										?.getFilterValue() as string) ??
 									""
 								}
 								onChange={(event) =>
 									table
-										.getColumn("vin_number")
+										.getColumn("chasis_number")
 										?.setFilterValue(
 											event.target.value
 										)
