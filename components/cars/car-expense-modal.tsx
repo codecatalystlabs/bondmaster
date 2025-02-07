@@ -64,7 +64,7 @@ export function CarExpenseModal({
 			isLoading: idLoadingExpense,
 		} = useSWR(`/meta/expenses`, fetcher);
 	
-	console.log(expenses, "??????");
+	// console.log(expenses, "??????");
 
 	const user = useUserStore((state) => state.user)
 
