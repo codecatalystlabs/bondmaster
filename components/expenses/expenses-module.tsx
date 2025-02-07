@@ -66,7 +66,7 @@ const formSchema = z.object({
 
 export function ExpensesModule() {
 	  const user = useUserStore((state) => state.user);
-		console.log(user);
+		
 	const [expenses, setExpenses] = React.useState<Expense[]>([]);
 	const [editingExpense, setEditingExpense] =
 		React.useState<ExpenseResponse | null>(null);

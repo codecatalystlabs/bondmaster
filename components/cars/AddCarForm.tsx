@@ -37,9 +37,12 @@ import {
 
 // Add this import for file uploads
 import  {useDropzone}  from "react-dropzone";
-import { addCar } from "@/apis";
+import { addCar, fetcher } from "@/apis";
 import { BASE_URL } from "@/constants/baseUrl";
 import toast from "react-hot-toast";
+import useSWR from "swr";
+import { ICurrency } from "@/types/cost-management";
+import useUserStore from "@/app/store/userStore";
 
 // Extend the form schema to include car images
 const formSchema = z.object({
@@ -133,6 +136,12 @@ export function AddCarForm({
   open,
   onOpenChange,
 }: StepperCarFormProps) {
+	const {
+		data: currencies,
+		error: currencyError,
+		isLoading: idLoadingCurrency,
+	} = useSWR(`/meta/currency`, fetcher);
+	const user = useUserStore((state) => state.user)
   const [step, setStep] = React.useState(1);
   const [previewImages, setPreviewImages] = React.useState<string[]>([]);
 
@@ -200,7 +209,7 @@ export function AddCarForm({
 
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
-	console.log(values, "values===>>>>");
+	// console.log(values, "values===>>>>");
   
 	try {
 	  // Create a FormData object
@@ -883,33 +892,40 @@ export function AddCarForm({
                 {step === 4 && (
                   <>
                     <div className="space-y-4">
-                      <FormField
-                        control={form.control}
-                        name="currency"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Currency</FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select currency" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="USD">USD</SelectItem>
-                                <SelectItem value="EUR">EUR</SelectItem>
-                                <SelectItem value="GBP">GBP</SelectItem>
-                                <SelectItem value="JPY">JPY</SelectItem>
-                                <SelectItem value="UGX">UGX</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                     <FormField
+										control={form.control}
+										name="currency"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Currency</FormLabel>
+												<Select
+													onValueChange={field.onChange}
+													defaultValue={field.value}
+												>
+													<FormControl>
+														<SelectTrigger>
+															<SelectValue placeholder="Select currency" />
+														</SelectTrigger>
+													</FormControl>
+													<SelectContent>
+														{currencies?.data.map(
+															(currency: ICurrency) => (
+																<SelectItem
+																	key={currency.ID}
+																	value={
+																		currency.name
+																	}
+																>
+																	{currency.name}
+																</SelectItem>
+															)
+														)}
+													</SelectContent>
+												</Select>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
                       <FormField
                         control={form.control}
                         name="bid_price"
