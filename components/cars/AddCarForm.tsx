@@ -37,7 +37,7 @@ import {
 
 // Add this import for file uploads
 import  {useDropzone}  from "react-dropzone";
-import { addCar, fetcher } from "@/apis";
+import { addCar, fetcher, updateCar } from "@/apis";
 import { BASE_URL } from "@/constants/baseUrl";
 import toast from "react-hot-toast";
 import useSWR from "swr";
@@ -141,57 +141,63 @@ export function AddCarForm({
 		error: currencyError,
 		isLoading: idLoadingCurrency,
 	} = useSWR(`/meta/currency`, fetcher);
+	const {
+		data: companiesData,
+		error:getCompanyError,
+		isLoading:isLoadingCompanies,
+	} = useSWR(`/companies`, fetcher);
+
 	const user = useUserStore((state) => state.user)
   const [step, setStep] = React.useState(1);
   const [previewImages, setPreviewImages] = React.useState<string[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || {
-      chasis_number: "",
-      make: "",
-      model: "",
-      maunufacture_year: new Date().getFullYear(),
-      first_registration_year: new Date().getFullYear(),
-      colour: "",
-      engine_number: "",
-      engine_capacity: "",
-      transmission: "",
-      body_type: "",
-      maxim_carry: 0,
-      weight: 0,
-      gross_weight: 0,
-      length: 0,
-      width: 0,
-      height: 0,
-      millage: 0,
-      fuel_consumption: "",
-      ps: false,
-      pw: false,
-      abs: false,
-      ads: false,
-      aw: false,
-      sw: false,
-      navigation: false,
-      ac: false,
-      currency: "",
-      bid_price: 0,
-      vat_tax: null,
-      dollar_rate: 0,
-      purchase_date: "",
-      auction: "",
-      from_company_id: 0,
-      to_company_id: "",
-      destination: "",
-      port: "",
-      broker_name: "",
-      broker_number: "",
-      number_plate: "",
-      customer_id: null,
-      car_status: "",
-      car_payment_status: "",
-      car_images: [],
-    },
+	defaultValues: {
+		chasis_number: initialData?.chasis_number || "",
+		make: initialData?.make || "",
+		model: initialData?.model || "",
+		maunufacture_year: initialData?.manufacture_year || new Date().getFullYear(),
+		first_registration_year: initialData?.first_registration_year || new Date().getFullYear(),
+		colour: initialData?.colour || "",
+		engine_number: initialData?.engine_number || "",
+		engine_capacity: initialData?.engine_capacity || "",
+		transmission: initialData?.transmission || "",
+		body_type: initialData?.body_type || "",
+		maxim_carry: initialData?.maxim_carry || 0,
+		weight: initialData?.weight || 0,
+		gross_weight: initialData?.gross_weight || 0,
+		length: initialData?.length || 0,
+		width: initialData?.width || 0,
+		height: initialData?.height || 0,
+		millage: initialData?.millage || 0,
+		fuel_consumption: initialData?.fuel_consumption || "",
+		ps: initialData?.ps || false,
+		pw: initialData?.pw || false,
+		abs: initialData?.abs || false,
+		ads: initialData?.ads || false,
+		aw: initialData?.aw || false,
+		sw: initialData?.sw || false,
+		navigation: initialData?.navigation || false,
+		ac: initialData?.ac || false,
+		currency: initialData?.currency || "",
+		bid_price: initialData?.bid_price || 0,
+		vat_tax: initialData?.vat_tax ?? null,  // Ensure null is preserved
+		dollar_rate: initialData?.dollar_rate || 0,
+		purchase_date: initialData?.purchase_date || "",
+		auction: initialData?.auction || "",
+		from_company_id: initialData?.from_company_id || user?.company_id ,
+		to_company_id: initialData?.to_company_id || "",
+		destination: initialData?.destination || "",
+		port: initialData?.port || "",
+		broker_name: initialData?.broker_name || "",
+		broker_number: initialData?.broker_number || "",
+		number_plate: initialData?.number_plate || "",
+		customer_id: initialData?.customer_id ?? null,  // Preserve null
+		car_status: initialData?.car_status || "",
+		car_payment_status: initialData?.car_payment_status || "",
+		car_images: initialData?.car_images || [],
+	  },
   });
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -207,12 +213,12 @@ export function AddCarForm({
   });
 
 
+  console.log(initialData,"am initial")
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
-	// console.log(values, "values===>>>>");
+	console.log(values, "values===>>>>");
   
 	try {
-	  // Create a FormData object
 	  const formData = new FormData();
   
 	  // Append all non-file fields correctly
@@ -233,22 +239,31 @@ export function AddCarForm({
 		});
 	  }
   
-	  // Send form data using API client
-	  const response = await addCar({
-		url: `${BASE_URL}/car`,
-		carInfo: formData,
-	  });
+	  let response;
+	  if (initialData) {
+		// Update existing car
+		response = await updateCar({
+		  url: `${BASE_URL}/car/${initialData.ID}/details`,
+		  carInfo: formData,
+		});
+	  } else {
+		// Add new car
+		response = await addCar({
+		  url: `${BASE_URL}/car`,
+		  carInfo: formData,
+		});
+	  }
   
 	  if (response?.data) {
-		toast.success("Car added successfully");
+		toast.success(initialData ? "Car updated successfully" : "Car added successfully");
 		onOpenChange(false);
 		setStep(1);
 	  }
 	} catch (error) {
-	  console.error("Error adding car:", error);
-	  toast.error("Failed to add car. Please try again.");
+	  console.error("Error:", error);
+	  toast.error(initialData ? "Failed to update car. Please try again." : "Failed to add car. Please try again.");
 	}
-     form.reset()
+	form.reset();
 	setPreviewImages([]);
   }
 
@@ -258,6 +273,12 @@ export function AddCarForm({
       setPreviewImages([]);
     }
   }, [open]);
+  React.useEffect(() => {
+	if (initialData) {
+	  form.setValue("model", initialData.model || "");
+	}
+  }, [initialData, form]);
+  
 
   React.useEffect(() => {
     // Cleanup function to revoke the data URIs to avoid memory leaks
@@ -406,7 +427,7 @@ export function AddCarForm({
                           <FormItem>
                             <FormLabel>Model</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter model" {...field} />
+                              <Input placeholder="Enter model" {...field}/>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -1038,30 +1059,6 @@ export function AddCarForm({
                     <div className="space-y-4">
                       <FormField
                         control={form.control}
-                        name="from_company_id"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>From Company ID</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                {...field}
-                                value={field.value === 0 ? "" : field.value}
-                                onChange={(e) => {
-                                  const value =
-                                    e.target.value === ""
-                                      ? 0
-                                      : Number(e.target.value);
-                                  field.onChange(value);
-                                }}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
                         name="to_company_id"
                         render={({ field }) => (
                           <FormItem>
@@ -1076,12 +1073,12 @@ export function AddCarForm({
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {destinationCompanies.map((company) => (
+                                {companiesData?.data?.map((company:any) => (
                                   <SelectItem
-                                    key={company.id}
-                                    value={company.id}
+                                    key={company?.ID}
+                                    value={company?.name}
                                   >
-                                    {company.name}
+                                    {company?.name}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -1105,7 +1102,7 @@ export function AddCarForm({
                             <FormMessage />
                           </FormItem>
                         )}
-                      />
+                      /> 
                     </div>
                     <div className="space-y-4">
                       <FormField
@@ -1169,7 +1166,7 @@ export function AddCarForm({
                           </FormItem>
                         )}
                       />
-                      <FormField
+                      {/* <FormField
                         control={form.control}
                         name="customer_id"
                         render={({ field }) => (
@@ -1192,7 +1189,7 @@ export function AddCarForm({
                             <FormMessage />
                           </FormItem>
                         )}
-                      />
+                      /> */}
                       <FormField
                         control={form.control}
                         name="car_status"
