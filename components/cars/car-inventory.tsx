@@ -149,6 +149,9 @@ const user = useUserStore((state) => state.user);
     );
   };
 
+
+   console.log(selectedCar,"am selected=>>")
+
   const columns: ColumnDef<Car>[] = [
     {
       accessorKey: 'chasis_number',
