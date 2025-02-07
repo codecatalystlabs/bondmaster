@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 import { AdminJapanSidebar } from "@/components/dashboard/admin-sidebar-japan";
 import useUserStore from "@/app/store/userStore";
 import { redirect } from "next/navigation";
+import WithAuth from "@/app/hooks/withAuth";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -25,10 +26,11 @@ export default function JapanLayout({
 	children: React.ReactNode;
 }>) {
 	const user = useUserStore((state) => state.user)
-	  
+	  console.log(user,"user in the higher order component")
 	if(!user)redirect('/signin')
 	return (
 
+		<WithAuth>
 		<div
 			className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 		>
@@ -40,6 +42,8 @@ export default function JapanLayout({
 					{children}
 				</div>
 			</div>
-		</div>
+			</div>
+		
+		</WithAuth>
 	);
 }

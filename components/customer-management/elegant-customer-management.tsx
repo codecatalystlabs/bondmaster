@@ -74,7 +74,7 @@ export function ElegantCostManagement() {
 	const handleCarSelect = (carJson: string) => {
 		try {
 			const car = JSON.parse(carJson); // Convert string back to object
-			console.log("Selected Car:", car); // Debugging log
+			// console.log("Selected Car:", car); // Debugging log
 			setSelectedCar(car);
 		} catch (error) {
 			console.error("Error parsing selected car:", error);
@@ -94,16 +94,14 @@ export function ElegantCostManagement() {
 					<CardTitle>Select a Car</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<Select onValueChange={handleCarSelect}>
-						<SelectTrigger className="w-full">
-							<SelectValue placeholder="Select a car" />
-						</SelectTrigger>
+				
+						
 						<Select onValueChange={handleCarSelect}>
 							<SelectTrigger className="w-full">
 								<SelectValue placeholder="Select a car" />
 							</SelectTrigger>
 							<SelectContent>
-								{carList?.data.map((car:any) => (
+								{carList?.data?.map((car:any) => (
 									<SelectItem
 										key={car?.car?.car_id}
 										value={JSON.stringify(
@@ -117,8 +115,8 @@ export function ElegantCostManagement() {
 								))}
 							</SelectContent>
 						</Select>
-						;
-					</Select>
+						
+				
 				</CardContent>
 			</Card>
 

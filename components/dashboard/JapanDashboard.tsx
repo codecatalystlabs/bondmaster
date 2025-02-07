@@ -191,7 +191,7 @@ export function JapanDashboard() {
 					<Card className="p-6">
 						<div className="flex items-center justify-between">
 							<h3 className="text-lg font-semibold">
-								Leads By Source
+								Visualization by cars
 							</h3>
 							<Button
 								variant="outline"
@@ -212,82 +212,7 @@ export function JapanDashboard() {
 						</div>
 					</Card>
 				</div>
-{/* 
-				<div className="grid gap-6 lg:grid-cols-2">
-					<Card className="p-6">
-						<div className="flex items-center justify-between">
-							<h3 className="text-lg font-semibold">
-								Top Deals
-							</h3>
-							<Button
-								variant="outline"
-								size="sm"
-							>
-								View All
-							</Button>
-						</div>
-						<div className="mt-4 space-y-4">
-							{topDeals?.map((deal, i) => (
-								<div
-									key={i}
-									className="flex items-center justify-between"
-								>
-									<div className="flex items-center gap-3">
-										<div className="h-10 w-10 rounded-full bg-gray-200" />
-										<div>
-											<div className="font-medium">
-												{deal?.name}
-											</div>
-											<div className="text-sm text-gray-500">
-												{deal?.email}
-											</div>
-										</div>
-									</div>
-									<div className="font-medium">
-										{deal?.amount}
-									</div>
-								</div>
-							))}
-						</div>
-					</Card>
 
-					<Card className="p-6">
-						<div className="flex items-center justify-between">
-							<h3 className="text-lg font-semibold">
-								Deals Status
-							</h3>
-							<Button
-								variant="outline"
-								size="sm"
-							>
-								View All
-							</Button>
-						</div>
-						<div className="mt-4 space-y-4">
-							<div className="flex items-center justify-between">
-								<div>Successful Deals</div>
-								<div className="font-medium">
-									987 deals
-								</div>
-							</div>
-							<Progress value={70} />
-							<div className="flex items-center justify-between">
-								<div>Pending Deals</div>
-								<div className="font-medium">
-									1,073 deals
-								</div>
-							</div>
-							<Progress value={45} />
-							<div className="flex items-center justify-between">
-								<div>Rejected Deals</div>
-								<div className="font-medium">
-									1,674 deals
-								</div>
-							</div>
-							<Progress value={25} />
-						</div>
-					</Card>
-				</div> */}
 			</div>
 		</div>
 	);

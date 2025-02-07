@@ -187,7 +187,7 @@ export function CustomerManagement() {
 
 	const deleteCustomer = (customerUuid: string) => {
 		setCustomers(
-			customers.filter(
+			customers?.filter(
 				(customer) => customer.customer_uuid !== customerUuid
 			)
 		);
@@ -533,11 +533,11 @@ export function CustomerManagement() {
 								customerList?.data?.map(
 									(item: DataItem) => (
 										<TableRow
-											key={item.customer.ID}
+											key={item?.customer?.ID}
 										>
 											<TableCell>
 												{`${
-													item.customer
+													item?.customer
 														?.surname
 												} ${
 													item.customer
@@ -556,22 +556,22 @@ export function CustomerManagement() {
 											</TableCell>
 											<TableCell>
 												{
-													item.customer
+													item?.customer
 														?.nationality
 												}
 											</TableCell>
 											<TableCell>
-												{item.customer?.age}
+												{item?.customer?.age}
 											</TableCell>
 											<TableCell>
 												{
-													item.customer
+													item?.customer
 														?.email
 												}
 											</TableCell>
 											<TableCell>
 												{
-													item.customer
+													item?.customer
 														?.telephone
 												}
 											</TableCell>

@@ -175,7 +175,6 @@ export function AddCarForm({
 			customer_id: null,
 			car_status: "",
 			car_payment_status: "",
-			dollar_rate: 0,
 			created_by: "",
 			updated_by: "",
 		},

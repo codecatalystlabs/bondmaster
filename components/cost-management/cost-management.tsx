@@ -25,29 +25,11 @@ import useSWR from "swr";
 import { BASE_URL } from "@/constants/baseUrl";
 import { fetcher } from "@/apis";
 
-// Mock data
-const buyers = [
-	{ id: "1", name: "John Doe" },
-	{ id: "2", name: "Jane Smith" },
-];
-
-const initialCostCategories: CostCategory[] = [
-	{ id: "1", name: "inspection" },
-	{ id: "2", name: "cleaning" },
-	{ id: "3", name: "inland_transport" },
-	{ id: "4", name: "customs" },
-	{ id: "5", name: "storage" },
-	{ id: "6", name: "repairs" },
-	{ id: "7", name: "documentation" },
-	{ id: "8", name: "other" },
-];
 
 export function CostManagement() {
 	const [costs, setCosts] = React.useState<Cost[]>([]);
 	const [invoices, setInvoices] = React.useState<Invoice[]>([]);
-	const [costCategories, setCostCategories] = React.useState<CostCategory[]>(
-		initialCostCategories
-	);
+
 	const [cars, setCars] = React.useState<Car[]>([]);
 
 	const {
@@ -64,7 +46,7 @@ export function CostManagement() {
 
 	React.useEffect(() => {
 		if (carList?.data) {
-			const flattenedList = carList.data.map((item: any) => item.car);
+			const flattenedList = carList?.data?.map((item: any) => item.car);
 			setCars(flattenedList);
 		}
 	}, [carList]);
@@ -77,9 +59,7 @@ export function CostManagement() {
 		setInvoices([...invoices, invoice]);
 	};
 
-	const handleAddCategory = (category: CostCategory) => {
-		setCostCategories([...costCategories, category]);
-	};
+
 
 	return (
 		<div className="flex-1 overflow-y-auto p-8">
@@ -109,8 +89,8 @@ export function CostManagement() {
 							<CostForm
 								onSubmit={handleCostSubmit}
 								cars={cars}
-								costCategories={costCategories}
-								onAddCategory={handleAddCategory}
+								costCategories={[]}
+								onAddCategory={() => console.log("add")}
 							/>
 							<div>
 								<h3 className="text-lg font-semibold mb-2">
@@ -148,19 +128,19 @@ export function CostManagement() {
 												) => (
 													<TableRow
 														key={
-															expense.ID
+															expense?.ID
 														}
 													>
 														<TableCell>
 															{
-																cars.find(
+																cars?.find(
 																	(
 																		car
 																	) =>
 																		Number(
-																			car.ID
+																			car?.ID
 																		) ===
-																		expense.ID
+																		expense?.ID
 																)
 																	?.model
 															}
@@ -168,22 +148,22 @@ export function CostManagement() {
 
 														<TableCell>
 															{
-																expense.description
+																expense?.description
 															}
 														</TableCell>
 														<TableCell>
 															{new Date(
-																expense.expense_date
+																expense?.expense_date
 															).toLocaleDateString()}
 														</TableCell>
 														<TableCell>
 															{
-																expense.amount
+																expense?.amount
 															}
 														</TableCell>
 														<TableCell>
 															{
-																expense.currency
+																expense?.currency
 															}
 														</TableCell>
 													</TableRow>
@@ -199,9 +179,9 @@ export function CostManagement() {
 						<div className="space-y-4">
 							<InvoiceGenerator
 								onSubmit={handleInvoiceSubmit}
-								cars={cars}
-								costs={costs}
-								buyers={buyers}
+								cars={cars && cars}
+								costs={costs && costs}
+								buyers={[]}
 							/>
 							<div>
 								<h3 className="text-lg font-semibold mb-2">
@@ -233,38 +213,38 @@ export function CostManagement() {
 											</TableRow>
 										</TableHeader>
 										<TableBody>
-											{invoices.map(
+											{invoices?.map(
 												(invoice) => (
 													<TableRow
 														key={
-															invoice.id
+															invoice?.id
 														}
 													>
 														<TableCell>
 															{
-																invoice.invoiceNumber
+																invoice?.invoiceNumber
 															}
 														</TableCell>
 														<TableCell>
 															{
-																invoice.buyerName
+																invoice?.buyerName
 															}
 														</TableCell>
 														<TableCell>
 															$
 															{
-																invoice.totalAmount
+																invoice?.totalAmount
 															}
 														</TableCell>
 														<TableCell>
 															{
-																invoice.status
+																invoice?.status
 															}
 														</TableCell>
 														<TableCell>
 															{new Date(
-																invoice.dueDate
-															).toLocaleDateString()}
+																invoice?.dueDate
+															)?.toLocaleDateString()}
 														</TableCell>
 													</TableRow>
 												)
