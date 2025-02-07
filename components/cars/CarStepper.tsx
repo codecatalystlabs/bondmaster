@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import * as React from "react";
@@ -36,10 +34,7 @@ import {
 } from "@/components/ui/dialog";
 
 // Add this import for file uploads
-import  {useDropzone}  from "react-dropzone";
-import { addCar } from "@/apis";
-import { BASE_URL } from "@/constants/baseUrl";
-import toast from "react-hot-toast";
+import  useDropzone  from "react-dropzone";
 
 // Extend the form schema to include car images
 const formSchema = z.object({
@@ -111,7 +106,7 @@ const destinationCompanies: DestinationCompany[] = [
 ];
 
 interface StepperCarFormProps {
-//   onSubmit: (car: Car) => void;
+  onSubmit: (car: Car) => void;
   onCancel: () => void;
   initialData?: Car;
   open: boolean;
@@ -126,8 +121,8 @@ const steps = [
   { id: 5, name: "Shipping and Destination" },
 ];
 
-export function AddCarForm({
-//   onSubmit,
+export function CarForm({
+  onSubmit,
   onCancel,
   initialData,
   open,
@@ -197,50 +192,10 @@ export function AddCarForm({
     },
   });
 
-
-
-  async function handleSubmit(values: z.infer<typeof formSchema>) {
-	console.log(values, "values===>>>>");
-  
-	try {
-	  // Create a FormData object
-	  const formData = new FormData();
-  
-	  // Append all non-file fields correctly
-	  Object.entries(values).forEach(([key, value]) => {
-		if (key !== "car_images") {
-		  if (typeof value === "number" || typeof value === "boolean") {
-			formData.append(key, value.toString()); // Convert numbers & booleans to strings
-		  } else if (value !== null) {
-			formData.append(key, value as string);
-		  }
-		}
-	  });
-  
-	  // Append file fields
-	  if (values.car_images && values.car_images.length > 0) {
-		values.car_images.forEach((file) => {
-		  formData.append("car_images", file);
-		});
-	  }
-  
-	  // Send form data using API client
-	  const response = await addCar({
-		url: `${BASE_URL}/car`,
-		carInfo: formData,
-	  });
-  
-	  if (response?.data) {
-		toast.success("Car added successfully");
-		onOpenChange(false);
-		setStep(1);
-	  }
-	} catch (error) {
-	  console.error("Error adding car:", error);
-	  toast.error("Failed to add car. Please try again.");
-	}
-     form.reset()
-	setPreviewImages([]);
+  function handleSubmit(values: z.infer<typeof formSchema>) {
+    onSubmit(values as Car);
+    onOpenChange(false);
+    setStep(1);
   }
 
   React.useEffect(() => {
@@ -1291,4 +1246,3 @@ export function AddCarForm({
     </Dialog>
   );
 }
-

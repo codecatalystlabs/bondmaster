@@ -88,8 +88,17 @@ const editCustomer = async ({ url, customerInfo }: ICreateCustomer) => {
 };
 
 const addCar = async ({ url, carInfo }: ICreateCar) => {
-    const { data } = await apiClient.post(url, carInfo);
-    return data;
+    try {
+        const { data } = await apiClient.post(url, carInfo,{
+            headers: {
+              "Content-Type": "multipart/form-data", // Not strictly needed, but added for clarity
+            },
+          });
+        return data;
+    } catch (error) {
+        console.log(error,"AM ERROR")
+    }
+
 };
 
 const addCarExpenses = async ({ url, expense }: ICarExpense) => {
