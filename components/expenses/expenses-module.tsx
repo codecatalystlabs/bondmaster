@@ -173,7 +173,7 @@ export function ExpensesModule() {
 		} else {
 			const newExpense: Expense = {
 				...values,
-				company_id: user?.company_id,
+				company_id: user?.company_id ?? 0,
 				created_by: "admin",
 				updated_by: "admin",
 			};

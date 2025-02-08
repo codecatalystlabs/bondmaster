@@ -64,7 +64,7 @@ export function CarDetailsModal({ car, open, onOpenChange }: CarDetailsModalProp
 						<div className="grid grid-cols-2 gap-4">
 							<InfoItem
 								label="Chasis Number"
-								value={car.vin_number}
+								value={car.chasis_number}
 							/>
 							<InfoItem
 								label="Make"

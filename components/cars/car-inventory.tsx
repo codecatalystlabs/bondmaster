@@ -47,7 +47,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import { CarForm } from './car-form';
 import { CarDetailsModal } from './car-details-modal';
 import { Car, CarResponse } from '@/types/car';
 import useSWR, { mutate } from 'swr';

@@ -23,17 +23,24 @@ import type { Car } from "@/types/car";
 
 export function ElegantCostManagement() {
 	const { data: carList } = useSWR("/cars", fetcher);
+
 	const [selectedCar, setSelectedCar] = useState<Car | null>(null);
 	const [totalExpenses, setTotalExpenses] = useState<number>(0);
 	const [profitOrLoss, setProfitOrLoss] = useState<number>(0);
 
+		const { data: total } = useSWR(
+			`/total-car-expense/${selectedCar?.ID}`,
+			fetcher
+		);
+	
+	
+	
+	console.log(total,"==3333")
+
+
 	useEffect(() => {
 		if (selectedCar) {
-			const expensesCost =
-				selectedCar.expenses?.reduce(
-					(sum, exp) => sum + exp.amount,
-					0
-				) || 0;
+			const expensesCost = 0	
 			setTotalExpenses(expensesCost);
 			setProfitOrLoss(selectedCar.bid_price - expensesCost);
 		}
@@ -71,7 +78,10 @@ export function ElegantCostManagement() {
 									value={JSON.stringify(car?.car)}
 								>
 									{car?.car?.make} {car?.car?.model}{" "}
-									({car?.car?.manufacture_year})
+									({car?.car.model})- (
+									{car?.car.colour}) -(
+									{car?.car.engine_capacity}) - (
+									{car?.car.manufacture_year})
 								</SelectItem>
 							))}
 						</SelectContent>
@@ -98,33 +108,34 @@ export function ElegantCostManagement() {
 								</p>
 								<p>
 									<strong>Chassis Number:</strong>{" "}
-									{selectedCar.chasis_number}
+									{selectedCar?.chasis_number}
+								</p>
+								<p>
+									<strong>VAT:</strong>{" "}
+									{" USD "}
+									{total?.data?.vat_tax?.toLocaleString()}
 								</p>
 								<p>
 									<strong>Bid Price:</strong>{" "}
-									{selectedCar.currency}{" "}
-									{selectedCar.bid_price.toLocaleString()}
+									{" USD "}
+									{total?.data?.bid_price?.toLocaleString()}
 								</p>
 								<p>
 									<strong>Total Expenses:</strong>{" "}
-									{selectedCar.currency}{" "}
-									{totalExpenses.toLocaleString()}
+									{" USD "}
+									{total?.data?.total_expense?.toLocaleString()}
 								</p>
-								<p
-									className={
-										profitOrLoss >= 0
-											? "text-green-600"
-											: "text-red-600"
-									}
-								>
-									<strong>Profit/Loss:</strong>{" "}
-									{selectedCar.currency}{" "}
-									{profitOrLoss.toLocaleString()}
+								<p>
+									<strong>
+										Total Car Price and Expense:
+									</strong>{" "}
+									{" USD"}
+									{total?.data?.total_car_price_and_expenses?.toLocaleString()}
 								</p>
 							</div>
 							<div className="flex justify-center items-center">
 								<QRCodeSVG
-									value={`https://yourapp.com/car-pdf/${selectedCar.car_uuid}`}
+									value={`http://192.168.0.13:3000/car-pdf/${selectedCar.car_uuid}`}
 									size={200}
 								/>
 							</div>
@@ -146,7 +157,7 @@ export function ElegantCostManagement() {
 								</tr>
 							</thead>
 							<tbody>
-								{selectedCar.expenses?.map(
+								{/* {selectedCar.expenses?.map(
 									(expense, index) => (
 										<tr
 											key={index}
@@ -163,7 +174,7 @@ export function ElegantCostManagement() {
 											</td>
 										</tr>
 									)
-								)}
+								)} */}
 							</tbody>
 						</table>
 					</CardContent>
