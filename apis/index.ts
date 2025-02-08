@@ -37,7 +37,7 @@ interface ICreateCustomer {
 
 interface ICreateCar {
     url: string;
-    carInfo: Partial<Car>;
+    carInfo: Partial<Car> | FormData
 }
 
 interface ISale {

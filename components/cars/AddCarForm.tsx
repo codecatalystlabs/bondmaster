@@ -99,7 +99,8 @@ const formSchema = z.object({
   customer_id: z.number().nullable(),
   car_status: z.string(),
   car_payment_status: z.string(),
-  car_photos: z.array(z.instanceof(File)).optional(),
+  images: z.array(z.instanceof(File)).optional(),
+
 });
 
 type DestinationCompany = {
@@ -196,7 +197,9 @@ export function AddCarForm({
 		customer_id: initialData?.customer_id ?? null,  // Preserve null
 		car_status: initialData?.car_status || "",
 		car_payment_status: initialData?.car_payment_status || "",
-		car_photos: initialData?.car_photos || [],
+
+		images: initialData?.images || [],
+
 	  },
   });
 
@@ -205,7 +208,9 @@ export function AddCarForm({
       "image/*": [],
     },
     onDrop: (acceptedFiles) => {
-      form.setValue("car_photos", acceptedFiles, {
+
+      form.setValue("images", acceptedFiles, {
+>
         shouldValidate: true,
       });
       setPreviewImages(acceptedFiles.map((file) => URL.createObjectURL(file)));
@@ -221,7 +226,8 @@ export function AddCarForm({
   
 	  // Append all non-file fields correctly
 	  Object.entries(values).forEach(([key, value]) => {
-		if (key !== "car_photos") {
+
+		if (key !== "images") {
 		  if (typeof value === "number" || typeof value === "boolean") {
 			formData.append(key, value.toString()); // Convert numbers & booleans to strings
 		  } else if (value !== null) {
@@ -231,9 +237,10 @@ export function AddCarForm({
 	  });
   
 	  // Append file fields
-	  if (values.car_photos && values.car_photos.length > 0) {
-		values.car_photos.forEach((file) => {
-		  formData.append("car_photos", file);
+
+	  if (values.images && values.images.length > 0) {
+		values.images.forEach((file) => {
+		  formData.append("images", file);
 		});
 	  }
   
@@ -319,7 +326,8 @@ export function AddCarForm({
 		customer_id: initialData.customer_id ?? null,  // Preserve null
 		car_status: initialData.car_status || "",
 		car_payment_status: initialData.car_payment_status || "",
-		car_photos: initialData.car_photos || [],
+		images: initialData.images || [],
+
 	  });
 	}
   }, [initialData, form]);
@@ -333,8 +341,9 @@ export function AddCarForm({
 
   const removeImage = (index: number) => {
     const newImages =
-      form.getValues("car_photos")?.filter((_, i) => i !== index) || [];
-    form.setValue("car_photos", newImages);
+
+      form.getValues("images")?.filter((_, i) => i !== index) || [];
+    form.setValue("images", newImages);
     setPreviewImages(previewImages.filter((_, i) => i !== index));
   };
 
@@ -1177,7 +1186,7 @@ export function AddCarForm({
               <div className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="car_photos"
+                  name="images"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Car Images</FormLabel>
