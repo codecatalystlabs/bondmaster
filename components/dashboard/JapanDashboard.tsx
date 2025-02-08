@@ -13,7 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import useSWR from "swr";
 import { fetcher } from "@/apis";
-import { Car } from "lucide-react";
+import { Car, JapaneseYen } from "lucide-react";
 
 
 
@@ -81,7 +81,7 @@ export function JapanDashboard() {
 			title: "Total Car Expenditure",
 			value: isLoading ? "loading" : totalCarExpenditure || 0,
 
-			icon: <DollarOutlined />,
+			icon: <JapaneseYen />,
 			chart: (
 				<LineChart
 					data={[65, 59, 80, 81, 56, 55, 40]}
@@ -119,7 +119,6 @@ export function JapanDashboard() {
 				/>
 			),
 		},
-		
     ];
 	return (
 		<div className="flex-1 overflow-y-auto p-8">

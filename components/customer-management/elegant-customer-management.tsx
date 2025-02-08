@@ -17,64 +17,31 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import type { Car } from "@/types/car";
 import useSWR from "swr";
 import { fetcher } from "@/apis";
-
-// This would typically come from an API or database
-const mockCars: Car[] = [
-	{
-		ID: 23,
-		car_uuid: "858e9bed-6b3e-4252-98cf-05ab95aa18de",
-		make: "Grab",
-		model: "Grab",
-		manufacture_year: 2025,
-		vin_number: "2311244123412341234",
-		bid_price: 12334,
-		currency: "USD",
-		expenses: [
-			{
-				ID: 5,
-				amount: 34343,
-				currency: "Ugandan Shilling",
-				description: "Pay for testing fuel",
-			},
-			{
-				ID: 6,
-				amount: 900000,
-				currency: "Ugandan Shilling",
-				description: "server",
-			},
-		],
-	},
-	// Add more mock cars here...
-];
-
-
+import type { Car } from "@/types/car";
 
 export function ElegantCostManagement() {
-    const { data: carList } = useSWR('/cars', fetcher)
-    
-    console.log(carList,"list===")
+	const { data: carList } = useSWR("/cars", fetcher);
 	const [selectedCar, setSelectedCar] = useState<Car | null>(null);
-	const [totalCost, setTotalCost] = useState<number>(0);
-
-
-	// const {data:TotalCarCost} = useSWR(`/car/${}/expenses`)
+	const [totalExpenses, setTotalExpenses] = useState<number>(0);
+	const [profitOrLoss, setProfitOrLoss] = useState<number>(0);
 
 	useEffect(() => {
 		if (selectedCar) {
-			const carCost = selectedCar.bid_price;
-			const expensesCost = 100
-				
-			setTotalCost(carCost + expensesCost);
+			const expensesCost =
+				selectedCar.expenses?.reduce(
+					(sum, exp) => sum + exp.amount,
+					0
+				) || 0;
+			setTotalExpenses(expensesCost);
+			setProfitOrLoss(selectedCar.bid_price - expensesCost);
 		}
 	}, [selectedCar]);
 
 	const handleCarSelect = (carJson: string) => {
 		try {
-			const car = JSON.parse(carJson); // Convert string back to object
-			// console.log("Selected Car:", car); // Debugging log
+			const car = JSON.parse(carJson);
 			setSelectedCar(car);
 		} catch (error) {
 			console.error("Error parsing selected car:", error);
@@ -82,7 +49,6 @@ export function ElegantCostManagement() {
 	};
 
 	const generatePDF = () => {
-		// This would typically call an API to generate the PDF
 		console.log("Generating PDF for car:", selectedCar?.car_uuid);
 	};
 
@@ -94,29 +60,22 @@ export function ElegantCostManagement() {
 					<CardTitle>Select a Car</CardTitle>
 				</CardHeader>
 				<CardContent>
-				
-						
-						<Select onValueChange={handleCarSelect}>
-							<SelectTrigger className="w-full">
-								<SelectValue placeholder="Select a car" />
-							</SelectTrigger>
-							<SelectContent>
-								{carList?.data?.map((car:any) => (
-									<SelectItem
-										key={car?.car?.car_id}
-										value={JSON.stringify(
-											car?.car
-										)} 
-									>
-										{car?.car?.make}{" "}
-										{car?.car?.model} (
-										{car?.car?.manufacture_year})
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-						
-				
+					<Select onValueChange={handleCarSelect}>
+						<SelectTrigger className="w-full">
+							<SelectValue placeholder="Select a car" />
+						</SelectTrigger>
+						<SelectContent>
+							{carList?.data?.map((car: any) => (
+								<SelectItem
+									key={car?.car?.car_id}
+									value={JSON.stringify(car?.car)}
+								>
+									{car?.car?.make} {car?.car?.model}{" "}
+									({car?.car?.manufacture_year})
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
 				</CardContent>
 			</Card>
 
@@ -138,8 +97,8 @@ export function ElegantCostManagement() {
 									{selectedCar.manufacture_year}
 								</p>
 								<p>
-									<strong>VIN:</strong>{" "}
-									{selectedCar.vin_number}
+									<strong>Chassis Number:</strong>{" "}
+									{selectedCar.chasis_number}
 								</p>
 								<p>
 									<strong>Bid Price:</strong>{" "}
@@ -147,14 +106,20 @@ export function ElegantCostManagement() {
 									{selectedCar.bid_price.toLocaleString()}
 								</p>
 								<p>
-									<strong>Total Cost:</strong> USD{" "}
-									{totalCost.toLocaleString(
-										undefined,
-										{
-											minimumFractionDigits: 2,
-											maximumFractionDigits: 2,
-										}
-									)}
+									<strong>Total Expenses:</strong>{" "}
+									{selectedCar.currency}{" "}
+									{totalExpenses.toLocaleString()}
+								</p>
+								<p
+									className={
+										profitOrLoss >= 0
+											? "text-green-600"
+											: "text-red-600"
+									}
+								>
+									<strong>Profit/Loss:</strong>{" "}
+									{selectedCar.currency}{" "}
+									{profitOrLoss.toLocaleString()}
 								</p>
 							</div>
 							<div className="flex justify-center items-center">
@@ -164,6 +129,43 @@ export function ElegantCostManagement() {
 								/>
 							</div>
 						</div>
+
+						{/* Expenses Table */}
+						<h3 className="text-lg font-semibold mt-4">
+							Expenses
+						</h3>
+						<table className="w-full border-collapse border border-gray-300 mt-2">
+							<thead>
+								<tr className="bg-gray-100">
+									<th className="border border-gray-300 px-4 py-2">
+										Description
+									</th>
+									<th className="border border-gray-300 px-4 py-2">
+										Amount
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								{selectedCar.expenses?.map(
+									(expense, index) => (
+										<tr
+											key={index}
+											className="border border-gray-300"
+										>
+											<td className="border border-gray-300 px-4 py-2">
+												{
+													expense.description
+												}
+											</td>
+											<td className="border border-gray-300 px-4 py-2">
+												{expense.currency}{" "}
+												{expense.amount.toLocaleString()}
+											</td>
+										</tr>
+									)
+								)}
+							</tbody>
+						</table>
 					</CardContent>
 					<CardFooter>
 						<Button onClick={generatePDF}>
@@ -175,7 +177,3 @@ export function ElegantCostManagement() {
 		</div>
 	);
 }
-
-
-
-
