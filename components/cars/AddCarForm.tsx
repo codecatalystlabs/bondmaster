@@ -52,7 +52,7 @@ const formSchema = z.object({
     .min(17, "Chassis number must be at least 17 characters"),
   make: z.string().min(1, "Make is required"),
   model: z.string().min(1, "Model is required"),
-  maunufacture_year: z.number().min(1900, "Year must be 1900 or later"),
+  manufacture_year: z.number().min(1900, "Year must be 1900 or later"),
   first_registration_year: z.number().min(1900, "Year must be 1900 or later"),
   colour: z.string().min(1, "Colour is required"),
 
@@ -157,7 +157,7 @@ export function AddCarForm({
 		chasis_number: initialData?.chasis_number || "",
 		make: initialData?.make || "",
 		model: initialData?.model || "",
-		maunufacture_year: initialData?.manufacture_year || new Date().getFullYear(),
+		manufacture_year: initialData?.manufacture_year || new Date().getFullYear(),
 		first_registration_year: initialData?.first_registration_year || new Date().getFullYear(),
 		colour: initialData?.colour || "",
 		engine_number: initialData?.engine_number || "",
@@ -273,11 +273,57 @@ export function AddCarForm({
       setPreviewImages([]);
     }
   }, [open]);
+
   React.useEffect(() => {
 	if (initialData) {
-	  form.setValue("model", initialData.model || "");
+	  form.reset({
+		chasis_number: initialData.chasis_number || "",
+		make: initialData.make || "",
+		model: initialData.model || "",
+		manufacture_year: initialData.manufacture_year || new Date().getFullYear(),
+		first_registration_year: initialData.first_registration_year || new Date().getFullYear(),
+		colour: initialData.colour || "",
+		engine_number: initialData.engine_number || "",
+		engine_capacity: initialData.engine_capacity || "",
+		transmission: initialData.transmission || "",
+		body_type: initialData.body_type || "",
+		maxim_carry: initialData.maxim_carry || 0,
+		weight: initialData.weight || 0,
+		gross_weight: initialData.gross_weight || 0,
+		length: initialData.length || 0,
+		width: initialData.width || 0,
+		height: initialData.height || 0,
+		millage: initialData.millage || 0,
+		fuel_consumption: initialData.fuel_consumption || "",
+		ps: initialData.ps || false,
+		pw: initialData.pw || false,
+		abs: initialData.abs || false,
+		ads: initialData.ads || false,
+		aw: initialData.aw || false,
+		sw: initialData.sw || false,
+		navigation: initialData.navigation || false,
+		ac: initialData.ac || false,
+		currency: initialData.currency || "",
+		bid_price: initialData.bid_price || 0,
+		vat_tax: initialData.vat_tax ?? null,  // Preserve null
+		dollar_rate: initialData.dollar_rate || 0,
+		purchase_date: initialData.purchase_date || "",
+		auction: initialData.auction || "",
+		from_company_id: initialData?.from_company_id || user?.company_id ,
+		to_company_id: initialData.to_company_id || "",
+		destination: initialData.destination || "",
+		port: initialData.port || "",
+		broker_name: initialData.broker_name || "",
+		broker_number: initialData.broker_number || "",
+		number_plate: initialData.number_plate || "",
+		customer_id: initialData.customer_id ?? null,  // Preserve null
+		car_status: initialData.car_status || "",
+		car_payment_status: initialData.car_payment_status || "",
+		car_images: initialData.car_images || [],
+	  });
 	}
   }, [initialData, form]);
+  
   
 
   React.useEffect(() => {
@@ -437,7 +483,7 @@ export function AddCarForm({
                     <div className="space-y-4">
                       <FormField
                         control={form.control}
-                        name="maunufacture_year"
+                        name="manufacture_year"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Manufacture Year</FormLabel>
