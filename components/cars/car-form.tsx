@@ -66,7 +66,7 @@ const formSchema = z.object({
   width: z.number().min(0, "Width must be a positive number."),
   height: z.number().min(0, "Height must be a positive number."),
   length_units: z.string().min(1, "Length units are required."),
-  maunufacture_year: z.number().min(1900, "Year must be 1900 or later."),
+  manufacture_year: z.number().min(1900, "Year must be 1900 or later."),
   first_registration_year: z.number().min(1900, "Year must be 1900 or later."),
   transmission: z.string().min(1, "Transmission is required."),
   body_type: z.string().min(1, "Body type is required."),
@@ -134,7 +134,7 @@ export function CarForm({ open, onOpenChange, car, onSubmit }: CarFormProps) {
           width: 0,
           height: 0,
           length_units: "mm",
-          maunufacture_year: new Date().getFullYear(),
+          manufacture_year: new Date().getFullYear(),
           first_registration_year: new Date().getFullYear(),
           transmission: "",
           body_type: "",
@@ -542,7 +542,7 @@ export function CarForm({ open, onOpenChange, car, onSubmit }: CarFormProps) {
               {/* Manufacture Year */}
               <FormField
                 control={form.control}
-                name="maunufacture_year"
+                name="manufacture_year"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Manufacture Year</FormLabel>

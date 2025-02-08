@@ -15,7 +15,7 @@ export interface Car {
   engine_capacity: string;
   make: string;
   model: string;
-  manufacture_year: number; // Fixed typo from maunufacture_year
+  manufacture_year: number; // Fixed typo from manufacture_year
   first_registration_year: number;
   colour: string;
 
@@ -60,7 +60,7 @@ export interface Car {
   customer_id: number | null;
   car_status: string;
   car_payment_status: string;
-  car_images?: File[]; // Optional field
+  car_photos?: File[]; // Optional field
 
   // Metadata
   created_by?: string;
@@ -89,7 +89,7 @@ export interface Car {
 //   width: number;
 //   height: number;
 //   length_units: string;
-//   maunufacture_year: number;
+//   manufacture_year: number;
 //   first_registration_year: number;
 //   transmission: string;
 //   body_type: string;

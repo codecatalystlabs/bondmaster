@@ -47,7 +47,7 @@ export function InspectionIntegration({ cars, onUpdate }: InspectionIntegrationP
           <TableRow key={car.ID}>
             <TableCell>{car.make}</TableCell>
             <TableCell>{car.model}</TableCell>
-            <TableCell>{car.maunufacture_year}</TableCell>
+            <TableCell>{car.manufacture_year}</TableCell>
             <TableCell>{car.inspectionReport ? `Inspected on ${new Date(car.inspectionReport.inspectionDate).toLocaleDateString()}` : 'Not Inspected'}</TableCell>
             <TableCell>
               <Button onClick={() => fetchInspectionReport(car)}>Fetch Inspection Report</Button>

@@ -124,7 +124,7 @@ export function BookingManagement() {
                                 />
                               </FormControl>
                               <FormLabel className="font-normal">
-                                {`${car.make} ${car.model} (${car.maunufacture_year}) - ${car.colour}`}
+                                {`${car.make} ${car.model} (${car.manufacture_year}) - ${car.colour}`}
                               </FormLabel>
                             </FormItem>
                           )

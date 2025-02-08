@@ -44,7 +44,7 @@ const formSchema = z.object({
     .min(17, "Chassis number must be at least 17 characters"),
   make: z.string().min(1, "Make is required"),
   model: z.string().min(1, "Model is required"),
-  maunufacture_year: z.number().min(1900, "Year must be 1900 or later"),
+  manufacture_year: z.number().min(1900, "Year must be 1900 or later"),
   first_registration_year: z.number().min(1900, "Year must be 1900 or later"),
   colour: z.string().min(1, "Colour is required"),
 
@@ -91,7 +91,7 @@ const formSchema = z.object({
   customer_id: z.number().nullable(),
   car_status: z.string(),
   car_payment_status: z.string(),
-  car_images: z.array(z.instanceof(File)).optional(),
+  car_photos: z.array(z.instanceof(File)).optional(),
 });
 
 type DestinationCompany = {
@@ -137,7 +137,7 @@ export function CarForm({
       chasis_number: "",
       make: "",
       model: "",
-      maunufacture_year: new Date().getFullYear(),
+      manufacture_year: new Date().getFullYear(),
       first_registration_year: new Date().getFullYear(),
       colour: "",
       engine_number: "",
@@ -176,7 +176,7 @@ export function CarForm({
       customer_id: null,
       car_status: "",
       car_payment_status: "",
-      car_images: [],
+      car_photos: [],
     },
   });
 
@@ -185,7 +185,7 @@ export function CarForm({
       "image/*": [],
     },
     onDrop: (acceptedFiles) => {
-      form.setValue("car_images", acceptedFiles, {
+      form.setValue("car_photos", acceptedFiles, {
         shouldValidate: true,
       });
       setPreviewImages(acceptedFiles.map((file) => URL.createObjectURL(file)));
@@ -212,8 +212,8 @@ export function CarForm({
 
   const removeImage = (index: number) => {
     const newImages =
-      form.getValues("car_images")?.filter((_, i) => i !== index) || [];
-    form.setValue("car_images", newImages);
+      form.getValues("car_photos")?.filter((_, i) => i !== index) || [];
+    form.setValue("car_photos", newImages);
     setPreviewImages(previewImages.filter((_, i) => i !== index));
   };
 
@@ -362,7 +362,7 @@ export function CarForm({
                     <div className="space-y-4">
                       <FormField
                         control={form.control}
-                        name="maunufacture_year"
+                        name="manufacture_year"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Manufacture Year</FormLabel>
@@ -1173,7 +1173,7 @@ export function CarForm({
               <div className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="car_images"
+                  name="car_photos"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Car Images</FormLabel>

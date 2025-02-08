@@ -139,7 +139,7 @@ export function ShippingPreparation() {
                           {cars.map((car) => (
                             car.ID ? (
                               <SelectItem key={car.ID} value={car.ID}>
-                                {car.make} {car.model} ({car.maunufacture_year})
+                                {car.make} {car.model} ({car.manufacture_year})
                               </SelectItem>
                             ) : null
                           ))}
