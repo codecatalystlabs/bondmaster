@@ -177,7 +177,7 @@ export function BookingManagement() {
                     {schedules.find(s => s.id === booking.scheduleId)?.vesselName}
                   </TableCell>
                   <TableCell>
-                    {booking.carIds.map(id => cars.find(c => c.ID === id)?.vin_number).join(", ")}
+                    {booking.carIds.map(id => cars.find(c => c.ID === id)?.chasis_number).join(", ")}
                   </TableCell>
                   <TableCell>{booking.containerNumber || "N/A"}</TableCell>
                   <TableCell>{booking.status}</TableCell>
