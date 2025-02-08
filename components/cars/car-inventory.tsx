@@ -121,12 +121,12 @@ const user = useUserStore((state) => state.user);
 			...data,
 			car_id: selectedCar?.ID || 1,
 			created_by: user?.username,
-			updated_by: "admin",
+			updated_by: user?.username,
 		};
 
 
 		try {
-			const response = await addCarExpenses({
+			 await addCarExpenses({
 				url: `${BASE_URL}/car/expense`,
 				expense: newExpense,
 			});

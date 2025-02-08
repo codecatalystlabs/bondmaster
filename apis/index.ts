@@ -4,7 +4,7 @@ import apiClient from "./apiClient";
 import { Car } from "@/types/car";
 import { Cost } from "@/types/cost-management";
 import { Customer } from "@/types/customer";
-import { Expense } from "@/types/expense";
+import { Expense, Invoice } from "@/types/expense";
 import { Sale2 } from "@/types/sale";
 import { LoginUser, UserInfo } from "@/types/user";
 import axios from "axios";
@@ -40,6 +40,11 @@ interface ICreateCar {
     carInfo: Partial<Car> | FormData
 }
 
+interface INvoice {
+    url: string;
+    invoiceData: Partial<Invoice> 
+}
+
 interface ISale {
     url: string;
     sale: Partial<Sale2>;
@@ -64,6 +69,11 @@ const fetcher = async (url: string) => {
 // API Functions
 const createUser = async ({ url, userInfo }: ICreateUser) => {
     const { data } = await apiClient.post(url, userInfo);
+    return data;
+};
+
+const createInvoice = async ({ url, invoiceData }: INvoice) => {
+    const { data } = await apiClient.post(url, invoiceData);
     return data;
 };
 
@@ -154,5 +164,6 @@ export {
     addSale,
     login,
     deleteUser,
-    updateCar
+    updateCar,
+    createInvoice
 };

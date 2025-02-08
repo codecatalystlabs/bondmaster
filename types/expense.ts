@@ -36,3 +36,16 @@ export interface Company {
   created_by: string;
   updated_by: string;
 }
+
+
+export interface Invoice{
+invoice_no: string,
+  ship_date: string,
+  currency: string,
+  total_cost: number,
+  vessel_name: string,
+  from_location: string,
+  to_location: string,
+  created_by: string,
+  updated_by: string
+}

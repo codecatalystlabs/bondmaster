@@ -108,14 +108,9 @@ type DestinationCompany = {
 	name: string;
 };
 
-const destinationCompanies: DestinationCompany[] = [
-	{ id: "1", name: "Company A" },
-	{ id: "2", name: "Company B" },
-	{ id: "3", name: "Company C" },
-];
+
 
 interface StepperCarFormProps {
-	//   onSubmit: (car: Car) => void;
 	onCancel: () => void;
 	initialData?: Car;
 	open: boolean;
@@ -131,7 +126,6 @@ const steps = [
 ];
 
 export function AddCarForm({
-	//   onSubmit,
 	onCancel,
 	initialData,
 	open,
@@ -225,12 +219,12 @@ export function AddCarForm({
 
 			// Append all non-file fields correctly
 			Object.entries(values).forEach(([key, value]) => {
-				if (key !== "car_images") {
+				if (key !== "images") {
 					if (
 						typeof value === "number" ||
 						typeof value === "boolean"
 					) {
-						formData.append(key, value.toString()); // Convert numbers & booleans to strings
+						formData.append(key, value.toString());
 					} else if (value !== null) {
 						formData.append(key, value as string);
 					}
@@ -240,7 +234,7 @@ export function AddCarForm({
 			// Append file fields
 			if (values.images && values.images.length > 0) {
 				values.images.forEach((file) => {
-					formData.append("car_images", file);
+					formData.append("images", file);
 				});
 			}
 
@@ -270,6 +264,8 @@ export function AddCarForm({
 				onOpenChange(false);
 				setStep(1);
 			}
+
+			mutate(`${BASE_URL}/cars`);
 		} catch (error) {
 			console.error("Error:", error);
 			toast.error(

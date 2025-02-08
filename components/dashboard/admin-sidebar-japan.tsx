@@ -17,7 +17,7 @@ import {
 	DollarOutlined,
 	UserOutlined,
 } from "@ant-design/icons";
-import { DollarSign, FileCheck, LogOut, Settings, Ship, ShoppingCart, UserCircle, Users } from "lucide-react";
+import { DollarSign, FileCheck, FileText, LogOut, Settings, Ship, ShoppingCart, UserCircle, Users } from "lucide-react";
 import Image from "next/image";
 import useUserStore from "@/app/store/userStore";
 
@@ -69,6 +69,16 @@ export function AdminJapanSidebar() {
 					icon: <DollarSign size={16} />,
 					href: "/japan/admin/expenses",
 				},
+
+				...(user?.group !== "user"
+					? [
+							{
+								title: "Invoices",
+								icon: <FileText size={16} />,
+								href: "/japan/admin/invoices",
+							},
+					  ]
+					: []),
 				...(user?.group !== "user"
 					? [
 							{
