@@ -319,7 +319,7 @@ export function AddCarForm({
 		customer_id: initialData.customer_id ?? null,  // Preserve null
 		car_status: initialData.car_status || "",
 		car_payment_status: initialData.car_payment_status || "",
-		car_images: initialData.car_images || [],
+		images: initialData.images || [],
 	  });
 	}
   }, [initialData, form]);
