@@ -276,7 +276,7 @@ const user = useUserStore((state) => state.user);
 					<DropdownMenuLabel>Actions</DropdownMenuLabel>
 					<DropdownMenuItem
                 onClick={() => {
-                  navigator.clipboard.writeText(car.vin_number);
+                  navigator.clipboard.writeText(car.chasis_number);
                   toast.success("Chasis number copied to clipboard")
             }
 						
