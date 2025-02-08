@@ -45,7 +45,7 @@ export function FinalApproval({ cars, onUpdate }: FinalApprovalProps) {
           <TableRow key={car.ID}>
             <TableCell>{car.make}</TableCell>
             <TableCell>{car.model}</TableCell>
-            <TableCell>{car.maunufacture_year}</TableCell>
+            <TableCell>{car.manufacture_year}</TableCell>
             <TableCell>{car.exportStatus}</TableCell>
             <TableCell>
               {car.exportStatus === 'ready' && !car.complianceCertificate ? (

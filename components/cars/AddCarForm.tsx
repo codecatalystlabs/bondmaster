@@ -100,6 +100,7 @@ const formSchema = z.object({
   car_status: z.string(),
   car_payment_status: z.string(),
   images: z.array(z.instanceof(File)).optional(),
+
 });
 
 type DestinationCompany = {
@@ -196,7 +197,9 @@ export function AddCarForm({
 		customer_id: initialData?.customer_id ?? null,  // Preserve null
 		car_status: initialData?.car_status || "",
 		car_payment_status: initialData?.car_payment_status || "",
+
 		images: initialData?.images || [],
+
 	  },
   });
 
@@ -205,7 +208,9 @@ export function AddCarForm({
       "image/*": [],
     },
     onDrop: (acceptedFiles) => {
+
       form.setValue("images", acceptedFiles, {
+>
         shouldValidate: true,
       });
       setPreviewImages(acceptedFiles.map((file) => URL.createObjectURL(file)));
@@ -215,12 +220,13 @@ export function AddCarForm({
 
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
-  
+     console.log(values,"AM THE ONE ")
 	try {
 	  const formData = new FormData();
   
 	  // Append all non-file fields correctly
 	  Object.entries(values).forEach(([key, value]) => {
+
 		if (key !== "images") {
 		  if (typeof value === "number" || typeof value === "boolean") {
 			formData.append(key, value.toString()); // Convert numbers & booleans to strings
@@ -231,6 +237,7 @@ export function AddCarForm({
 	  });
   
 	  // Append file fields
+
 	  if (values.images && values.images.length > 0) {
 		values.images.forEach((file) => {
 		  formData.append("images", file);
@@ -320,6 +327,7 @@ export function AddCarForm({
 		car_status: initialData.car_status || "",
 		car_payment_status: initialData.car_payment_status || "",
 		images: initialData.images || [],
+
 	  });
 	}
   }, [initialData, form]);
@@ -333,6 +341,7 @@ export function AddCarForm({
 
   const removeImage = (index: number) => {
     const newImages =
+
       form.getValues("images")?.filter((_, i) => i !== index) || [];
     form.setValue("images", newImages);
     setPreviewImages(previewImages.filter((_, i) => i !== index));
