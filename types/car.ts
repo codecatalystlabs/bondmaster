@@ -8,9 +8,8 @@ export interface CarDocument {
 
 export interface Car {
   ID?: any;
-  car_uuid:string;
+  car_uuid?:string;
   chasis_number: string; // Updated from car_uuid
-  vin_number: string; // Not in schema, kept optional
   engine_number: string;
   engine_capacity: string;
   make: string;
@@ -51,7 +50,7 @@ export interface Car {
 
   // Shipping and Destination
   from_company_id: number;
-  to_company_id: string; // Changed from number to string to match schema
+  to_company_id: string; 
   destination: string;
   port: string;
   broker_name: string;
@@ -60,7 +59,7 @@ export interface Car {
   customer_id: number | null;
   car_status: string;
   car_payment_status: string;
-  car_images?: File[]; // Optional field
+  images?: File[]; 
 
   // Metadata
   created_by?: string;

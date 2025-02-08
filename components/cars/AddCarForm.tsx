@@ -99,7 +99,7 @@ const formSchema = z.object({
   customer_id: z.number().nullable(),
   car_status: z.string(),
   car_payment_status: z.string(),
-  car_images: z.array(z.instanceof(File)).optional(),
+  images: z.array(z.instanceof(File)).optional(),
 });
 
 type DestinationCompany = {
@@ -196,7 +196,7 @@ export function AddCarForm({
 		customer_id: initialData?.customer_id ?? null,  // Preserve null
 		car_status: initialData?.car_status || "",
 		car_payment_status: initialData?.car_payment_status || "",
-		car_images: initialData?.car_images || [],
+		images: initialData?.images || [],
 	  },
   });
 
@@ -205,7 +205,7 @@ export function AddCarForm({
       "image/*": [],
     },
     onDrop: (acceptedFiles) => {
-      form.setValue("car_images", acceptedFiles, {
+      form.setValue("images", acceptedFiles, {
         shouldValidate: true,
       });
       setPreviewImages(acceptedFiles.map((file) => URL.createObjectURL(file)));
@@ -221,7 +221,7 @@ export function AddCarForm({
   
 	  // Append all non-file fields correctly
 	  Object.entries(values).forEach(([key, value]) => {
-		if (key !== "car_images") {
+		if (key !== "images") {
 		  if (typeof value === "number" || typeof value === "boolean") {
 			formData.append(key, value.toString()); // Convert numbers & booleans to strings
 		  } else if (value !== null) {
@@ -231,9 +231,9 @@ export function AddCarForm({
 	  });
   
 	  // Append file fields
-	  if (values.car_images && values.car_images.length > 0) {
-		values.car_images.forEach((file) => {
-		  formData.append("car_images", file);
+	  if (values.images && values.images.length > 0) {
+		values.images.forEach((file) => {
+		  formData.append("images", file);
 		});
 	  }
   
@@ -287,8 +287,8 @@ export function AddCarForm({
 
   const removeImage = (index: number) => {
     const newImages =
-      form.getValues("car_images")?.filter((_, i) => i !== index) || [];
-    form.setValue("car_images", newImages);
+      form.getValues("images")?.filter((_, i) => i !== index) || [];
+    form.setValue("images", newImages);
     setPreviewImages(previewImages.filter((_, i) => i !== index));
   };
 
@@ -1131,7 +1131,7 @@ export function AddCarForm({
               <div className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="car_images"
+                  name="images"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Car Images</FormLabel>
