@@ -215,7 +215,7 @@ const user = useUserStore((state) => state.user);
         );
       },
       cell: ({ row }) => (
-        <div className="ml-[30px]">{row.getValue('maunufacture_year')}</div>
+        <div className="ml-[30px]">{row.getValue('manufacture_year')}</div>
       ),
     },
     {

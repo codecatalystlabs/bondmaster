@@ -51,7 +51,7 @@
 //     width: values.width || 0,
 //     height: values.height || 0,
 //     length_units: values.length_units || "mm",
-//     maunufacture_year: values.maunufacture_year || 0,
+//     manufacture_year: values.manufacture_year || 0,
 //     first_registration_year: values.first_registration_year || 0,
 //     transmission: values.transmission || "unknown",
 //     body_type: values.body_type || "unknown",

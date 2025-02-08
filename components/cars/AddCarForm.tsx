@@ -88,18 +88,19 @@ const formSchema = z.object({
 	purchase_date: z.string().min(1, "Purchase date is required"),
 	auction: z.string().min(1, "Auction is required"),
 
-	// Step 5: Shipping and Destination
-	from_company_id: z.number().min(1, "From company ID is required"),
-	to_company_id: z.string().min(1, "Destination company is required"),
-	destination: z.string().min(1, "Destination is required"),
-	port: z.string().min(1, "Port is required"),
-	broker_name: z.string(),
-	broker_number: z.string(),
-	number_plate: z.string(),
-	customer_id: z.number().nullable(),
-	car_status: z.string(),
-	car_payment_status: z.string(),
-	images: z.array(z.instanceof(File)).optional(),
+  // Step 5: Shipping and Destination
+  from_company_id: z.number().min(1, "From company ID is required"),
+  to_company_id: z.string().min(1, "Destination company is required"),
+  destination: z.string().min(1, "Destination is required"),
+  port: z.string().min(1, "Port is required"),
+  broker_name: z.string(),
+  broker_number: z.string(),
+  number_plate: z.string(),
+  customer_id: z.number().nullable(),
+  car_status: z.string(),
+  car_payment_status: z.string(),
+  images: z.array(z.instanceof(File)).optional(),
+
 });
 
 type DestinationCompany = {
@@ -209,7 +210,7 @@ export function AddCarForm({
 			"image/*": [],
 		},
 		onDrop: (acceptedFiles) => {
-			form.setValue("car_images", acceptedFiles, {
+			form.setValue("images", acceptedFiles, {
 				shouldValidate: true,
 			});
 			setPreviewImages(
@@ -237,8 +238,8 @@ export function AddCarForm({
 			});
 
 			// Append file fields
-			if (values.car_images && values.car_images.length > 0) {
-				values.car_images.forEach((file) => {
+			if (values.images && values.images.length > 0) {
+				values.images.forEach((file) => {
 					formData.append("car_images", file);
 				});
 			}
@@ -338,7 +339,7 @@ export function AddCarForm({
 				customer_id: initialData.customer_id ?? null, // Preserve null
 				car_status: initialData.car_status || "",
 				car_payment_status: initialData.car_payment_status || "",
-				car_images: initialData.car_images || [],
+				images: initialData.images || [],
 			});
 		}
 	}, [initialData, form]);
@@ -350,9 +351,9 @@ export function AddCarForm({
 
 	const removeImage = (index: number) => {
 		const newImages =
-			form.getValues("car_images")?.filter((_, i) => i !== index) ||
+			form.getValues("images")?.filter((_, i) => i !== index) ||
 			[];
-		form.setValue("car_images", newImages);
+		form.setValue("images", newImages);
 		setPreviewImages(previewImages.filter((_, i) => i !== index));
 	};
 

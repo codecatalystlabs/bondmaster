@@ -192,7 +192,7 @@ export function InvoiceGenerator({
 													{car.make}{" "}
 													{car.model} (
 													{
-														car.maunufacture_year
+														car.manufacture_year
 													}
 													) - $
 													{

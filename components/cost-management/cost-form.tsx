@@ -166,7 +166,7 @@ export function CostForm({
 										>
 											{car.make} {car.model}{" "}
 											{car.colour}{" "}
-											{car.maunufacture_year} ({" "}
+											{car.manufacture_year} ({" "}
 											{car.vin_number}{" "}
 											{car.engine_number}{" "}
 											{car.engine_capacity}{" "}
