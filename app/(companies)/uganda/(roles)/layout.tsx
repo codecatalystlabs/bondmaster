@@ -7,6 +7,8 @@ import { Header } from "@/components/dashboard/header";
 import { Toaster } from "react-hot-toast";
 import { AdminSidebar } from "@/components/dashboard/admin-sidebar-uganda";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Loader } from "@/components/ui/loader";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -26,13 +28,24 @@ export default function UgandaLayout({
 	children: React.ReactNode;
 }>) {
 	const router = useRouter();
+	const [userData, setUserData] = useState<any>(null);
+	const [isClient,setIsClient] = useState(false)
 
 
-	const userData = JSON.parse(localStorage.getItem("user-details") || "{}");
-	if (!userData?.state?.user) {
-	 router.push("/signin"); // Redirect to signin if no user found
-  } 
- 
+	useEffect(() => {
+		  setIsClient(true);
+			if (typeof window !== "undefined") {
+				const storedUserData = JSON.parse(
+					localStorage.getItem("user-details") || "{}"
+				);
+				setUserData(storedUserData);
+				if (!storedUserData?.state?.user) {
+					router.push("/signin");
+				}
+			}
+	   }, []);
+	
+	   if(!isClient) return <Loader />
 
 
 	return (

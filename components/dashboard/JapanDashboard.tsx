@@ -17,36 +17,6 @@ import { Car, JapaneseYen } from "lucide-react";
 
 
 
-
-
-const topDeals = [
-	{
-		name: "Michael Jordan",
-		email: "michael.jordan@example.com",
-		amount: "$2,893",
-	},
-	{
-		name: "Emigo Kiaren",
-		email: "emigo.kiaren@gmail.com",
-		amount: "$4,289",
-	},
-	{
-		name: "Randy Origoan",
-		email: "randy.origoan@gmail.com",
-		amount: "$6,347",
-	},
-	{
-		name: "George Pieterson",
-		email: "george.pieterson@gmail.com",
-		amount: "$3,894",
-	},
-	{
-		name: "Kiara Advain",
-		email: "kiaraadvain214@gmail.com",
-		amount: "$2,679",
-	},
-];
-
 export function JapanDashboard() {
 
     const { data, error, isLoading } = useSWR('/cars', fetcher)
@@ -141,9 +111,6 @@ export function JapanDashboard() {
 							})}
 						</span>
 					</div>
-
-					
-					
 				</Card>
 
 				<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -185,8 +152,6 @@ export function JapanDashboard() {
 				</div>
 
 				<div className="grid gap-6 lg:grid-cols-2">
-					
-
 					<Card className="p-6">
 						<div className="flex items-center justify-between">
 							<h3 className="text-lg font-semibold">
@@ -201,17 +166,15 @@ export function JapanDashboard() {
 						</div>
 						<div className="mt-4 h-[300px]">
 							<DoughnutChart
-								data={[1624, 1000]}
+								data={[data?.data?.length, 1000]}
 								labels={[
 									"Total Car Stock Available",
 									"Total Cars Sold",
-								
 								]}
 							/>
 						</div>
 					</Card>
 				</div>
-
 			</div>
 		</div>
 	);
