@@ -77,6 +77,11 @@ const createInvoice = async ({ url, invoiceData }: INvoice) => {
     return data;
 };
 
+const addInvoiceToCar = async ({ url, invoiceNumber }: any) => {
+    const { data } = await apiClient.post(url, invoiceNumber);
+    return data;
+}
+
 const createCustomer = async ({ url, customerInfo }: ICreateCustomer) => {
     const { data } = await apiClient.post(url, customerInfo);
     return data;
@@ -165,5 +170,6 @@ export {
     login,
     deleteUser,
     updateCar,
-    createInvoice
+    createInvoice,
+    addInvoiceToCar
 };

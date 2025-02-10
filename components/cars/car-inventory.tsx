@@ -51,7 +51,7 @@ import { CarDetailsModal } from './car-details-modal';
 import { Car, CarResponse } from '@/types/car';
 import useSWR, { mutate } from 'swr';
 import { BASE_URL } from '@/constants/baseUrl';
-import { addCarExpenses, fetcher } from '@/apis';
+import { addCarExpenses, addInvoiceToCar, fetcher } from '@/apis';
 import { Loader } from '../ui/loader';
 import { AddCarForm } from './AddCarForm';
 import toast from 'react-hot-toast';
@@ -59,6 +59,7 @@ import { CarExpenseModal } from './car-expense-modal';
 import * as z from "zod";
 import useUserStore from '@/app/store/userStore';
 import { handleDownloadExcel } from '@/lib/utils';
+import { CarInvoiceModal } from './car-invoice-modal';
 
 
 const formSchema = z.object({
@@ -88,7 +89,8 @@ const user = useUserStore((state) => state.user);
   const [showDetailsModal, setShowDetailsModal] = React.useState(false);
   const [selectedCar, setSelectedCar] = React.useState<Car | null | any>(null);
   const [cars, setCars] = React.useState<Car[]>([]);
- const [showExpenseModal, setShowExpenseModal] = React.useState(false);
+	const [showExpenseModal, setShowExpenseModal] = React.useState(false);
+	const [showInvoiceModal, setShowInvoiceModal] = React.useState(false);
  const [selectedCarForExpense, setSelectedCarForExpense] = React.useState<
 		string | null
 	 >(null);
@@ -138,7 +140,26 @@ const user = useUserStore((state) => state.user);
 		}
 		
 		
-    };
+	};
+	
+	const handleInvoiceAttachment = async (data: any) => {
+			const invoice: any = {
+				...data
+				
+			};
+
+			try {
+				await addInvoiceToCar({
+					url: `${BASE_URL}/car/${selectedCar?.ID}/shipping-invoice`,
+					invoiceNumber: invoice,
+				});
+
+				mutate(`${BASE_URL}/shipping-invoices`);
+				toast.success("Invoice added successfully");
+			} catch (error) {
+				console.log(error);
+			}
+		};
 
   const handleUpdateCar = (updatedCar: Car) => {
     setCars(
@@ -240,10 +261,7 @@ const user = useUserStore((state) => state.user);
       header: () => <div className="text-right">Bid Price</div>,
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue('bid_price') ?? 0);
-        // const formatted = new Intl.NumberFormat("en-US", {
-        // 	style: "currency",
-        // 	currency: row.getValue("currency") || "USD",
-        // }).format(amount);
+        
 
         return <div className="text-right font-medium">{amount}</div>;
       },
@@ -274,12 +292,14 @@ const user = useUserStore((state) => state.user);
 				<DropdownMenuContent align="end">
 					<DropdownMenuLabel>Actions</DropdownMenuLabel>
 					<DropdownMenuItem
-                onClick={() => {
-                  navigator.clipboard.writeText(car.chasis_number);
-                  toast.success("Chasis number copied to clipboard")
-            }
-						
-						}
+						onClick={() => {
+							navigator.clipboard.writeText(
+								car.chasis_number
+							);
+							toast.success(
+								"Chasis number copied to clipboard"
+							);
+						}}
 					>
 						Copy car Chasis Number
 					</DropdownMenuItem>
@@ -303,11 +323,19 @@ const user = useUserStore((state) => state.user);
 
 					<DropdownMenuItem
 						onClick={() => {
-							setSelectedCar(car)
+							setSelectedCar(car);
 							setShowExpenseModal(true);
 						}}
 					>
 						Add Expense
+					</DropdownMenuItem>
+					<DropdownMenuItem
+						onClick={() => {
+							setSelectedCar(car);
+							setShowInvoiceModal(true);
+						}}
+					>
+						Add Invoice
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
@@ -344,7 +372,6 @@ const user = useUserStore((state) => state.user);
 					<CardHeader>
 						<CardTitle>Car Inventory</CardTitle>
 						<div className="flex gap-2">
-							
 							{/* <Button onClick={handleDownloadPDF}>
 								<FileText className="mr-2 h-4 w-4" />{" "}
 								Download PDF
@@ -566,6 +593,13 @@ const user = useUserStore((state) => state.user);
 						open={showExpenseModal}
 						onOpenChange={setShowExpenseModal}
 						onSubmit={handleCarExpenseSubmit}
+					/>
+
+					<CarInvoiceModal
+						carId={selectedCar?.ID || ""}
+						open={showInvoiceModal}
+						onOpenChange={setShowInvoiceModal}
+						onSubmit={handleInvoiceAttachment}
 					/>
 				</Card>
 			)}

@@ -1,4 +1,3 @@
-import withAuth from '@/app/hooks/withAuth';
 import { CarInventory } from '@/components/cars/car-inventory';
 
 const CarInventoryPage: React.FC = () => {
