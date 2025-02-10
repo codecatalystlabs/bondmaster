@@ -93,50 +93,29 @@ export function CarInvoiceModal({
 								<FormItem>
 									<FormLabel>Invoice </FormLabel>
 									<Select
-										onValueChange={(value) => {
-											const numberValue =
-												Number(value);
-											field.onChange(
-												numberValue
-											);
-										}}
-									>
-										<FormControl>
-											<SelectTrigger>
-												<SelectValue placeholder="Select invoice" />
-											</SelectTrigger>
-										</FormControl>
-										<SelectContent>
-											{invoicesData?.data.map(
-												(invoice: any) => (
-													<SelectItem
-														key={
-															invoice
-																?.customer
-																.ID
-														}
-														value={
-															invoice
-																?.customer
-																.ID
-														}
-													>
-														{
-															invoice
-																?.customer
-																.invoice_no
-														}{" "}
-														-{" "}
-														{
-															invoice
-																?.customer
-																.vessel_name
-														}
-													</SelectItem>
-												)
-											)}
-										</SelectContent>
-									</Select>
+  value={form.watch('car_shipping_invoice_id').toString()} 
+  onValueChange={(value) => {
+    const numberValue = Number(value);
+    field.onChange(numberValue); 
+  }}
+>
+  <FormControl>
+    <SelectTrigger>
+      <SelectValue placeholder="Select invoice" />
+    </SelectTrigger>
+  </FormControl>
+  <SelectContent>
+    {invoicesData?.data.map((invoice: any) => (
+      <SelectItem
+        key={invoice?.customer.ID}
+        value={invoice?.customer.ID.toString()}
+      >
+        {invoice?.customer.invoice_no} - {invoice?.customer.vessel_name}
+      </SelectItem>
+    ))}
+  </SelectContent>
+</Select>
+
 									<FormMessage />
 								</FormItem>
 							)}
