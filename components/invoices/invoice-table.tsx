@@ -92,9 +92,11 @@ export function InvoiceTable() {
 							<TableCell>
 								<Button
 									onClick={() =>
+									
 									{
+										console.log(invoice,"invoice");
 										setSelectedInvoice(
-											 invoice?.customer
+											 invoice
 										);
 									}
 									}

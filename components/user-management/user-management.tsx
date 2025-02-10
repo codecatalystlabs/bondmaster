@@ -152,20 +152,6 @@ export function UserManagement() {
 		fetcher
 	);
 
-
-// previous way
-	// const {
-	// 	data: usersData,
-	// 	error,
-	// 	isLoading,
-	// } = useSWR(
-	// 	`/users`,
-	// 	fetcher
-	// );
-
-	
-
-
 		const {
 			data: companiesData,
 			error:getCompanyError,

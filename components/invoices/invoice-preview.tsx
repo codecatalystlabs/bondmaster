@@ -1,5 +1,4 @@
 import { forwardRef } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface InvoicePreviewProps {
 	invoice: {
@@ -15,63 +14,158 @@ interface InvoicePreviewProps {
 	};
 }
 
-export const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
+export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 	({ invoice }, ref) => {
 		return (
 			<div
 				ref={ref}
-				className="p-8 bg-white"
+				className="p-8 bg-white min-w-[800px]"
 			>
-				<Card>
-					<CardHeader>
-						<CardTitle>
-							Invoice {invoice?.invoice_no}
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className="grid grid-cols-2 gap-4">
-							<div>
-								<p>
-									<strong>Ship Date:</strong>{" "}
-									{invoice?.ship_date}
-								</p>
-								<p>
-									<strong>Vessel Name:</strong>{" "}
-									{invoice?.vessel_name}
-								</p>
-								<p>
-									<strong>From:</strong>{" "}
-									{invoice?.from_location}
-								</p>
-								<p>
-									<strong>To:</strong>{" "}
-									{invoice?.to_location}
-								</p>
-							</div>
-							<div>
-								<p>
-									<strong>Currency:</strong>{" "}
-									{invoice?.currency}
-								</p>
-								<p>
-									<strong>Total Cost:</strong>{" "}
-									{invoice?.total_cost
-										? invoice.total_cost.toLocaleString()
-										: "N/A"}
-								</p>
+				{/* Company Header */}
+				<div className="text-center mb-8">
+					<h1 className="text-xl font-bold">
+						MADINA TRADING CO Ltd.
+					</h1>
+				</div>
 
-								<p>
-									<strong>Created By:</strong>{" "}
-									{invoice?.created_by}
-								</p>
-								<p>
-									<strong>Updated By:</strong>{" "}
-									{invoice?.updated_by}
-								</p>
-							</div>
-						</div>
-					</CardContent>
-				</Card>
+				{/* Invoice Details */}
+				<div className="flex justify-between mb-6">
+					<div>
+						<p>
+							<span className="font-semibold">
+								Invoice No.
+							</span>{" "}
+							{invoice?.customer?.invoice_no}
+						</p>
+					</div>
+					<div>
+						<p>
+							<span className="font-semibold">Date:</span>{" "}
+							{invoice?.customer?.ship_date}
+						</p>
+					</div>
+				</div>
+
+				{/* Customer Details */}
+				<div className="mb-6">
+					<p>
+						<span className="font-semibold">To:</span> SHERAZ
+						TRADING U LTD
+					</p>
+					<p>
+						<span className="font-semibold">
+							Name of Vessel:
+						</span>{" "}
+						{invoice?.customer?.vessel_name}
+					</p>
+					<p>
+						<span className="font-semibold">Sailing ON:</span>{" "}
+						{invoice?.customer?.ship_date}
+					</p>
+					<p>
+						<span className="font-semibold">FROM:</span>{" "}
+						{invoice?.customer?.from_location}
+					</p>
+				</div>
+
+				{/* Table */}
+				<table className="w-full border-collapse border border-gray-300">
+					<thead>
+						<tr className="bg-gray-50">
+							<th className="border border-gray-300 p-2 text-sm">
+								SR NO
+							</th>
+							<th className="border border-gray-300 p-2 text-sm">
+								DATE
+							</th>
+							<th className="border border-gray-300 p-2 text-sm">
+								MODEL
+							</th>
+							<th className="border border-gray-300 p-2 text-sm">
+								CHASSIS
+							</th>
+							<th className="border border-gray-300 p-2 text-sm">
+								BUY
+							</th>
+							<th className="border border-gray-300 p-2 text-sm">
+								TAX
+							</th>
+							<th className="border border-gray-300 p-2 text-sm">
+								REC
+							</th>
+							<th className="border border-gray-300 p-2 text-sm">
+								AUCTION
+							</th>
+							<th className="border border-gray-300 p-2 text-sm">
+								COMMISSION
+							</th>
+							<th className="border border-gray-300 p-2 text-sm">
+								RIKSO
+							</th>
+							<th className="border border-gray-300 p-2 text-sm">
+								FREIGHT
+							</th>
+							<th className="border border-gray-300 p-2 text-sm">
+								TOTAL
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						{invoice.cars.length > 0 ? (
+							invoice.cars.map((car:any, index:any) => (
+								<tr key={car.ID}>
+									<td className="border border-gray-300 p-2 text-sm">
+										{index + 1}
+									</td>
+									<td className="border border-gray-300 p-2 text-sm">
+										{car.purchase_date}
+									</td>
+									<td className="border border-gray-300 p-2 text-sm">
+										{car.model || "n/a"}
+									</td>
+									<td className="border border-gray-300 p-2 text-sm">
+										{car.chasis_number || "n/a"}
+									</td>
+									<td className="border border-gray-300 p-2 text-sm text-right">
+										{car.bid_price || "n/a"}
+									</td>
+									<td className="border border-gray-300 p-2 text-sm text-right">
+										{car.vat_tax || "n/a"}
+									</td>
+									<td className="border border-gray-300 p-2 text-sm text-right">
+										{car.millage || "n/a"}
+									</td>
+									<td className="border border-gray-300 p-2 text-sm text-right">
+										{car.auction || "n/a"}
+									</td>
+									<td className="border border-gray-300 p-2 text-sm text-right">
+										{car.commission || "n/a"}
+									</td>
+									<td className="border border-gray-300 p-2 text-sm text-right">
+										{car.rikso || "n/a"}
+									</td>
+									<td className="border border-gray-300 p-2 text-sm text-right">
+										{car.freight || "n/a"}
+									</td>
+									<td className="border border-gray-300 p-2 text-sm text-right">
+										{car.bid_price +
+											car.vat_tax +
+											car.freight || "n/a"}
+									</td>
+								</tr>
+							))
+						) : (
+							<tr>
+								<td
+									colSpan={12}
+									className="text-center p-2"
+								>
+									No cars available for this invoice.
+								</td>
+							</tr>
+						)}
+					</tbody>
+				</table>
 			</div>
 		);
 	}

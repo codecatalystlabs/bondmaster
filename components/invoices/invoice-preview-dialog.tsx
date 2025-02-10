@@ -31,13 +31,16 @@ export function InvoicePreviewDialog({
 	invoice,
 	open,
 	onOpenChange,
-}: InvoicePreviewDialogProps) {
+}: any) {
 	const previewRef = useRef<HTMLDivElement>(null);
 
 	const handlePrint = () => {
-		if (previewRef.current) {
-			window.print();
-		}
+		console.log("log")
+		// if (previewRef.current) {
+		// 	ReactToPrint({
+		// 		content: () => previewRef.current,
+		// 	});
+		// }
 	};
 
 	return (
@@ -45,22 +48,19 @@ export function InvoicePreviewDialog({
 			open={open}
 			onOpenChange={onOpenChange}
 		>
-			<DialogContent className="max-w-3xl">
+			<DialogContent className="max-w-[95vw] w-[1200px] h-[90vh] overflow-y-auto">
 				<DialogHeader>
 					<DialogTitle>Invoice Preview</DialogTitle>
 				</DialogHeader>
-				{invoice && (
+				<div className="p-6">
 					<InvoicePreview
 						ref={previewRef}
 						invoice={invoice}
 					/>
-				)}
-
-				<Button onClick={handlePrint}>Print</Button>
-				{/* <ReactToPrint
-					trigger={() => <Button>Print</Button>}
-					content={() => previewRef.current}
-				/> */}
+				</div>
+				<div className="sticky bottom-0 bg-background p-4 border-t">
+					<Button onClick={handlePrint}>Print</Button>
+				</div>
 			</DialogContent>
 		</Dialog>
 	);

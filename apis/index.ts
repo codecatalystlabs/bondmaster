@@ -78,7 +78,7 @@ const createInvoice = async ({ url, invoiceData }: INvoice) => {
 };
 
 const addInvoiceToCar = async ({ url, invoiceNumber }: any) => {
-    const { data } = await apiClient.post(url, invoiceNumber);
+    const { data } = await apiClient.put(url, invoiceNumber);
     return data;
 }
 

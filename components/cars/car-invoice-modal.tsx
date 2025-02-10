@@ -93,8 +93,13 @@ export function CarInvoiceModal({
 								<FormItem>
 									<FormLabel>Invoice </FormLabel>
 									<Select
-										onValueChange={field.onChange}
-										defaultValue={field.value.toString()}
+										onValueChange={(value) => {
+											const numberValue =
+												Number(value);
+											field.onChange(
+												numberValue
+											);
+										}}
 									>
 										<FormControl>
 											<SelectTrigger>
@@ -113,7 +118,7 @@ export function CarInvoiceModal({
 														value={
 															invoice
 																?.customer
-																.invoice_no
+																.ID
 														}
 													>
 														{
