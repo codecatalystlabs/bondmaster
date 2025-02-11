@@ -28,14 +28,14 @@ export function ElegantCostManagement() {
 	const [totalExpenses, setTotalExpenses] = useState<number>(0);
 	const [profitOrLoss, setProfitOrLoss] = useState<number>(0);
 
+
 		const { data: total } = useSWR(
 			`/total-car-expense/${selectedCar?.ID}`,
 			fetcher
 		);
+	console.log(total,"===vat==")
 	
 	
-	
-	console.log(total,"==3333")
 
 
 	useEffect(() => {
@@ -93,7 +93,7 @@ export function ElegantCostManagement() {
 				<Card>
 					<CardHeader>
 						<CardTitle>
-							{selectedCar.make} {selectedCar.model}
+							{selectedCar?.make} {selectedCar?.model}
 						</CardTitle>
 					</CardHeader>
 					<CardContent>

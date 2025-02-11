@@ -79,28 +79,28 @@ const formSchema = z.object({
 	sw: z.boolean(),
 	navigation: z.boolean(),
 	ac: z.boolean(),
+	oil_brake: z.boolean(),
+	air_brake: z.boolean(),
 
 	// Step 4: Purchase Information
 	currency: z.string().min(1, "Currency is required"),
 	bid_price: z.number().min(0, "Bid price must be 0 or greater"),
 	vat_tax: z.number().nullable(),
-	dollar_rate: z.number().min(0, "Dollar rate must be 0 or greater"),
 	purchase_date: z.string().min(1, "Purchase date is required"),
 	auction: z.string().min(1, "Auction is required"),
 
-  // Step 5: Shipping and Destination
-  from_company_id: z.number().min(1, "From company ID is required"),
-  to_company_id: z.string().min(1, "Destination company is required"),
-  destination: z.string().min(1, "Destination is required"),
-  port: z.string().min(1, "Port is required"),
-  broker_name: z.string(),
-  broker_number: z.string(),
-  number_plate: z.string(),
-  customer_id: z.number().nullable(),
-  car_status: z.string(),
-  car_payment_status: z.string(),
-  images: z.array(z.instanceof(File)).optional(),
-
+	// Step 5: Shipping and Destination
+	from_company_id: z.number().min(1, "From company ID is required"),
+	to_company_id: z.string().min(1, "Destination company is required"),
+	destination: z.string().min(1, "Destination is required"),
+	port: z.string().min(1, "Port is required"),
+	broker_name: z.string(),
+	broker_number: z.string(),
+	number_plate: z.string(),
+	customer_id: z.number().nullable(),
+	car_status: z.string(),
+	car_payment_status: z.string(),
+	images: z.array(z.instanceof(File)).optional(),
 });
 
 type DestinationCompany = {
@@ -136,6 +136,20 @@ export function AddCarForm({
 		error: currencyError,
 		isLoading: idLoadingCurrency,
 	} = useSWR(`/meta/currency`, fetcher);
+
+
+	// const {
+	// 	data: ports,
+	// 	error: portsError,
+	// 	isLoading: idLoadingPorts,
+	// } = useSWR(`/meta/port`, fetcher);
+
+
+	// console.log(ports,"ports")
+
+
+
+
 	const {
 		data: companiesData,
 		error: getCompanyError,
@@ -176,12 +190,13 @@ export function AddCarForm({
 			ads: initialData?.ads || false,
 			aw: initialData?.aw || false,
 			sw: initialData?.sw || false,
+			oil_brake: initialData?.sw || false,
+			air_brake: initialData?.sw || false,
 			navigation: initialData?.navigation || false,
 			ac: initialData?.ac || false,
 			currency: initialData?.currency || "",
 			bid_price: initialData?.bid_price || 0,
 			vat_tax: initialData?.vat_tax ?? null, // Ensure null is preserved
-			dollar_rate: initialData?.dollar_rate || 0,
 			purchase_date: initialData?.purchase_date || "",
 			auction: initialData?.auction || "",
 			from_company_id:
@@ -316,12 +331,14 @@ export function AddCarForm({
 				ads: initialData.ads || false,
 				aw: initialData.aw || false,
 				sw: initialData.sw || false,
+				oil_brake: initialData?.sw || false,
+				air_brake: initialData?.sw || false,
 				navigation: initialData.navigation || false,
 				ac: initialData.ac || false,
 				currency: initialData.currency || "",
 				bid_price: initialData.bid_price || 0,
 				vat_tax: initialData.vat_tax ?? null, // Preserve null
-				dollar_rate: initialData.dollar_rate || 0,
+
 				purchase_date: initialData.purchase_date || "",
 				auction: initialData.auction || "",
 				from_company_id:
@@ -1140,6 +1157,35 @@ export function AddCarForm({
 												control={
 													form.control
 												}
+												name="oil_brake"
+												render={({
+													field,
+												}) => (
+													<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+														<FormControl>
+															<Checkbox
+																checked={
+																	field.value
+																}
+																onCheckedChange={
+																	field.onChange
+																}
+															/>
+														</FormControl>
+														<div className="space-y-1 leading-none">
+															<FormLabel>
+																Oil
+																Brake
+															</FormLabel>
+														</div>
+													</FormItem>
+												)}
+											/>
+
+											<FormField
+												control={
+													form.control
+												}
 												name="ps"
 												render={({
 													field,
@@ -1280,6 +1326,34 @@ export function AddCarForm({
 												control={
 													form.control
 												}
+												name="air_brake"
+												render={({
+													field,
+												}) => (
+													<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+														<FormControl>
+															<Checkbox
+																checked={
+																	field.value
+																}
+																onCheckedChange={
+																	field.onChange
+																}
+															/>
+														</FormControl>
+														<div className="space-y-1 leading-none">
+															<FormLabel>
+																Air
+																Brake
+															</FormLabel>
+														</div>
+													</FormItem>
+												)}
+											/>
+											<FormField
+												control={
+													form.control
+												}
 												name="sw"
 												render={({
 													field,
@@ -1403,11 +1477,11 @@ export function AddCarForm({
 																				currency.ID
 																			}
 																			value={
-																				currency.name
+																				currency.symbol
 																			}
 																		>
 																			{
-																				currency.name
+																				currency.symbol
 																			}
 																		</SelectItem>
 																	)
@@ -1515,53 +1589,7 @@ export function AddCarForm({
 											/>
 										</div>
 										<div className="space-y-4">
-											<FormField
-												control={
-													form.control
-												}
-												name="dollar_rate"
-												render={({
-													field,
-												}) => (
-													<FormItem>
-														<FormLabel>
-															Dollar
-															Rate
-														</FormLabel>
-														<FormControl>
-															<Input
-																type="number"
-																{...field}
-																value={
-																	field.value ===
-																	0
-																		? ""
-																		: field.value
-																}
-																onChange={(
-																	e
-																) => {
-																	const value =
-																		e
-																			.target
-																			.value ===
-																		""
-																			? 0
-																			: Number(
-																					e
-																						.target
-																						.value
-																			  );
-																	field.onChange(
-																		value
-																	);
-																}}
-															/>
-														</FormControl>
-														<FormMessage />
-													</FormItem>
-												)}
-											/>
+											
 											<FormField
 												control={
 													form.control
