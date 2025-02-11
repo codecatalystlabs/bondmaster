@@ -35,13 +35,13 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 							<span className="font-semibold">
 								Invoice No.
 							</span>{" "}
-							{invoice?.customer?.invoice_no}
+							{invoice?.invoice?.invoice_no}
 						</p>
 					</div>
 					<div>
 						<p>
 							<span className="font-semibold">Date:</span>{" "}
-							{invoice?.customer?.ship_date}
+							{invoice?.invoice?.ship_date}
 						</p>
 					</div>
 				</div>
@@ -56,15 +56,15 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 						<span className="font-semibold">
 							Name of Vessel:
 						</span>{" "}
-						{invoice?.customer?.vessel_name}
+						{invoice?.invoice?.vessel_name}
 					</p>
 					<p>
 						<span className="font-semibold">Sailing ON:</span>{" "}
-						{invoice?.customer?.ship_date}
+						{invoice?.invoice?.ship_date}
 					</p>
 					<p>
 						<span className="font-semibold">FROM:</span>{" "}
-						{invoice?.customer?.from_location}
+						{invoice?.invoice?.from_location}
 					</p>
 				</div>
 
@@ -112,7 +112,7 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 					</thead>
 					<tbody>
 						{invoice.cars.length > 0 ? (
-							invoice.cars.map((car:any, index:any) => (
+							invoice.cars.map((car: any, index: any) => (
 								<tr key={car.ID}>
 									<td className="border border-gray-300 p-2 text-sm">
 										{index + 1}

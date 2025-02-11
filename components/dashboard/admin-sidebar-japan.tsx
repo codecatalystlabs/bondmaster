@@ -32,7 +32,7 @@ type MenuItem = {
 
 
 
-export function AdminJapanSidebar() {
+export  function AdminJapanSidebar() {
 	const user = useUserStore((state) => state.user)
 	const menuItems: { title: string; items: MenuItem[] }[] = [
 		{
@@ -51,7 +51,7 @@ export function AdminJapanSidebar() {
 				{
 					title: "Car Inventory",
 					icon: <CarOutlined />,
-					href: "/japan/admin/car-inventory",
+					href: "/japan/admin/car-overview",
 				},
 
 				...(user?.group !== "user"

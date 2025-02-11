@@ -107,10 +107,10 @@ export function CarInvoiceModal({
   <SelectContent>
     {invoicesData?.data.map((invoice: any) => (
       <SelectItem
-        key={invoice?.customer.ID}
-        value={invoice?.customer.ID.toString()}
+        key={invoice?.invoice.ID}
+        value={invoice?.invoice.ID.toString()}
       >
-        {invoice?.customer.invoice_no} - {invoice?.customer.vessel_name}
+        {invoice?.invoice.invoice_no} - {invoice?.invoice.vessel_name}
       </SelectItem>
     ))}
   </SelectContent>

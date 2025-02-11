@@ -61,6 +61,10 @@ const formSchema = z.object({
 		z.number().min(1, "Amount is required"),
 		z.number().positive("Amount must be positive"),
 	]),
+	dollar_rate: z.union([
+		z.number().min(1, "Amount is required"),
+		z.number().positive("Amount must be positive"),
+	]),
 	expense_date: z.string(),
 });
 
@@ -88,6 +92,7 @@ export function ExpensesModule() {
 			company_id: 0,
 			description: "",
 			currency: "USD",
+			dollar_rate:0,
 			amount: 0,
 			expense_date: new Date().toISOString(),
 		},
@@ -100,6 +105,7 @@ export function ExpensesModule() {
 				description: editingExpense.description,
 				currency: editingExpense.currency,
 				amount: editingExpense.amount,
+				dollar_rate: editingExpense.dollar_rate,
 				expense_date: new Date(
 					editingExpense.expense_date
 				).toISOString(),
@@ -110,6 +116,7 @@ export function ExpensesModule() {
 				description: "",
 				currency: "USD",
 				amount: 0,
+				dollar_rate:0,
 				expense_date: new Date().toISOString(),
 			});
 		}
@@ -127,6 +134,7 @@ export function ExpensesModule() {
 				expense.description,
 				expense.amount.toFixed(2),
 				expense.currency,
+				expense.dollar_rate,
 				format(new Date(expense.expense_date), "MMM d, yyyy"),
 			].join(",")
 		);

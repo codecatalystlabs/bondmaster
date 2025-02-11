@@ -2,7 +2,8 @@ export interface Expense {
     company_id: number;
     description: string;
     currency: string;
-    amount: any;
+  amount: any;
+  dollar_rate:any,
     expense_date: string;
     created_by: string;
     updated_by: string
@@ -19,6 +20,7 @@ export interface ExpenseResponse {
   description: string;
   currency: string;
   amount: number;
+  dollar_rate: number;
   expense_date: string; 
   created_by: string;
   updated_by: string;

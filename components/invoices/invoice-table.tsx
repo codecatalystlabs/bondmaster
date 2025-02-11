@@ -39,7 +39,7 @@ export function InvoiceTable() {
 		`${BASE_URL}/shipping/invoices`,fetcher
 	);
 
-	console.log(invoicesData?.data,"pppads")
+	// console.log(invoicesData?.data,"pppads")
 
 	return (
 		<>
@@ -61,33 +61,33 @@ export function InvoiceTable() {
 				</TableHeader>
 				<TableBody>
 					{invoicesData?.data?.map((invoice: any) => (
-						<TableRow key={invoice?.customer?.invoice_no}>
+						<TableRow key={invoice?.invoice?.invoice_no}>
 							<TableCell>
-								{invoice?.customer?.invoice_no}
+								{invoice?.invoice?.invoice_no}
 							</TableCell>
 							<TableCell>
-								{invoice?.customer?.ship_date}
+								{invoice?.invoice?.ship_date}
 							</TableCell>
 							<TableCell>
-								{invoice?.customer?.currency}
+								{invoice?.invoice?.currency}
 							</TableCell>
 							<TableCell>
-								{invoice?.customer?.total_cost?.toLocaleString()}
+								{invoice?.invoice?.total_cost?.toLocaleString()}
 							</TableCell>
 							<TableCell>
-								{invoice?.customer?.vessel_name}
+								{invoice?.invoice?.vessel_name}
 							</TableCell>
 							<TableCell>
-								{invoice?.customer?.from_location}
+								{invoice?.invoice?.from_location}
 							</TableCell>
 							<TableCell>
-								{invoice?.customer.to_location}
+								{invoice?.invoice?.to_location}
 							</TableCell>
 							<TableCell>
-								{invoice?.customer.created_by}
+								{invoice?.invoice?.created_by}
 							</TableCell>
 							<TableCell>
-								{invoice?.customer?.updated_by}
+								{invoice?.invoice?.updated_by}
 							</TableCell>
 							<TableCell>
 								<Button
