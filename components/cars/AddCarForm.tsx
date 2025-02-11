@@ -138,14 +138,13 @@ export function AddCarForm({
 	} = useSWR(`/meta/currency`, fetcher);
 
 
-	// const {
-	// 	data: ports,
-	// 	error: portsError,
-	// 	isLoading: idLoadingPorts,
-	// } = useSWR(`/meta/port`, fetcher);
+	const {
+		data: ports,
+		error: portsError,
+		isLoading: idLoadingPorts,
+	} = useSWR(`/meta/ports`, fetcher);
 
 
-	// console.log(ports,"ports")
 
 
 
@@ -1717,7 +1716,7 @@ export function AddCarForm({
 											/>
 										</div>
 										<div className="space-y-4">
-											<FormField
+											{/* <FormField
 												control={
 													form.control
 												}
@@ -1735,6 +1734,58 @@ export function AddCarForm({
 																{...field}
 															/>
 														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/> */}
+
+<FormField
+												control={
+													form.control
+												}
+												name="port"
+												render={({
+													field,
+												}) => (
+													<FormItem>
+														<FormLabel>
+															Port
+												
+														</FormLabel>
+														<Select
+															onValueChange={
+																field.onChange
+															}
+															defaultValue={
+																field.value
+															}
+														>
+															<FormControl>
+																<SelectTrigger>
+																	<SelectValue placeholder="Select port" />
+																</SelectTrigger>
+															</FormControl>
+															<SelectContent>
+																{ports?.data?.map(
+																	(
+																		port: any
+																	) => (
+																		<SelectItem
+																			key={
+																				port?.ID
+																			}
+																			value={
+																			port?.name
+																			}
+																		>
+																			{
+																			port?.name
+																			}
+																		</SelectItem>
+																	)
+																)}
+															</SelectContent>
+														</Select>
 														<FormMessage />
 													</FormItem>
 												)}
