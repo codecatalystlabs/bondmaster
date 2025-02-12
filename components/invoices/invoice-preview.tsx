@@ -16,6 +16,8 @@ interface InvoicePreviewProps {
 
 export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 	({ invoice }, ref) => {
+
+		console.log(invoice,"ooooo")
 		return (
 			<div
 				ref={ref}
@@ -90,13 +92,13 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 							<th className="border border-gray-300 p-2 text-sm">
 								TAX
 							</th>
-							<th className="border border-gray-300 p-2 text-sm">
+							{/* <th className="border border-gray-300 p-2 text-sm">
 								REC
-							</th>
+							</th> */}
 							<th className="border border-gray-300 p-2 text-sm">
 								AUCTION
 							</th>
-							<th className="border border-gray-300 p-2 text-sm">
+							{/* <th className="border border-gray-300 p-2 text-sm">
 								COMMISSION
 							</th>
 							<th className="border border-gray-300 p-2 text-sm">
@@ -104,7 +106,7 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 							</th>
 							<th className="border border-gray-300 p-2 text-sm">
 								FREIGHT
-							</th>
+							</th> */}
 							<th className="border border-gray-300 p-2 text-sm">
 								TOTAL
 							</th>
@@ -132,13 +134,13 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 									<td className="border border-gray-300 p-2 text-sm text-right">
 										{car.vat_tax || "n/a"}
 									</td>
-									<td className="border border-gray-300 p-2 text-sm text-right">
+									{/* <td className="border border-gray-300 p-2 text-sm text-right">
 										{car.millage || "n/a"}
-									</td>
+									</td> */}
 									<td className="border border-gray-300 p-2 text-sm text-right">
 										{car.auction || "n/a"}
 									</td>
-									<td className="border border-gray-300 p-2 text-sm text-right">
+									{/* <td className="border border-gray-300 p-2 text-sm text-right">
 										{car.commission || "n/a"}
 									</td>
 									<td className="border border-gray-300 p-2 text-sm text-right">
@@ -146,11 +148,9 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 									</td>
 									<td className="border border-gray-300 p-2 text-sm text-right">
 										{car.freight || "n/a"}
-									</td>
+									</td> */}
 									<td className="border border-gray-300 p-2 text-sm text-right">
-										{car.bid_price +
-											car.vat_tax +
-											car.freight || "n/a"}
+										{car.bid_price + car.vat_tax}
 									</td>
 								</tr>
 							))
