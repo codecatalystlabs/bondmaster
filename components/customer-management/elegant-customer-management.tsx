@@ -81,7 +81,8 @@ export function ElegantCostManagement() {
 									({car?.car.model})- (
 									{car?.car.colour}) -(
 									{car?.car.engine_capacity}) - (
-									{car?.car.manufacture_year})
+									{car?.car.manufacture_year}) - (
+									{car?.car.chasis_number})
 								</SelectItem>
 							))}
 						</SelectContent>
@@ -111,30 +112,32 @@ export function ElegantCostManagement() {
 									{selectedCar?.chasis_number}
 								</p>
 								<p>
-									<strong>VAT:</strong> {" USD "}
+									<strong>VAT:</strong> {" JPY "}
 									{total?.data?.vat_tax?.toLocaleString()}
 								</p>
 								<p>
 									<strong>Bid Price:</strong>{" "}
-									{" USD "}
+									{" JPY "}
 									{total?.data?.bid_price?.toLocaleString()}
 								</p>
 								<p>
-									<strong>Total Car Expenses:</strong>{" "}
-									{" USD "}
+									<strong>
+										Total Car Expenses:
+									</strong>{" "}
+									{" JPY "}
 									{total?.data?.total_expense_japan?.toLocaleString()}
 								</p>
-								
+
 								<p>
 									<strong>Total Car Price :</strong>{" "}
-									{" USD "}
+									{" JPY "}
 									{total?.data?.total_car_price_japan?.toLocaleString()}
 								</p>
 								<p>
 									<strong>
 										Total Car Price and Expense:
 									</strong>{" "}
-									{" USD "}
+									{" JPY "}
 									{total?.data?.total_car_price_and_expenses_japan?.toLocaleString()}
 								</p>
 							</div>
@@ -145,8 +148,6 @@ export function ElegantCostManagement() {
 								/>
 							</div>
 						</div>
-
-					
 					</CardContent>
 					<CardFooter>
 						<Button onClick={generatePDF}>

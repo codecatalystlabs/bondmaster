@@ -29,7 +29,6 @@ import { CalendarIcon } from "lucide-react";
 import * as z from "zod";
 import { format } from "date-fns";
 import { Button } from "../ui/button";
-import useUserStore from "@/app/store/userStore";
 
 
 const formSchema = z.object({
@@ -40,10 +39,10 @@ const formSchema = z.object({
 		z.number().min(1, "Amount is required"),
 		z.number().positive("Amount must be positive"),
 	]),
-	dollar_rate: z.union([
-		z.number().min(1, "Amount is required"),
-		z.number().positive("Amount must be positive"),
-	]),
+	// dollar_rate: z.union([
+	// 	z.number().min(1, "Amount is required"),
+	// 	z.number().positive("Amount must be positive"),
+	// ]),
 	expense_date: z.string(),
 });
 
@@ -148,7 +147,7 @@ export function ExpenseForm({
 						</FormItem>
 					)}
 				/>
-				<FormField
+				{/* <FormField
 					control={form.control}
 					name="dollar_rate"
 					render={({ field }) => (
@@ -175,7 +174,7 @@ export function ExpenseForm({
 							<FormMessage />
 						</FormItem>
 					)}
-				/>
+				/> */}
 				<FormField
 					control={form.control}
 					name="expense_date"

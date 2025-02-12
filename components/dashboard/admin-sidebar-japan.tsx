@@ -70,15 +70,15 @@ export  function AdminJapanSidebar() {
 					href: "/japan/admin/expenses",
 				},
 
-				...(user?.group !== "user"
-					? [
-							{
-								title: "Invoices",
-								icon: <FileText size={16} />,
-								href: "/japan/admin/invoices",
-							},
-					  ]
-					: []),
+				// ...(user?.group !== "user"
+				// 	? [
+				// 			{
+				// 				title: "Invoices",
+				// 				icon: <FileText size={16} />,
+				// 				href: "/japan/admin/invoices",
+				// 			},
+				// 	  ]
+				// 	: []),
 				...(user?.group !== "user"
 					? [
 							{
