@@ -49,7 +49,7 @@ const formSchema = z.object({
 		.string()
 		.min(17, "Chassis number must be at least 17 characters"),
 	make: z.string().min(1, "Make is required"),
-	model: z.string().min(1, "Model is required"),
+	car_model: z.string().min(1, "Model is required"),
 	manufacture_year: z.number().min(1900, "Year must be 1900 or later"),
 	first_registration_year: z
 		.number()
@@ -67,7 +67,7 @@ const formSchema = z.object({
 	length: z.number().min(0, "Length must be 0 or greater"),
 	width: z.number().min(0, "Width must be 0 or greater"),
 	height: z.number().min(0, "Height must be 0 or greater"),
-	millage: z.number().min(0, "Mileage must be 0 or greater"),
+	car_millage: z.number().min(0, "Mileage must be 0 or greater"),
 	fuel_consumption: z.string().min(1, "Fuel consumption is required"),
 
 	// Step 3: Features
@@ -75,8 +75,8 @@ const formSchema = z.object({
 	pw: z.boolean(),
 	abs: z.boolean(),
 	ads: z.boolean(),
-	aw: z.boolean(),
-	sw: z.boolean(),
+	alloy_wheel: z.boolean(),
+	simple_wheel: z.boolean(),
 	navigation: z.boolean(),
 	ac: z.boolean(),
 	oil_brake: z.boolean(),
@@ -146,25 +146,27 @@ export function AddCarForm({
 
 
 
-
-
-
 	const {
 		data: companiesData,
 		error: getCompanyError,
 		isLoading: isLoadingCompanies,
 	} = useSWR(`/companies`, fetcher);
 
+
+	console.log(companiesData,"$$$$$$")
+
 	const user = useUserStore((state) => state.user);
 	const [step, setStep] = React.useState(1);
 	const [previewImages, setPreviewImages] = React.useState<string[]>([]);
+
+	const filteredCompany = companiesData?.data.filter((data:any) => data.ID !== user?.company_id)
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			chasis_number: initialData?.chasis_number || "",
 			make: initialData?.make || "",
-			model: initialData?.model || "",
+			car_model: initialData?.car_model || "",
 			manufacture_year:
 				initialData?.manufacture_year || new Date().getFullYear(),
 			first_registration_year:
@@ -181,16 +183,16 @@ export function AddCarForm({
 			length: initialData?.length || 0,
 			width: initialData?.width || 0,
 			height: initialData?.height || 0,
-			millage: initialData?.millage || 0,
+			car_millage: initialData?.car_millage || 0,
 			fuel_consumption: initialData?.fuel_consumption || "",
 			ps: initialData?.ps || false,
 			pw: initialData?.pw || false,
 			abs: initialData?.abs || false,
 			ads: initialData?.ads || false,
-			aw: initialData?.aw || false,
-			sw: initialData?.sw || false,
-			oil_brake: initialData?.sw || false,
-			air_brake: initialData?.sw || false,
+			alloy_wheel: initialData?.alloy_wheel || false,
+			simple_wheel: initialData?.simple_wheel || false,
+			oil_brake: initialData?.oil_brake || false,
+			air_brake: initialData?.air_brake || false,
 			navigation: initialData?.navigation || false,
 			ac: initialData?.ac || false,
 			currency: initialData?.currency || "",
@@ -304,7 +306,7 @@ export function AddCarForm({
 			form.reset({
 				chasis_number: initialData.chasis_number || "",
 				make: initialData.make || "",
-				model: initialData.model || "",
+				car_model: initialData.car_model || "",
 				manufacture_year:
 					initialData.manufacture_year ||
 					new Date().getFullYear(),
@@ -322,16 +324,16 @@ export function AddCarForm({
 				length: initialData.length || 0,
 				width: initialData.width || 0,
 				height: initialData.height || 0,
-				millage: initialData.millage || 0,
+				car_millage: initialData.car_millage || 0,
 				fuel_consumption: initialData.fuel_consumption || "",
 				ps: initialData.ps || false,
 				pw: initialData.pw || false,
 				abs: initialData.abs || false,
 				ads: initialData.ads || false,
-				aw: initialData.aw || false,
-				sw: initialData.sw || false,
-				oil_brake: initialData?.sw || false,
-				air_brake: initialData?.sw || false,
+				alloy_wheel: initialData.alloy_wheel || false,
+				simple_wheel: initialData.simple_wheel || false,
+				oil_brake: initialData?.oil_brake || false,
+				air_brake: initialData?.oil_brake || false,
 				navigation: initialData.navigation || false,
 				ac: initialData.ac || false,
 				currency: initialData.currency || "",
@@ -542,7 +544,7 @@ export function AddCarForm({
 												control={
 													form.control
 												}
-												name="model"
+												name="car_model"
 												render={({
 													field,
 												}) => (
@@ -942,7 +944,7 @@ export function AddCarForm({
 												control={
 													form.control
 												}
-												name="millage"
+												name="car_millage"
 												render={({
 													field,
 												}) => (
@@ -1297,7 +1299,7 @@ export function AddCarForm({
 												control={
 													form.control
 												}
-												name="aw"
+												name="alloy_wheel"
 												render={({
 													field,
 												}) => (
@@ -1353,7 +1355,7 @@ export function AddCarForm({
 												control={
 													form.control
 												}
-												name="sw"
+												name="simple_wheel"
 												render={({
 													field,
 												}) => (

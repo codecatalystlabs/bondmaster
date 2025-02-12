@@ -27,7 +27,7 @@ export function CarDetailsModal({ car, open, onOpenChange }: CarDetailsModalProp
 			<DialogContent className="sm:max-w-[700px]">
 				<DialogHeader>
 					<DialogTitle className="text-2xl">
-						{car.make} {car.model} (
+						{car.make} {car.car_model} (
 						{car.manufacture_year || "N/A"})
 					</DialogTitle>
 					<DialogDescription>
@@ -51,7 +51,7 @@ export function CarDetailsModal({ car, open, onOpenChange }: CarDetailsModalProp
 							<DollarSign className="w-4 h-4 mr-2" />
 							Financial
 						</TabsTrigger>
-						
+
 						<TabsTrigger value="expenses">
 							<Receipt className="w-4 h-4 mr-2" />
 							Expenses
@@ -72,7 +72,7 @@ export function CarDetailsModal({ car, open, onOpenChange }: CarDetailsModalProp
 							/>
 							<InfoItem
 								label="Model"
-								value={car.model}
+								value={car.car_model}
 							/>
 							<InfoItem
 								label="Year"
@@ -186,22 +186,26 @@ export function CarDetailsModal({ car, open, onOpenChange }: CarDetailsModalProp
 								</TableRow>
 							</TableHeader>
 							<TableBody>
-								{expenseData?.data.map((expense:any) => (
-									<TableRow key={expense.id}>
-										<TableCell>
-											{expense.description}
-										</TableCell>
-										<TableCell>
-											{car.currency}{" "}
-											{expense.amount}
-										</TableCell>
-										<TableCell>
-											{new Date(
-												expense.expense_date
-											).toLocaleDateString()}
-										</TableCell>
-									</TableRow>
-								))}
+								{expenseData?.data.map(
+									(expense: any) => (
+										<TableRow key={expense?.id}>
+											<TableCell>
+												{
+													expense?.description
+												}
+											</TableCell>
+											<TableCell>
+												{expense?.currency}{" "}
+												{expense?.amount}
+											</TableCell>
+											<TableCell>
+												{new Date(
+													expense?.expense_date
+												).toLocaleDateString()}
+											</TableCell>
+										</TableRow>
+									)
+								)}
 							</TableBody>
 						</Table>
 					</TabsContent>
@@ -209,11 +213,11 @@ export function CarDetailsModal({ car, open, onOpenChange }: CarDetailsModalProp
 				<div className="mt-6 pt-4 border-t flex justify-between items-center text-sm text-gray-500">
 					<div className="flex items-center">
 						<User className="w-4 h-4 mr-2" />
-						<span>Created by: {car.created_by || "N/A"}</span>
+						<span>Created by: {car?.created_by || "N/A"}</span>
 					</div>
 					<div className="flex items-center">
 						<User className="w-4 h-4 mr-2" />
-						<span>Updated by: {car.updated_by || "N/A"}</span>
+						<span>Updated by: {car?.updated_by || "N/A"}</span>
 					</div>
 				</div>
 			</DialogContent>

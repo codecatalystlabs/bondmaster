@@ -132,7 +132,8 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 										{car.bid_price || "n/a"}
 									</td>
 									<td className="border border-gray-300 p-2 text-sm text-right">
-										{car.vat_tax || "n/a"}
+										{(car.vat_tax / 100 )* car.bid_price ||
+											"n/a"}
 									</td>
 									{/* <td className="border border-gray-300 p-2 text-sm text-right">
 										{car.millage || "n/a"}
