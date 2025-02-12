@@ -28,19 +28,15 @@ export function ElegantCostManagement() {
 	const [totalExpenses, setTotalExpenses] = useState<number>(0);
 	const [profitOrLoss, setProfitOrLoss] = useState<number>(0);
 
-
-		const { data: total } = useSWR(
-			`/total-car-expense/${selectedCar?.ID}`,
-			fetcher
-		);
-	console.log(total,"===vat==")
-	
-	
-
+	const { data: total } = useSWR(
+		`/total-car-expense/${selectedCar?.ID}`,
+		fetcher
+	);
+	console.log(total, "===vat==");
 
 	useEffect(() => {
 		if (selectedCar) {
-			const expensesCost = 0	
+			const expensesCost = 0;
 			setTotalExpenses(expensesCost);
 			setProfitOrLoss(selectedCar.bid_price - expensesCost);
 		}
@@ -78,7 +74,7 @@ export function ElegantCostManagement() {
 									value={JSON.stringify(car?.car)}
 								>
 									{car?.car?.make} {car?.car?.model}{" "}
-									({car?.car.model})- (
+									({car?.car.car_model})- (
 									{car?.car.colour}) -(
 									{car?.car.engine_capacity}) - (
 									{car?.car.manufacture_year}) - (
@@ -94,7 +90,7 @@ export function ElegantCostManagement() {
 				<Card>
 					<CardHeader>
 						<CardTitle>
-							{selectedCar?.make} {selectedCar?.model}
+							{selectedCar?.make} {selectedCar?.car_model}
 						</CardTitle>
 					</CardHeader>
 					<CardContent>

@@ -44,7 +44,7 @@ export function FinalApproval({ cars, onUpdate }: FinalApprovalProps) {
         {cars.map((car) => (
           <TableRow key={car.ID}>
             <TableCell>{car.make}</TableCell>
-            <TableCell>{car.model}</TableCell>
+            <TableCell>{car.car_model}</TableCell>
             <TableCell>{car.manufacture_year}</TableCell>
             <TableCell>{car.exportStatus}</TableCell>
             <TableCell>

@@ -61,7 +61,7 @@
 //         {cars.map((car) => (
 //           <TableRow key={car.id}>
 //             <TableCell>{car.make}</TableCell>
-//             <TableCell>{car.model}</TableCell>
+//             <TableCell>{car.car_model}</TableCell>
 //             <TableCell>{car.year}</TableCell>
 //             <TableCell>{car.emissionsRating}</TableCell>
 //             <TableCell>{car.exportStatus}</TableCell>
@@ -74,4 +74,3 @@
 //     </Table>
 //   )
 // }
-

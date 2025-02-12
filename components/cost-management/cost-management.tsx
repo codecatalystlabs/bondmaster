@@ -142,7 +142,7 @@ export function CostManagement() {
 																		) ===
 																		expense?.ID
 																)
-																	?.model
+																	?.car_model
 															}
 														</TableCell>
 

@@ -106,7 +106,7 @@ export function SalesTable({
 			header: "Car Make",
 		},
 		{
-			accessorKey: "Car.model",
+			accessorKey: "car.car_model",
 			header: "Car Model",
 		},
 		{

@@ -16,8 +16,7 @@ interface InvoicePreviewProps {
 
 export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 	({ invoice }, ref) => {
-
-		console.log(invoice,"ooooo")
+		console.log(invoice, "ooooo");
 		return (
 			<div
 				ref={ref}
@@ -123,7 +122,7 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 										{car.purchase_date}
 									</td>
 									<td className="border border-gray-300 p-2 text-sm">
-										{car.model || "n/a"}
+										{car.car_model || "n/a"}
 									</td>
 									<td className="border border-gray-300 p-2 text-sm">
 										{car.chasis_number || "n/a"}
@@ -132,8 +131,8 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 										{car.bid_price || "n/a"}
 									</td>
 									<td className="border border-gray-300 p-2 text-sm text-right">
-										{(car.vat_tax / 100 )* car.bid_price ||
-											"n/a"}
+										{(car.vat_tax / 100) *
+											car.bid_price || "n/a"}
 									</td>
 									{/* <td className="border border-gray-300 p-2 text-sm text-right">
 										{car.millage || "n/a"}

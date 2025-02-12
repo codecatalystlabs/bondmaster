@@ -190,7 +190,7 @@ export function InvoiceGenerator({
 												</FormControl>
 												<FormLabel className="font-normal">
 													{car.make}{" "}
-													{car.model} (
+													{car.car_model} (
 													{
 														car.manufacture_year
 													}
