@@ -12,7 +12,7 @@ export interface Car {
   chasis_number: string; // Updated from car_uuid
   engine_number: string;
   engine_capacity: string;
-  make: string;
+  car_make: string;
   car_model: string;
   manufacture_year: number; // Fixed typo from manufacture_year
   first_registration_year: number;

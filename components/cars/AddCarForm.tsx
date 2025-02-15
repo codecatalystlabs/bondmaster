@@ -47,7 +47,7 @@ const formSchema = z.object({
 	// Step 1: Basic Information
 	chasis_number: z
 		.string()
-		.min(17, "Chassis number must be at least 17 characters"),
+		.min(5, "Chassis number must be at least 5 characters"),
 	make: z.string().min(1, "Make is required"),
 	car_model: z.string().min(1, "Model is required"),
 	manufacture_year: z.number().min(1900, "Year must be 1900 or later"),
@@ -71,8 +71,8 @@ const formSchema = z.object({
 	fuel_consumption: z.string().min(1, "Fuel consumption is required"),
 
 	// Step 3: Features
-	ps: z.boolean(),
-	pw: z.boolean(),
+	power_steering: z.boolean(),
+	power_window: z.boolean(),
 	abs: z.boolean(),
 	ads: z.boolean(),
 	alloy_wheel: z.boolean(),
@@ -84,22 +84,22 @@ const formSchema = z.object({
 
 	// Step 4: Purchase Information
 	currency: z.string().min(1, "Currency is required"),
-	bid_price: z.number().min(0, "Bid price must be 0 or greater"),
+	bid_price: z.number().optional(),
 	vat_tax: z.number().nullable(),
-	purchase_date: z.string().min(1, "Purchase date is required"),
-	auction: z.string().min(1, "Auction is required"),
+	purchase_date: z.string().optional(),
+	auction: z.string().optional(),
 
 	// Step 5: Shipping and Destination
 	from_company_id: z.number().min(1, "From company ID is required"),
 	to_company_id: z.string().min(1, "Destination company is required"),
 	destination: z.string().min(1, "Destination is required"),
 	port: z.string().min(1, "Port is required"),
-	broker_name: z.string(),
-	broker_number: z.string(),
-	number_plate: z.string(),
+	broker_name: z.string().optional(),
+	broker_number: z.string().optional(),
+	number_plate: z.string().optional(),
 	customer_id: z.number().nullable(),
-	car_status: z.string(),
-	car_payment_status: z.string(),
+	car_status: z.string().optional(),
+	car_payment_status: z.string().optional(),
 	images: z.array(z.instanceof(File)).optional(),
 });
 
@@ -153,7 +153,6 @@ export function AddCarForm({
 	} = useSWR(`/companies`, fetcher);
 
 
-	console.log(companiesData,"$$$$$$")
 
 	const user = useUserStore((state) => state.user);
 	const [step, setStep] = React.useState(1);
@@ -185,8 +184,8 @@ export function AddCarForm({
 			height: initialData?.height || 0,
 			car_millage: initialData?.car_millage || 0,
 			fuel_consumption: initialData?.fuel_consumption || "",
-			ps: initialData?.ps || false,
-			pw: initialData?.pw || false,
+			power_steering: initialData?.ps || false,
+			power_window: initialData?.pw || false,
 			abs: initialData?.abs || false,
 			ads: initialData?.ads || false,
 			alloy_wheel: initialData?.alloy_wheel || false,
@@ -283,7 +282,6 @@ export function AddCarForm({
 
 			mutate(`${BASE_URL}/cars`);
 		} catch (error) {
-			console.error("Error:", error);
 			toast.error(
 				initialData
 					? "Failed to update car. Please try again."
@@ -326,8 +324,8 @@ export function AddCarForm({
 				height: initialData.height || 0,
 				car_millage: initialData.car_millage || 0,
 				fuel_consumption: initialData.fuel_consumption || "",
-				ps: initialData.ps || false,
-				pw: initialData.pw || false,
+				power_steering: initialData.ps || false,
+				power_window: initialData.pw || false,
 				abs: initialData.abs || false,
 				ads: initialData.ads || false,
 				alloy_wheel: initialData.alloy_wheel || false,
@@ -1187,7 +1185,7 @@ export function AddCarForm({
 												control={
 													form.control
 												}
-												name="ps"
+												name="power_steering"
 												render={({
 													field,
 												}) => (
@@ -1215,7 +1213,7 @@ export function AddCarForm({
 												control={
 													form.control
 												}
-												name="pw"
+												name="power_window"
 												render={({
 													field,
 												}) => (
@@ -1590,7 +1588,6 @@ export function AddCarForm({
 											/>
 										</div>
 										<div className="space-y-4">
-											
 											<FormField
 												control={
 													form.control
@@ -1741,7 +1738,7 @@ export function AddCarForm({
 												)}
 											/> */}
 
-<FormField
+											<FormField
 												control={
 													form.control
 												}
@@ -1752,7 +1749,6 @@ export function AddCarForm({
 													<FormItem>
 														<FormLabel>
 															Port
-												
 														</FormLabel>
 														<Select
 															onValueChange={
@@ -1777,11 +1773,11 @@ export function AddCarForm({
 																				port?.ID
 																			}
 																			value={
-																			port?.name
+																				port?.name
 																			}
 																		>
 																			{
-																			port?.name
+																				port?.name
 																			}
 																		</SelectItem>
 																	)

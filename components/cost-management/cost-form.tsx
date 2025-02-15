@@ -110,7 +110,7 @@ export function CostForm({
 				toast.success(response.message);
 			}
 		} catch (error: any) {
-			toast.error(error || "An error occurred");
+			toast.error("An error occurred");
 		}
 		onSubmit(cost);
 		form.reset();

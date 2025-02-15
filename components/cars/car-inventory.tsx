@@ -136,7 +136,7 @@ const user = useUserStore((state) => state.user);
 			toast.success("Expense added successfully");
 			
 		} catch (error) {
-			console.log(error);
+			console.log("failed");
 		}
 		
 		
@@ -157,7 +157,7 @@ const user = useUserStore((state) => state.user);
 				mutate(`${BASE_URL}/shipping-invoices`);
 				toast.success("Invoice added successfully");
 			} catch (error) {
-				console.log(error);
+				console.log("failed");
 			}
 		};
 
@@ -205,7 +205,7 @@ const user = useUserStore((state) => state.user);
       ),
     },
     {
-      accessorKey: 'model',
+      accessorKey: 'car_model',
       header: ({ column }) => {
         return (
           <Button
@@ -218,7 +218,7 @@ const user = useUserStore((state) => state.user);
         );
       },
       cell: ({ row }) => (
-        <div className="ml-[30px]">{row.getValue('model')}</div>
+        <div className="ml-[30px]">{row.getValue('car_model')}</div>
       ),
     },
     {
@@ -395,6 +395,24 @@ const user = useUserStore((state) => state.user);
 								onChange={(event) =>
 									table
 										.getColumn("chasis_number")
+										?.setFilterValue(
+											event.target.value
+										)
+								}
+								className="max-w-sm"
+							/>
+
+							<Input
+								placeholder="Filter model..."
+								value={
+									(table
+										.getColumn("car_model")
+										?.getFilterValue() as string) ??
+									""
+								}
+								onChange={(event) =>
+									table
+										.getColumn("car_model")
 										?.setFilterValue(
 											event.target.value
 										)

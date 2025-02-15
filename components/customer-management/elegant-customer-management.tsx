@@ -32,7 +32,6 @@ export function ElegantCostManagement() {
 		`/total-car-expense/${selectedCar?.ID}`,
 		fetcher
 	);
-	console.log(total, "===vat==");
 
 	useEffect(() => {
 		if (selectedCar) {
@@ -68,9 +67,9 @@ export function ElegantCostManagement() {
 							<SelectValue placeholder="Select a car" />
 						</SelectTrigger>
 						<SelectContent>
-							{carList?.data?.map((car: any) => (
+							{carList?.data?.map((car: any,index:any) => (
 								<SelectItem
-									key={car?.car?.car_id}
+									key={index}
 									value={JSON.stringify(car?.car)}
 								>
 									{car?.car?.make} {car?.car?.model}{" "}
@@ -90,7 +89,7 @@ export function ElegantCostManagement() {
 				<Card>
 					<CardHeader>
 						<CardTitle>
-							{selectedCar?.make} {selectedCar?.car_model}
+							{selectedCar?.car_make} {selectedCar?.car_model}
 						</CardTitle>
 					</CardHeader>
 					<CardContent>

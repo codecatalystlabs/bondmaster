@@ -1,34 +1,3 @@
-// // apiClient.ts
-
-// import useUserStore from "@/app/store/userStore";
-// import { BASE_URL } from "@/constants/baseUrl";
-
-
-// export const apiClient = async (url: string, options: RequestInit = {}) => {
-//     const token = useUserStore.getState().token; 
-//     console
-
-//     const headers: { [key: string]: string } = {
-//         'Content-Type': 'application/json',
-//         ...(options.headers as { [key: string]: string }),
-//     };
-
-//     if (token) {
-//         headers['Authorization'] = `Bearer ${token}`;
-//     }
-
-//     const response = await fetch(`${BASE_URL}${url}`, {
-//         ...options,
-//         headers,
-//     });
-
-//     if (!response.ok) {
-//         throw new Error(`HTTP error! status: ${response.status}`);
-//     }
-
-//     return response.json();
-// };
-
 
 
 
@@ -36,6 +5,7 @@
 import axios from "axios";
 import useUserStore from "@/app/store/userStore";
 import { BASE_URL } from "@/constants/baseUrl";
+import toast from "react-hot-toast";
 
 // Create an Axios instance
 const apiClient = axios.create({
@@ -61,7 +31,19 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
     (response) => response,
     (error) => {
-        console.error("API Error:", error.response?.status, error.response?.data);
+        if (error.response) {
+            // Server responded with a status code outside 2xx
+            const errorMessage = error.response.data?.message || "An error occurred. Please try again.";
+            toast.error(errorMessage); 
+           
+        } else if (error.request) {
+            // No response received
+            toast.error("No response received from the server. Please check your connection.");
+        } else {
+            // Something went wrong in setting up the request
+            toast.error("An error occurred while setting up the request.");
+          
+        }
         return Promise.reject(error);
     }
 );

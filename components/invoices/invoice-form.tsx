@@ -48,7 +48,7 @@ export function InvoiceForm() {
 		defaultValues: {
 			invoice_no: "",
 			ship_date: "",
-			currency: "Yen",
+			currency: "JPY",
 			total_cost: 0,
 			vessel_name: "",
 			from_location: "",
@@ -58,27 +58,27 @@ export function InvoiceForm() {
 		},
 	});
 
-	useEffect(() => {
-		// In a real application, you would fetch the last invoice number from your backend
-		// For this example, we'll simulate it with a random number
-		const fetchLastInvoiceNumber = async () => {
-			// Simulating an API call
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-			const randomNumber = Math.floor(Math.random() * 1000000);
-			setLastInvoiceNumber(randomNumber);
-		};
+	// useEffect(() => {
+	// 	// In a real application, you would fetch the last invoice number from your backend
+	// 	// For this example, we'll simulate it with a random number
+	// 	const fetchLastInvoiceNumber = async () => {
+	// 		// Simulating an API call
+	// 		await new Promise((resolve) => setTimeout(resolve, 1000));
+	// 		const randomNumber = Math.floor(Math.random() * 1000000);
+	// 		setLastInvoiceNumber(randomNumber);
+	// 	};
 
-		fetchLastInvoiceNumber();
-	}, []);
+	// 	fetchLastInvoiceNumber();
+	// }, []);
 
-	useEffect(() => {
-		if (lastInvoiceNumber > 0) {
-			const newInvoiceNumber = `JP${String(
-				lastInvoiceNumber + 1
-			).padStart(9, "0")}`;
-			form.setValue("invoice_no", newInvoiceNumber);
-		}
-	}, [lastInvoiceNumber, form]);
+	// useEffect(() => {
+	// 	if (lastInvoiceNumber > 0) {
+	// 		const newInvoiceNumber = `JP${String(
+	// 			lastInvoiceNumber + 1
+	// 		).padStart(9, "0")}`;
+	// 		form.setValue("invoice_no", newInvoiceNumber);
+	// 	}
+	// }, [lastInvoiceNumber, form]);
 
 async function onSubmit(values: z.infer<typeof formSchema>) {
 		const payload: Invoice = {
@@ -96,11 +96,10 @@ async function onSubmit(values: z.infer<typeof formSchema>) {
 			
 		} catch (error) {
 			console.log(error)
-			toast.error(error)
 		}
 		
 	
-		setLastInvoiceNumber((prev) => prev + 1);
+		// setLastInvoiceNumber((prev) => prev + 1);
 		form.reset({
 			...form.getValues(),
 			ship_date: "",
@@ -129,7 +128,7 @@ async function onSubmit(values: z.infer<typeof formSchema>) {
 							<FormControl>
 								<Input
 									{...field}
-									disabled
+									
 								/>
 							</FormControl>
 							<FormMessage />

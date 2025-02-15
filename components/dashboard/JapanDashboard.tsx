@@ -14,12 +14,13 @@ import { cn } from "@/lib/utils";
 import useSWR from "swr";
 import { fetcher } from "@/apis";
 import { Car, JapaneseYen } from "lucide-react";
+import { BASE_URL } from "@/constants/baseUrl";
 
 
 
 export function JapanDashboard() {
 
-    const { data, error, isLoading } = useSWR('/cars', fetcher)
+    const { data, error, isLoading } = useSWR(`${BASE_URL}/cars`, fetcher)
 	
 	const totalCarExpenditure = data?.data?.reduce((sum: any, item: any) => sum + item?.car.bid_price, 0)
 

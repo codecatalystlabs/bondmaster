@@ -27,7 +27,7 @@ export function CarDetailsModal({ car, open, onOpenChange }: CarDetailsModalProp
 			<DialogContent className="sm:max-w-[700px]">
 				<DialogHeader>
 					<DialogTitle className="text-2xl">
-						{car.make} {car.car_model} (
+						{car.car_make} {car.car_model} (
 						{car.manufacture_year || "N/A"})
 					</DialogTitle>
 					<DialogDescription>
@@ -68,7 +68,7 @@ export function CarDetailsModal({ car, open, onOpenChange }: CarDetailsModalProp
 							/>
 							<InfoItem
 								label="Make"
-								value={car.make}
+								value={car.car_make}
 							/>
 							<InfoItem
 								label="Model"
@@ -187,8 +187,8 @@ export function CarDetailsModal({ car, open, onOpenChange }: CarDetailsModalProp
 							</TableHeader>
 							<TableBody>
 								{expenseData?.data.map(
-									(expense: any) => (
-										<TableRow key={expense?.id}>
+									(expense: any, index: any) => (
+										<TableRow key={index}>
 											<TableCell>
 												{
 													expense?.description
@@ -213,11 +213,15 @@ export function CarDetailsModal({ car, open, onOpenChange }: CarDetailsModalProp
 				<div className="mt-6 pt-4 border-t flex justify-between items-center text-sm text-gray-500">
 					<div className="flex items-center">
 						<User className="w-4 h-4 mr-2" />
-						<span>Created by: {car?.created_by || "N/A"}</span>
+						<span>
+							Created by: {car?.created_by || "N/A"}
+						</span>
 					</div>
 					<div className="flex items-center">
 						<User className="w-4 h-4 mr-2" />
-						<span>Updated by: {car?.updated_by || "N/A"}</span>
+						<span>
+							Updated by: {car?.updated_by || "N/A"}
+						</span>
 					</div>
 				</div>
 			</DialogContent>
