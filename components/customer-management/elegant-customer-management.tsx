@@ -144,11 +144,11 @@ export function ElegantCostManagement() {
 							</div>
 						</div>
 					</CardContent>
-					<CardFooter>
+					{/* <CardFooter>
 						<Button onClick={generatePDF}>
 							Generate PDF
 						</Button>
-					</CardFooter>
+					</CardFooter> */}
 				</Card>
 			)}
 		</div>

@@ -80,6 +80,7 @@ export function ExpensesModule() {
 		error: currencyError,
 		isLoading: idLoadingCurrency,
 	} = useSWR(`/meta/currency`, fetcher);
+
 	const { data: expensesData, isLoading } = useSWR(
 		`${BASE_URL}/expenses`,
 		fetcher
@@ -91,7 +92,7 @@ export function ExpensesModule() {
 		defaultValues: {
 			company_id: 0,
 			description: "",
-			currency: "USD",
+			currency: "JPY",
 			// dollar_rate:0,
 			amount: 0,
 			expense_date: new Date().toISOString(),
@@ -114,7 +115,7 @@ export function ExpensesModule() {
 			form.reset({
 				company_id: 0,
 				description: "",
-				currency: "USD",
+				currency: "JPY",
 				amount: 0,
 				expense_date: new Date().toISOString(),
 			});
@@ -517,7 +518,7 @@ export function ExpensesModule() {
 					<CardContent>
 						<Button
 							onClick={() =>
-								generateCSVReport(expensesData || [])
+								generateCSVReport(expensesData?.data || [])
 							}
 						>
 							<FileText className="mr-2 h-4 w-4" />

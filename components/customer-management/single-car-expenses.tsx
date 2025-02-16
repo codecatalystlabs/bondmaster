@@ -85,8 +85,8 @@ export function SingleCarExpense() {
 
 
 	return (
-		<div className="container mx-auto p-4">
-			<h1 className="text-2xl font-bold mb-4">
+		<div className="container mx-auto ">
+			<h1 className="text-xl font-bold mb-4">
 				Car Expense Management
 			</h1>
 			<Card className="mb-4">
