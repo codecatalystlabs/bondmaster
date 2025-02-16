@@ -158,11 +158,20 @@ const addSale = async ({ url, sale }: ISale) => {
 
 const addCarSaleJapan = async ({ url, sale }: INewSale) => {
     const { data } = await apiClient.post(url, sale);
+   return data
+}
+const updateSale = async ({ url, sale }: ISale) => {
+    const { data } = await apiClient.put(url, sale);
     return data;
 };
 
 const deleteUser = async ({ url, password }: IDeleteUser) => {
     const { data } = await apiClient.delete(url, { data: { password } });
+    return data;
+}
+
+const deleteSale = async (url:string) => {
+    const { data } = await apiClient.delete(url);
     return data;
 }
 
@@ -183,5 +192,6 @@ export {
     updateCar,
     createInvoice,
     addInvoiceToCar,
-    addCarSaleJapan
+    addCarSaleJapan,
+    updateSale
 };
