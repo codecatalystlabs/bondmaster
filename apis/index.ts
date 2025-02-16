@@ -150,8 +150,18 @@ const addSale = async ({ url, sale }: ISale) => {
     return data;
 };
 
+const updateSale = async ({ url, sale }: ISale) => {
+    const { data } = await apiClient.put(url, sale);
+    return data;
+};
+
 const deleteUser = async ({ url, password }: IDeleteUser) => {
     const { data } = await apiClient.delete(url, { data: { password } });
+    return data;
+}
+
+const deleteSale = async (url:string) => {
+    const { data } = await apiClient.delete(url);
     return data;
 }
 
@@ -171,5 +181,7 @@ export {
     deleteUser,
     updateCar,
     createInvoice,
-    addInvoiceToCar
+    addInvoiceToCar,
+    deleteSale,
+    updateSale
 };
