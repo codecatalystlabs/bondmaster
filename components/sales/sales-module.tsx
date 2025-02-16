@@ -23,7 +23,7 @@ import * as XLSX from "xlsx";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import toast from "react-hot-toast";
-import { addSale, fetcher } from "@/apis";
+import { addSale, deleteSale, fetcher } from "@/apis";
 import useSWR, { mutate } from "swr";
 import { BASE_URL } from "@/constants/baseUrl";
 
@@ -219,6 +219,24 @@ export function SalesModule() {
 
 	// console.log("fetched sales ===", fetchedSales);
 
+
+
+	const handleDelete = async (id: string) => {
+		try {
+			const response = await deleteSale(`sale/${id}`);
+
+			if (response.data) {
+				toast.success("Sale been successfully deleted");
+				mutate(`${BASE_URL}/sales`);
+
+			}
+		} catch (error) {
+			toast.error("Error Fetching sales");
+		}
+	}
+
+	
+
 	return (
 		<Card>
 			<CardHeader>
@@ -298,6 +316,7 @@ export function SalesModule() {
 							onInlineEdit={handleInlineEdit}
 							onDownloadPDF={handleDownloadPDF}
 							onDownloadExcel={handleDownloadExcel}
+							onDeleteSale={handleDelete}
 						/>
 					</TabsContent>
 					<TabsContent value="analytics">

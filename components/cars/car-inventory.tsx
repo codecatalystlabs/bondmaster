@@ -205,7 +205,7 @@ const user = useUserStore((state) => state.user);
       ),
     },
     {
-      accessorKey: 'model',
+      accessorKey: 'car_model',
       header: ({ column }) => {
         return (
           <Button
@@ -218,7 +218,7 @@ const user = useUserStore((state) => state.user);
         );
       },
       cell: ({ row }) => (
-        <div className="ml-[30px]">{row.getValue('model')}</div>
+        <div className="ml-[30px]">{row.getValue('car_model')}</div>
       ),
     },
     {
