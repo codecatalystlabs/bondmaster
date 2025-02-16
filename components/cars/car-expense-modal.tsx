@@ -36,7 +36,7 @@ const formSchema = z.object({
 	description: z.string().min(1, "Description is required"),
 	currency: z.string().min(1, "Currency is required"),
 	amount: z.number().positive("Amount must be positive"),
-	dollar_rate: z.number().positive("Amount must be positive"),
+	dollar_rate: z.number().optional(),
 	expense_date: z.string().min(1, "Expense date is required"),
 });
 
@@ -73,7 +73,7 @@ export function CarExpenseModal({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			description: "",
-			currency: "UGX",
+			currency: "JPY",
 			amount: 0,
 			dollar_rate:0,
 			expense_date: new Date().toISOString().split("T")[0],
@@ -169,6 +169,9 @@ export function CarExpenseModal({
 														value={
 															currency.symbol
 														}
+														defaultValue={
+															"JPY"
+														}
 													>
 														{
 															currency.symbol
@@ -182,7 +185,10 @@ export function CarExpenseModal({
 								</FormItem>
 							)}
 						/>
+						<div className="hidden">
+
 						<FormField
+							
 							control={form.control}
 							name="dollar_rate"
 							render={({ field }) => (
@@ -207,6 +213,7 @@ export function CarExpenseModal({
 								</FormItem>
 							)}
 						/>
+						</div>
 						<FormField
 							control={form.control}
 							name="amount"

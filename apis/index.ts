@@ -5,7 +5,7 @@ import { Car } from "@/types/car";
 import { Cost } from "@/types/cost-management";
 import { Customer } from "@/types/customer";
 import { Expense, Invoice } from "@/types/expense";
-import { Sale2 } from "@/types/sale";
+import { NewSale, Sale2 } from "@/types/sale";
 import { LoginUser, UserInfo } from "@/types/user";
 import axios from "axios";
 
@@ -49,6 +49,12 @@ interface ISale {
     url: string;
     sale: Partial<Sale2>;
 }
+
+interface INewSale {
+    url: string;
+    sale: Partial<NewSale>;
+}
+
 
 interface IDeleteUser {
     url: string;
@@ -150,6 +156,11 @@ const addSale = async ({ url, sale }: ISale) => {
     return data;
 };
 
+const addCarSaleJapan = async ({ url, sale }: INewSale) => {
+    const { data } = await apiClient.post(url, sale);
+    return data;
+};
+
 const deleteUser = async ({ url, password }: IDeleteUser) => {
     const { data } = await apiClient.delete(url, { data: { password } });
     return data;
@@ -171,5 +182,6 @@ export {
     deleteUser,
     updateCar,
     createInvoice,
-    addInvoiceToCar
+    addInvoiceToCar,
+    addCarSaleJapan
 };

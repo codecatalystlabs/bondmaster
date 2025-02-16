@@ -107,7 +107,7 @@ export function SingleCarExpense() {
 											car?.car
 										)}
 									>
-										{car?.car?.car_make}{" "}
+										({car?.car?.car_make}{" "}
 										{car?.car.car_model})- (
 										{car?.car.colour}) -(
 										{car?.car.engine_capacity}) -

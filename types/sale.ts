@@ -42,3 +42,17 @@ export interface Sale2 {
 }
 
 
+
+export interface NewSale {
+  id?: string
+  car_id: number
+  company_id: number
+  auction_date: string
+  auction:string
+  price: number
+  vat_tax: number
+  recycle_fee:number
+  created_by: string
+  updated_by: string
+}
+

@@ -2,7 +2,7 @@ import { SingleCarExpense } from "@/components/customer-management/single-car-ex
 
 export default function CarExpensesPage() {
     return (
-        <div className="p-8">
+        <div className="p-2">
             <SingleCarExpense />
         </div>
     );

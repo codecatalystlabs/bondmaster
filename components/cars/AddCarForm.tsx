@@ -164,7 +164,7 @@ export function AddCarForm({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			chasis_number: initialData?.chasis_number || "",
-			make: initialData?.make || "",
+			make: initialData?.car_make || "",
 			car_model: initialData?.car_model || "",
 			manufacture_year:
 				initialData?.manufacture_year || new Date().getFullYear(),
@@ -303,7 +303,7 @@ export function AddCarForm({
 		if (initialData) {
 			form.reset({
 				chasis_number: initialData.chasis_number || "",
-				make: initialData.make || "",
+				make: initialData.car_make || "",
 				car_model: initialData.car_model || "",
 				manufacture_year:
 					initialData.manufacture_year ||
