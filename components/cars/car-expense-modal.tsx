@@ -36,6 +36,7 @@ const formSchema = z.object({
 	description: z.string().min(1, "Description is required"),
 	currency: z.string().min(1, "Currency is required"),
 	amount: z.number().positive("Amount must be positive"),
+	dollar_rate: z.number().positive("Amount must be positive"),
 	expense_date: z.string().min(1, "Expense date is required"),
 });
 
@@ -74,6 +75,7 @@ export function CarExpenseModal({
 			description: "",
 			currency: "UGX",
 			amount: 0,
+			dollar_rate:0,
 			expense_date: new Date().toISOString().split("T")[0],
 		},
 	});
@@ -104,8 +106,6 @@ export function CarExpenseModal({
 						onSubmit={form.handleSubmit(handleSubmit)}
 						className="space-y-4"
 					>
-					
-
 						<FormField
 							control={form.control}
 							name="description"
@@ -167,17 +167,42 @@ export function CarExpenseModal({
 															currency.ID
 														}
 														value={
-															currency.name
+															currency.symbol
 														}
 													>
 														{
-															currency.name
+															currency.symbol
 														}
 													</SelectItem>
 												)
 											)}
 										</SelectContent>
 									</Select>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="dollar_rate"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Dollar Rate</FormLabel>
+									<FormControl>
+										<Input
+											type="number"
+											placeholder="Enter dollar rate"
+											{...field}
+											onChange={(e) =>
+												field.onChange(
+													Number.parseFloat(
+														e.target
+															.value
+													)
+												)
+											}
+										/>
+									</FormControl>
 									<FormMessage />
 								</FormItem>
 							)}

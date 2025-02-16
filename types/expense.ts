@@ -2,7 +2,7 @@ export interface Expense {
     company_id: number;
     description: string;
     currency: string;
-    amount: any;
+  amount: any;
     expense_date: string;
     created_by: string;
     updated_by: string

@@ -180,7 +180,7 @@ export function CustomerManagement() {
 			setEditingCustomer(null);
 			form.reset();
 		} catch (error: any) {
-			toast.error(error || "An error occurred");
+			toast.error("An error occurred");
 			console.error("Error submitting form:", error);
 		}
 	}

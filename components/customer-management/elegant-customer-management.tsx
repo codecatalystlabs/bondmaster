@@ -28,19 +28,14 @@ export function ElegantCostManagement() {
 	const [totalExpenses, setTotalExpenses] = useState<number>(0);
 	const [profitOrLoss, setProfitOrLoss] = useState<number>(0);
 
-
-		const { data: total } = useSWR(
-			`/total-car-expense/${selectedCar?.ID}`,
-			fetcher
-		);
-	console.log(total,"===vat==")
-	
-	
-
+	const { data: total } = useSWR(
+		`/total-car-expense/${selectedCar?.ID}`,
+		fetcher
+	);
 
 	useEffect(() => {
 		if (selectedCar) {
-			const expensesCost = 0	
+			const expensesCost = 0;
 			setTotalExpenses(expensesCost);
 			setProfitOrLoss(selectedCar.bid_price - expensesCost);
 		}
@@ -72,16 +67,17 @@ export function ElegantCostManagement() {
 							<SelectValue placeholder="Select a car" />
 						</SelectTrigger>
 						<SelectContent>
-							{carList?.data?.map((car: any) => (
+							{carList?.data?.map((car: any,index:any) => (
 								<SelectItem
-									key={car?.car?.car_id}
+									key={index}
 									value={JSON.stringify(car?.car)}
 								>
 									{car?.car?.make} {car?.car?.model}{" "}
-									({car?.car.model})- (
+									({car?.car.car_model})- (
 									{car?.car.colour}) -(
 									{car?.car.engine_capacity}) - (
-									{car?.car.manufacture_year})
+									{car?.car.manufacture_year}) - (
+									{car?.car.chasis_number})
 								</SelectItem>
 							))}
 						</SelectContent>
@@ -93,7 +89,7 @@ export function ElegantCostManagement() {
 				<Card>
 					<CardHeader>
 						<CardTitle>
-							{selectedCar?.make} {selectedCar?.model}
+							{selectedCar?.car_make} {selectedCar?.car_model}
 						</CardTitle>
 					</CardHeader>
 					<CardContent>
@@ -111,26 +107,33 @@ export function ElegantCostManagement() {
 									{selectedCar?.chasis_number}
 								</p>
 								<p>
-									<strong>VAT:</strong>{" "}
-									{" USD "}
+									<strong>VAT:</strong> {" JPY "}
 									{total?.data?.vat_tax?.toLocaleString()}
 								</p>
 								<p>
 									<strong>Bid Price:</strong>{" "}
-									{" USD "}
+									{" JPY "}
 									{total?.data?.bid_price?.toLocaleString()}
 								</p>
 								<p>
-									<strong>Total Expenses:</strong>{" "}
-									{" USD "}
-									{total?.data?.total_expense?.toLocaleString()}
+									<strong>
+										Total Car Expenses:
+									</strong>{" "}
+									{" JPY "}
+									{total?.data?.total_expense_japan?.toLocaleString()}
+								</p>
+
+								<p>
+									<strong>Total Car Price :</strong>{" "}
+									{" JPY "}
+									{total?.data?.total_car_price_japan?.toLocaleString()}
 								</p>
 								<p>
 									<strong>
 										Total Car Price and Expense:
 									</strong>{" "}
-									{" USD"}
-									{total?.data?.total_car_price_and_expenses?.toLocaleString()}
+									{" JPY "}
+									{total?.data?.total_car_price_and_expenses_japan?.toLocaleString()}
 								</p>
 							</div>
 							<div className="flex justify-center items-center">
@@ -140,43 +143,6 @@ export function ElegantCostManagement() {
 								/>
 							</div>
 						</div>
-
-						{/* Expenses Table */}
-						<h3 className="text-lg font-semibold mt-4">
-							Expenses
-						</h3>
-						<table className="w-full border-collapse border border-gray-300 mt-2">
-							<thead>
-								<tr className="bg-gray-100">
-									<th className="border border-gray-300 px-4 py-2">
-										Description
-									</th>
-									<th className="border border-gray-300 px-4 py-2">
-										Amount
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								{/* {selectedCar.expenses?.map(
-									(expense, index) => (
-										<tr
-											key={index}
-											className="border border-gray-300"
-										>
-											<td className="border border-gray-300 px-4 py-2">
-												{
-													expense.description
-												}
-											</td>
-											<td className="border border-gray-300 px-4 py-2">
-												{expense.currency}{" "}
-												{expense.amount.toLocaleString()}
-											</td>
-										</tr>
-									)
-								)} */}
-							</tbody>
-						</table>
 					</CardContent>
 					<CardFooter>
 						<Button onClick={generatePDF}>

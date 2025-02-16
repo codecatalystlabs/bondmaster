@@ -12,8 +12,8 @@ export interface Car {
   chasis_number: string; // Updated from car_uuid
   engine_number: string;
   engine_capacity: string;
-  make: string;
-  model: string;
+  car_make: string;
+  car_model: string;
   manufacture_year: number; // Fixed typo from manufacture_year
   first_registration_year: number;
   colour: string;
@@ -27,16 +27,18 @@ export interface Car {
   length: number;
   width: number;
   height: number;
-  millage: number;
+  car_millage: number;
   fuel_consumption: string;
 
   // Features
+  oil_brake: boolean;
+  air_brake: boolean;
   ps: boolean;
   pw: boolean;
   abs: boolean;
   ads: boolean;
-  aw: boolean;
-  sw: boolean;
+  alloy_wheel: boolean;
+  simple_wheel: boolean;
   navigation: boolean;
   ac: boolean;
 

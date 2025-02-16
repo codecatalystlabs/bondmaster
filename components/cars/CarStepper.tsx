@@ -193,7 +193,7 @@ export function CarForm({
   });
 
   function handleSubmit(values: z.infer<typeof formSchema>) {
-    onSubmit(values as Car);
+    onSubmit(values as unknown as Car);
     onOpenChange(false);
     setStep(1);
   }

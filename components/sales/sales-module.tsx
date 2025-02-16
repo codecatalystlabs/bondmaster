@@ -27,9 +27,6 @@ import { addSale, deleteSale, fetcher } from "@/apis";
 import useSWR, { mutate } from "swr";
 import { BASE_URL } from "@/constants/baseUrl";
 
-
-
-
 const mockCompanies: Company[] = [
 	{
 		id: "1",
@@ -54,7 +51,7 @@ export function SalesModule() {
 	const [showAddForm, setShowAddForm] = React.useState(false);
 	const [editingSale, setEditingSale] = React.useState<Sale | null>(null);
 	const [fetchedSales, setFetchedSales] = React.useState<Sale[]>([]);
-	
+
 	const { data: companies } = useSWR("/companies", fetcher);
 
 	const {
@@ -63,7 +60,7 @@ export function SalesModule() {
 		isLoading: carListLoading,
 	} = useSWR(`${BASE_URL}/cars`, fetcher);
 
-	console.log(fetchedSales,"sales data")
+	console.log(fetchedSales, "sales data");
 
 	const handleAddSale = async (newSale: any) => {
 		try {
@@ -153,18 +150,15 @@ export function SalesModule() {
 			"Company",
 			"Payment Type",
 		];
-		const tableRows = fetchedSales?.map((sale:any) =>
-		
-			[
+		const tableRows = fetchedSales?.map((sale: any) => [
 			sale.ID,
 			`$${sale.total_price.toFixed(2)}`,
 			format(new Date(sale.sale_date), "PPP"),
-			`${sale.Car.make} ${sale.Car.model}`,
+			`${sale.Car.make} ${sale.car.car_model}`,
 			sale.Company.name,
 			sale.is_full_payment ? "Full Payment" : "Installments",
-		]
-		);
-			console.log("sale rows ",fetchedSales )
+		]);
+		console.log("sale rows ", fetchedSales);
 
 		// @ts-ignore
 		doc.autoTable({
@@ -183,7 +177,7 @@ export function SalesModule() {
 				ID: sale.id,
 				"Total Price": sale.totalPrice,
 				"Sale Date": format(new Date(sale.saleDate), "PPP"),
-				Car: `${sale.car.make} ${sale.car.model}`,
+				Car: `${sale.car.make} ${sale.car.car_model}`,
 				Company: sale.company.name,
 				"Payment Type": sale.isFullPayment
 					? "Full Payment"
@@ -199,8 +193,6 @@ export function SalesModule() {
 		toast.success("Sales report has been downloaded as Excel file.");
 	};
 
-
-
 	const {
 		data: salesList,
 		error: salesListError,
@@ -208,7 +200,6 @@ export function SalesModule() {
 	} = useSWR(`${BASE_URL}/sales`, fetcher);
 
 	React.useEffect(() => {
-		
 		if (salesList?.data) {
 			const flattenedList = salesList.data.map(
 				(item: any) => item.sale

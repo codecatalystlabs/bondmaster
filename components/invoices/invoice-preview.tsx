@@ -16,6 +16,7 @@ interface InvoicePreviewProps {
 
 export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 	({ invoice }, ref) => {
+		console.log(invoice, "ooooo");
 		return (
 			<div
 				ref={ref}
@@ -35,13 +36,13 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 							<span className="font-semibold">
 								Invoice No.
 							</span>{" "}
-							{invoice?.customer?.invoice_no}
+							{invoice?.invoice?.invoice_no}
 						</p>
 					</div>
 					<div>
 						<p>
 							<span className="font-semibold">Date:</span>{" "}
-							{invoice?.customer?.ship_date}
+							{invoice?.invoice?.ship_date}
 						</p>
 					</div>
 				</div>
@@ -56,15 +57,15 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 						<span className="font-semibold">
 							Name of Vessel:
 						</span>{" "}
-						{invoice?.customer?.vessel_name}
+						{invoice?.invoice?.vessel_name}
 					</p>
 					<p>
 						<span className="font-semibold">Sailing ON:</span>{" "}
-						{invoice?.customer?.ship_date}
+						{invoice?.invoice?.ship_date}
 					</p>
 					<p>
 						<span className="font-semibold">FROM:</span>{" "}
-						{invoice?.customer?.from_location}
+						{invoice?.invoice?.from_location}
 					</p>
 				</div>
 
@@ -90,13 +91,13 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 							<th className="border border-gray-300 p-2 text-sm">
 								TAX
 							</th>
-							<th className="border border-gray-300 p-2 text-sm">
+							{/* <th className="border border-gray-300 p-2 text-sm">
 								REC
-							</th>
+							</th> */}
 							<th className="border border-gray-300 p-2 text-sm">
 								AUCTION
 							</th>
-							<th className="border border-gray-300 p-2 text-sm">
+							{/* <th className="border border-gray-300 p-2 text-sm">
 								COMMISSION
 							</th>
 							<th className="border border-gray-300 p-2 text-sm">
@@ -104,7 +105,7 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 							</th>
 							<th className="border border-gray-300 p-2 text-sm">
 								FREIGHT
-							</th>
+							</th> */}
 							<th className="border border-gray-300 p-2 text-sm">
 								TOTAL
 							</th>
@@ -112,7 +113,7 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 					</thead>
 					<tbody>
 						{invoice.cars.length > 0 ? (
-							invoice.cars.map((car:any, index:any) => (
+							invoice.cars.map((car: any, index: any) => (
 								<tr key={car.ID}>
 									<td className="border border-gray-300 p-2 text-sm">
 										{index + 1}
@@ -121,7 +122,7 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 										{car.purchase_date}
 									</td>
 									<td className="border border-gray-300 p-2 text-sm">
-										{car.model || "n/a"}
+										{car.car_model || "n/a"}
 									</td>
 									<td className="border border-gray-300 p-2 text-sm">
 										{car.chasis_number || "n/a"}
@@ -130,15 +131,16 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 										{car.bid_price || "n/a"}
 									</td>
 									<td className="border border-gray-300 p-2 text-sm text-right">
-										{car.vat_tax || "n/a"}
+										{(car.vat_tax / 100) *
+											car.bid_price || "n/a"}
 									</td>
-									<td className="border border-gray-300 p-2 text-sm text-right">
+									{/* <td className="border border-gray-300 p-2 text-sm text-right">
 										{car.millage || "n/a"}
-									</td>
+									</td> */}
 									<td className="border border-gray-300 p-2 text-sm text-right">
 										{car.auction || "n/a"}
 									</td>
-									<td className="border border-gray-300 p-2 text-sm text-right">
+									{/* <td className="border border-gray-300 p-2 text-sm text-right">
 										{car.commission || "n/a"}
 									</td>
 									<td className="border border-gray-300 p-2 text-sm text-right">
@@ -146,11 +148,10 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 									</td>
 									<td className="border border-gray-300 p-2 text-sm text-right">
 										{car.freight || "n/a"}
-									</td>
+									</td> */}
 									<td className="border border-gray-300 p-2 text-sm text-right">
-										{car.bid_price +
-											car.vat_tax +
-											car.freight || "n/a"}
+										{car.bid_price + ((car.vat_tax / 100) *
+											car.bid_price || "n/a")}
 									</td>
 								</tr>
 							))

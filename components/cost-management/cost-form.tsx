@@ -32,13 +32,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
+
 
 import { cn } from "@/lib/utils";
 import { Car } from "@/types/car";
@@ -116,7 +110,7 @@ export function CostForm({
 				toast.success(response.message);
 			}
 		} catch (error: any) {
-			toast.error(error || "An error occurred");
+			toast.error("An error occurred");
 		}
 		onSubmit(cost);
 		form.reset();
@@ -164,7 +158,7 @@ export function CostForm({
 												""
 											}
 										>
-											{car.make} {car.model}{" "}
+											{car.make} {car.car_model}{" "}
 											{car.colour}{" "}
 											{car.manufacture_year} ({" "}
 											{car.chasis_number}{" "}

@@ -29,18 +29,21 @@ import { CalendarIcon } from "lucide-react";
 import * as z from "zod";
 import { format } from "date-fns";
 import { Button } from "../ui/button";
-import useUserStore from "@/app/store/userStore";
 
 
 const formSchema = z.object({
-    company_id: z.number(),
-    description: z.string().min(1, "Description is required"),
-    currency: z.string().min(1, "Currency is required"),
-    amount: z.union([
-        z.number().min(1, "Amount is required"),
-        z.number().positive("Amount must be positive"),
-    ]),
-    expense_date: z.string(),
+	company_id: z.number(),
+	description: z.string().min(1, "Description is required"),
+	currency: z.string().min(1, "Currency is required"),
+	amount: z.union([
+		z.number().min(1, "Amount is required"),
+		z.number().positive("Amount must be positive"),
+	]),
+	// dollar_rate: z.union([
+	// 	z.number().min(1, "Amount is required"),
+	// 	z.number().positive("Amount must be positive"),
+	// ]),
+	expense_date: z.string(),
 });
 
 
@@ -103,10 +106,10 @@ export function ExpenseForm({
 											<SelectItem
 												key={currency.ID}
 												value={
-													currency.name
+													currency.symbol
 												}
 											>
-												{currency.name}
+												{currency.symbol}
 											</SelectItem>
 										)
 									)}
@@ -144,6 +147,34 @@ export function ExpenseForm({
 						</FormItem>
 					)}
 				/>
+				{/* <FormField
+					control={form.control}
+					name="dollar_rate"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Dollar Rate</FormLabel>
+							<FormControl>
+								<Input
+									type="number"
+									placeholder="Enter dollar rate"
+									{...field}
+									value={field.value || ""}
+									onChange={(e) => {
+										const value =
+											e.target.value === ""
+												? ""
+												: parseFloat(
+														e.target
+															.value
+												  );
+										field.onChange(value);
+									}}
+								/>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/> */}
 				<FormField
 					control={form.control}
 					name="expense_date"

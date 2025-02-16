@@ -61,7 +61,7 @@ export function LineChart({
 
 	return (
 		<div
-			className={cn("h-full w-full", className)}
+			className={cn("h-[500px] w-full", className)}
 			{...props}
 		>
 			<ResponsiveContainer
@@ -77,7 +77,7 @@ export function LineChart({
 						axisLine={false}
 					/>
 					<YAxis
-						width={yAxisWidth}
+						width={yAxisWidth || 60}
 						stroke="#888888"
 						fontSize={12}
 						tickLine={false}
