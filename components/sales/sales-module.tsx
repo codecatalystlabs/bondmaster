@@ -23,7 +23,7 @@ import * as XLSX from "xlsx";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import toast from "react-hot-toast";
-import { addSale, deleteSale, fetcher } from "@/apis";
+import { addSale, fetcher } from "@/apis";
 import useSWR, { mutate } from "swr";
 import { BASE_URL } from "@/constants/baseUrl";
 
