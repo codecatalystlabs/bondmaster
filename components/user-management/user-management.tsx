@@ -147,6 +147,7 @@ export function UserManagement() {
 		data: usersData,
 		error,
 		isLoading,
+		mutate:mutateUsers
 	} = useSWR(
 		`/users/${storedUser?.company_id}?page=${page}&limit=${limit}`,
 		fetcher
@@ -192,8 +193,7 @@ export function UserManagement() {
 					url: `${BASE_URL}/user`,
 					userInfo: userPayload,
 				});
-
-				mutate(`${BASE_URL}/users`);
+				mutateUsers()
 				if (response.data) {
 					toast.success("User created successfully");
 				}

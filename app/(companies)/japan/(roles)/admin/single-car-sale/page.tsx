@@ -44,6 +44,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { ICompany } from "@/types/company";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
+import { Loader } from "@/components/ui/loader";
 
 const formSchema = z.object({
 	car_id: z.number(),
@@ -147,7 +148,7 @@ export default function CarSalePage() {
 	if (error || getCompanyError || carListError)
 		return <div>Failed to load</div>;
 	if (isLoading || isLoadingCompanies || carListLoading)
-		return <Loader2 className="h-8 w-8 animate-spin" />;
+		return <Loader />;
 
 	return (
 		<div className="p-2">

@@ -4,7 +4,7 @@ import { CustomerManagement } from '@/components/customer-management/customer-ma
 export default function CustomerManagementPage() {
   return (
     <WithAuth>
-    <div className="p-8">
+    <div className="p-2">
       <CustomerManagement />
     </div>
     </WithAuth>
