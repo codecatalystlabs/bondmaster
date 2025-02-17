@@ -28,6 +28,7 @@ import useSWR, { mutate } from "swr";
 import { BASE_URL } from "@/constants/baseUrl";
 import { Input } from "../ui/input";
 import { InvoiceTable } from "./InvoiceTable";
+import { PaymentsTable } from "./Payments";
 
 const mockCompanies: Company[] = [
 	{
@@ -56,6 +57,7 @@ export function SalesModule() {
 
 	const { data: companies } = useSWR("/companies", fetcher);
 	const { data: invoices } = useSWR("/invoices", fetcher);
+	const { data: payments } = useSWR("/payments", fetcher);
 
 	const {
 		data: carList,
@@ -251,6 +253,7 @@ console.log(invoices,"AM INVOICES")
 						</TabsTrigger>
 						<TabsTrigger value="sales">Sales</TabsTrigger>
 						<TabsTrigger value="invoice">Invoices</TabsTrigger>
+						<TabsTrigger value="payments">Payments</TabsTrigger>
 
 						<TabsTrigger value="analytics">
 							Analytics
@@ -318,6 +321,11 @@ console.log(invoices,"AM INVOICES")
 					<TabsContent value="invoice">
 						<div className="space-y-4">
                           <InvoiceTable data={invoices?.data} />
+						</div>
+					</TabsContent>
+					<TabsContent value="payments">
+						<div className="space-y-4">
+                          <PaymentsTable data={payments?.data}/>
 						</div>
 					</TabsContent>
 					<TabsContent value="analytics">
