@@ -26,6 +26,8 @@ import toast from "react-hot-toast";
 import { addSale, deleteSale, fetcher } from "@/apis";
 import useSWR, { mutate } from "swr";
 import { BASE_URL } from "@/constants/baseUrl";
+import { Input } from "../ui/input";
+import { InvoiceTable } from "./InvoiceTable";
 
 const mockCompanies: Company[] = [
 	{
@@ -53,6 +55,7 @@ export function SalesModule() {
 	const [fetchedSales, setFetchedSales] = React.useState<Sale[]>([]);
 
 	const { data: companies } = useSWR("/companies", fetcher);
+	const { data: invoices } = useSWR("/invoices", fetcher);
 
 	const {
 		data: carList,
@@ -177,7 +180,7 @@ export function SalesModule() {
 				ID: sale.id,
 				"Total Price": sale.totalPrice,
 				"Sale Date": format(new Date(sale.saleDate), "PPP"),
-				Car: `${sale.car.make} ${sale.car.car_model}`,
+				Car: `${sale.car.car_make} ${sale.car.car_model}`,
 				Company: sale.company.name,
 				"Payment Type": sale.isFullPayment
 					? "Full Payment"
@@ -227,7 +230,7 @@ export function SalesModule() {
 	}
 
 	
-
+console.log(invoices,"AM INVOICES")
 	return (
 		<Card>
 			<CardHeader>
@@ -247,6 +250,8 @@ export function SalesModule() {
 							Overview
 						</TabsTrigger>
 						<TabsTrigger value="sales">Sales</TabsTrigger>
+						<TabsTrigger value="invoice">Invoices</TabsTrigger>
+
 						<TabsTrigger value="analytics">
 							Analytics
 						</TabsTrigger>
@@ -309,6 +314,11 @@ export function SalesModule() {
 							onDownloadExcel={handleDownloadExcel}
 							onDeleteSale={handleDelete}
 						/>
+					</TabsContent>
+					<TabsContent value="invoice">
+						<div className="space-y-4">
+                          <InvoiceTable data={invoices?.data} />
+						</div>
 					</TabsContent>
 					<TabsContent value="analytics">
 						<SalesVisualization sales={sales} />
