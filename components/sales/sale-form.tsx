@@ -360,7 +360,7 @@ export function SaleForm({ onSubmit,  companies }: SaleFormProps) {
 												""
 											}
 										>
-											{car.make} {car.car_model} (
+											{car.car_make} {car.car_model} (
 											{car.manufacture_year})
 										</SelectItem>
 									))}

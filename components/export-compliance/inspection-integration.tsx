@@ -45,7 +45,7 @@ export function InspectionIntegration({ cars, onUpdate }: InspectionIntegrationP
       <TableBody>
         {cars.map((car) => (
           <TableRow key={car.ID}>
-            <TableCell>{car.make}</TableCell>
+            <TableCell>{car.car_make}</TableCell>
             <TableCell>{car.car_model}</TableCell>
             <TableCell>{car.manufacture_year}</TableCell>
             <TableCell>{car.inspectionReport ? `Inspected on ${new Date(car.inspectionReport.inspectionDate).toLocaleDateString()}` : 'Not Inspected'}</TableCell>
