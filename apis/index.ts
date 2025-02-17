@@ -156,6 +156,11 @@ const addSale = async ({ url, sale }: ISale) => {
     return data;
 };
 
+const addInvoice = async ({ url, invoice }: any) => {
+    const { data } = await apiClient.post(url, invoice);
+    return data;
+};
+
 const addCarSaleJapan = async ({ url, sale }: INewSale) => {
     const { data } = await apiClient.post(url, sale);
    return data
@@ -193,5 +198,7 @@ export {
     createInvoice,
     addInvoiceToCar,
     addCarSaleJapan,
-    updateSale
+    updateSale,
+    deleteSale,
+    addInvoice
 };

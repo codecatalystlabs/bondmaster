@@ -50,6 +50,7 @@ import { updateSale } from "@/apis";
 import toast from "react-hot-toast";
 import { mutate } from "swr";
 import { BASE_URL } from "@/constants/baseUrl";
+import InvoiceDialog from "./InvoiceModal";
 
 interface SalesTableProps {
   data: Sale[];
@@ -58,7 +59,7 @@ interface SalesTableProps {
   onInlineEdit: (updatedSale: Sale) => void;
   onDownloadPDF: () => void;
   onDownloadExcel: () => void;
-  onDeleteSale: () => void;
+  onDeleteSale: (id: string) => void;
 }
 
 export function SalesTable({
@@ -75,12 +76,18 @@ export function SalesTable({
     []
   );
   const [editingRow, setEditingRow] = React.useState<number | null>(null);
-  const [selectedSale, setSelectedSale] = React.useState<Sale | null>(null);
+  const [selectedSale, setSelectedSale] = React.useState<any>(null);
   const [isDialogOpen, setDialogOpen] = React.useState(false);
+  const [invoiceDialogOpen, setInvoiceDialogOpen] = React.useState(false);
 
   const openEditDialog = (sale: Sale) => {
     setSelectedSale(sale);
     setDialogOpen(true);
+  };
+
+  const openInvoiceDialog = (sale: Sale) => {
+    setSelectedSale(sale);
+    setInvoiceDialogOpen(true);
   };
 
   const closeEditDialog = () => {
@@ -190,9 +197,12 @@ export function SalesTable({
           <Button
             variant="destructive"
             size="sm"
-            onClick={() => onDeleteSale(row.original.ID)}
+            onClick={() => onDeleteSale(row?.original?.ID)}
           >
             <Trash2 className="h-4 w-4" />
+          </Button>
+          <Button size="sm" onClick={() => openInvoiceDialog(row.original)}>
+            Add Invoice
           </Button>
         </div>
       ),
@@ -238,13 +248,17 @@ export function SalesTable({
         <Input
           placeholder="Filter by company..."
           value={
-            (table.getColumn("company.name")?.getFilterValue() as string) ?? ""
+            table?.getColumn("Company.name")
+              ? (table.getColumn("Company.name")?.getFilterValue() as string) ??
+                ""
+              : ""
           }
           onChange={(event) =>
-            table.getColumn("company.name")?.setFilterValue(event.target.value)
+            table.getColumn("Company?.name")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
+
         <div className="flex space-x-2">
           <Button variant="outline" size="sm" onClick={onDownloadPDF}>
             <FileText className="mr-2 h-4 w-4" />
@@ -409,6 +423,12 @@ export function SalesTable({
           )}
         </DialogContent>
       </Dialog>
+
+      <InvoiceDialog
+        open={invoiceDialogOpen}
+        onOpenChange={setInvoiceDialogOpen}
+        selectedSale={selectedSale}
+      />
     </div>
   );
 }
