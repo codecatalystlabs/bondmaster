@@ -44,7 +44,6 @@ export function PaymentsTable({ data }: DataTableProps) {
   ];
 
 
-
   const table = useReactTable({
     data,
     columns,
