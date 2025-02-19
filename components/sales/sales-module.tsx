@@ -218,17 +218,19 @@ export function SalesModule() {
 
 
 	const handleDelete = async (id: string) => {
-		try {
-			const response = await deleteSale(`sale/${id}`);
+		console.log("callsss")
+		// try {
 
-			if (response.data) {
-				toast.success("Sale been successfully deleted");
-				mutate(`${BASE_URL}/sales`);
+		// 	const response = await deleteSale(`sale/${id}`);
 
-			}
-		} catch (error) {
-			toast.error("Error Fetching sales");
-		}
+		// 	if (response.data) {
+		// 		toast.success("Sale been successfully deleted");
+		// 		mutate(`${BASE_URL}/sales`);
+
+		// 	}
+		// } catch (error) {
+		// 	toast.error("Error Fetching sales");
+		// }
 	}
 
 	

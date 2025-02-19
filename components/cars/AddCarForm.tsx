@@ -108,8 +108,6 @@ type DestinationCompany = {
 	name: string;
 };
 
-
-
 interface StepperCarFormProps {
 	onCancel: () => void;
 	initialData?: Car;
@@ -137,14 +135,11 @@ export function AddCarForm({
 		isLoading: idLoadingCurrency,
 	} = useSWR(`/meta/currency`, fetcher);
 
-
 	const {
 		data: ports,
 		error: portsError,
 		isLoading: idLoadingPorts,
 	} = useSWR(`/meta/ports`, fetcher);
-
-
 
 	const {
 		data: companiesData,
@@ -152,13 +147,14 @@ export function AddCarForm({
 		isLoading: isLoadingCompanies,
 	} = useSWR(`/companies`, fetcher);
 
-
-
 	const user = useUserStore((state) => state.user);
+	console.log(user, "uer");
 	const [step, setStep] = React.useState(1);
 	const [previewImages, setPreviewImages] = React.useState<string[]>([]);
 
-	const filteredCompany = companiesData?.data.filter((data:any) => data.ID !== user?.company_id)
+	const filteredCompanies = companiesData?.data?.filter(
+		(company: any) => company.ID !== user?.company_id
+	);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -194,7 +190,7 @@ export function AddCarForm({
 			air_brake: initialData?.air_brake || false,
 			navigation: initialData?.navigation || false,
 			ac: initialData?.ac || false,
-			currency: initialData?.currency || "",
+			currency: initialData?.currency || "JPY",
 			bid_price: initialData?.bid_price || 0,
 			vat_tax: initialData?.vat_tax ?? null, // Ensure null is preserved
 			purchase_date: initialData?.purchase_date || "",
@@ -207,7 +203,7 @@ export function AddCarForm({
 			broker_name: initialData?.broker_name || "",
 			broker_number: initialData?.broker_number || "",
 			number_plate: initialData?.number_plate || "",
-			customer_id: initialData?.customer_id ?? null, // Preserve null
+			customer_id: initialData?.customer_id ?? null,
 			car_status: initialData?.car_status || "",
 			car_payment_status: initialData?.car_payment_status || "",
 			images: initialData?.images || [],
@@ -334,7 +330,7 @@ export function AddCarForm({
 				air_brake: initialData?.oil_brake || false,
 				navigation: initialData.navigation || false,
 				ac: initialData.ac || false,
-				currency: initialData.currency || "",
+				currency: initialData.currency || "JPY",
 				bid_price: initialData.bid_price || 0,
 				vat_tax: initialData.vat_tax ?? null, // Preserve null
 
@@ -363,8 +359,7 @@ export function AddCarForm({
 
 	const removeImage = (index: number) => {
 		const newImages =
-			form.getValues("images")?.filter((_, i) => i !== index) ||
-			[];
+			form.getValues("images")?.filter((_, i) => i !== index) || [];
 		form.setValue("images", newImages);
 		setPreviewImages(previewImages.filter((_, i) => i !== index));
 	};
@@ -1667,24 +1662,32 @@ export function AddCarForm({
 																</SelectTrigger>
 															</FormControl>
 															<SelectContent>
-																{companiesData?.data?.map(
-																	(
-																		company: any
-																	) => (
-																		<SelectItem
-																			key={
-																				company?.ID
-																			}
-																			value={
-																				company?.name
-																			}
-																		>
-																			{
-																				company?.name
-																			}
-																		</SelectItem>
+																{companiesData?.data
+																	?.filter(
+																		(
+																			company: any
+																		) =>
+																			company.ID !==
+																			user?.company_id
 																	)
-																)}
+																	?.map(
+																		(
+																			company: any
+																		) => (
+																			<SelectItem
+																				key={
+																					company?.ID
+																				}
+																				value={
+																					company?.name
+																				}
+																			>
+																				{
+																					company?.name
+																				}
+																			</SelectItem>
+																		)
+																	)}
 															</SelectContent>
 														</Select>
 														<FormMessage />

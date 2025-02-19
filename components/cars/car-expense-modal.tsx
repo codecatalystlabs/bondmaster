@@ -142,7 +142,10 @@ export function CarExpenseModal({
 								</FormItem>
 							)}
 						/>
+						<div className="hidden">
+
 						<FormField
+						
 							control={form.control}
 							name="currency"
 							render={({ field }) => (
@@ -185,6 +188,7 @@ export function CarExpenseModal({
 								</FormItem>
 							)}
 						/>
+						</div>
 						<div className="hidden">
 
 						<FormField

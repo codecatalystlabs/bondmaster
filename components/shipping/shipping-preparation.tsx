@@ -189,7 +189,7 @@ export function ShippingPreparation() {
 																	}
 																>
 																	{
-																		car.make
+																		car.car_make
 																	}{" "}
 																	{
 																		car.car_model
@@ -342,7 +342,7 @@ export function ShippingPreparation() {
 												(
 													item: ShippingOrderItem
 												) =>
-													`${item.car.make} ${item.car.car_model} (x${item.quantity})`
+													`${item.car.car_make} ${item.car.car_model} (x${item.quantity})`
 											)
 											.join(", ")}
 									</TableCell>

@@ -45,6 +45,14 @@ import type { ICompany } from "@/types/company";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
 import { Loader } from "@/components/ui/loader";
+import {
+	Card,
+	CardHeader,
+	CardTitle,
+	CardDescription,
+	CardContent,
+} from "@/components/ui/card";
+import { Plus } from "lucide-react";
 
 const formSchema = z.object({
 	car_id: z.number(),
@@ -75,8 +83,8 @@ export default function CarSalePage() {
 	} = useSWR<{ data: any; total: number }>(
 		`${BASE_URL}/auction-sales?page=${page}&limit=${limit}&company=${filterCompany}&car=${filterCar}&sortBy=${sortBy}&sortOrder=${sortOrder}`,
 		fetcher
-		);
-	
+	);
+
 	console.log(salesData?.data, "salesData");
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -145,454 +153,525 @@ export default function CarSalePage() {
 		}
 	};
 
+	const totalPages = Math.ceil((salesData?.total || 0) / limit);
+	const startIndex = (page - 1) * limit + 1;
+	const endIndex = Math.min(page * limit, salesData?.total || 0);
+
 	if (error || getCompanyError || carListError)
 		return <div>Failed to load</div>;
-	if (isLoading || isLoadingCompanies || carListLoading)
-		return <Loader />;
+	if (isLoading || isLoadingCompanies || carListLoading) return <Loader />;
 
 	return (
-		<div className="p-2">
-			<div className="mb-4 flex justify-between items-center">
-				<Dialog
-					open={isAddSaleOpen}
-					onOpenChange={setIsAddSaleOpen}
-				>
-					<DialogTrigger asChild>
-						<Button>Add New Sale</Button>
-					</DialogTrigger>
-					<DialogContent className="sm:max-w-[600px]">
-						<DialogHeader>
-							<DialogTitle>Add New Sale</DialogTitle>
-						</DialogHeader>
-						<Form {...form}>
-							<form
-								onSubmit={form.handleSubmit(
-									handleAddSale
-								)}
-								className="grid grid-cols-2 gap-4"
-							>
-								<FormField
-									control={form.control}
-									name="car_id"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>
-												Car
-											</FormLabel>
-											<Select
-												onValueChange={(
-													value
-												) =>
-													field.onChange(
-														Number(
-															value
-														)
-													)
-												}
-											>
-												<FormControl>
-													<SelectTrigger>
-														<SelectValue placeholder="Select car" />
-													</SelectTrigger>
-												</FormControl>
-												<SelectContent>
-													{carList?.data.map(
-														(
-															car: any
-														) => (
-															<SelectItem
-																key={
-																	car
-																		?.car
-																		.ID
-																}
-																value={car?.car.ID.toString()}
-															>
-																{
-																	car
-																		.car
-																		.make
-																}{" "}
-																{
-																	car
-																		.car
-																		.car_model
-																}{" "}
-																-{" "}
-																{
-																	car
-																		.car
-																		.chasis_number
-																}
-															</SelectItem>
-														)
-													)}
-												</SelectContent>
-											</Select>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="company_id"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>
-												Company
-											</FormLabel>
-											<Select
-												onValueChange={(
-													value
-												) =>
-													field.onChange(
-														Number(
-															value
-														)
-													)
-												}
-											>
-												<FormControl>
-													<SelectTrigger>
-														<SelectValue placeholder="Select company" />
-													</SelectTrigger>
-												</FormControl>
-												<SelectContent>
-													{companiesData?.data.map(
-														(
-															company: ICompany
-														) => (
-															<SelectItem
-																key={
-																	company.ID
-																}
-																value={company.ID.toString()}
-															>
-																{
-																	company.name
-																}
-															</SelectItem>
-														)
-													)}
-												</SelectContent>
-											</Select>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="price"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>
-												Price
-											</FormLabel>
-											<FormControl>
-												<Input
-													type="number"
-													{...field}
-													onChange={(
-														e
-													) =>
-														field.onChange(
-															Number(
-																e
-																	.target
-																	.value
-															)
-														)
-													}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="vat_tax"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>
-												VAT Tax
-											</FormLabel>
-											<FormControl>
-												<Input
-													type="number"
-													{...field}
-													onChange={(
-														e
-													) =>
-														field.onChange(
-															Number(
-																e
-																	.target
-																	.value
-															)
-														)
-													}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="recycle_fee"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>
-												Recycle Fee
-											</FormLabel>
-											<FormControl>
-												<Input
-													type="number"
-													{...field}
-													onChange={(
-														e
-													) =>
-														field.onChange(
-															Number(
-																e
-																	.target
-																	.value
-															)
-														)
-													}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="auction_date"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>
-												Auction Date
-											</FormLabel>
-											<FormControl>
-												<Input
-													type="date"
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="auction"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>
-												Auction
-											</FormLabel>
-											<FormControl>
-												<Input
-													type="text"
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<Button
-									type="submit"
-									className="col-span-2"
-								>
-									Add Sale
-								</Button>
-							</form>
-						</Form>
-					</DialogContent>
-				</Dialog>
-				{/* <div className="flex gap-2">
-					<Select
-						onValueChange={(value) => setFilterCompany(value)}
-					>
-						<SelectTrigger className="w-[180px]">
-							<SelectValue placeholder="Filter by Company" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="0">
-								All Companies
-							</SelectItem>
-							{companiesData?.data.map(
-								(company: ICompany) => (
-									<SelectItem
-										key={company.ID}
-										value={company.ID.toString()}
-									>
-										{company.name}
-									</SelectItem>
-								)
-							)}
-						</SelectContent>
-					</Select>
-					<Select onValueChange={(value) => setFilterCar(value)}>
-						<SelectTrigger className="w-[180px]">
-							<SelectValue placeholder="Filter by Car" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="0">All Cars</SelectItem>
-							{carList?.data.map((car: any) => (
-								<SelectItem
-									key={car?.car.ID}
-									value={car?.car.ID.toString()}
-								>
-									{car.car.make} {car.car.car_model}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-				</div> */}
-			</div>
-			{salesData?.data && salesData.data.length > 0 ? (
-				<>
-					<Table>
-						<TableHeader>
-							<TableRow>
-								<TableHead
-									onClick={() =>
-										handleSort("car_model")
-									}
-								>
-									Car
-								</TableHead>
-								<TableHead
-									onClick={() =>
-										handleSort("company_name")
-									}
-								>
-									Company
-								</TableHead>
-								<TableHead
-									onClick={() => handleSort("price")}
-								>
-									Price
-								</TableHead>
-								<TableHead
-									onClick={() =>
-										handleSort("vat_tax")
-									}
-								>
-									VAT Tax
-								</TableHead>
-								<TableHead
-									onClick={() =>
-										handleSort("recycle_fee")
-									}
-								>
-									Recycle Fee
-								</TableHead>
-								<TableHead
-									onClick={() =>
-										handleSort("auction_date")
-									}
-								>
-									Auction Date
-								</TableHead>
-								<TableHead
-									onClick={() =>
-										handleSort("auction")
-									}
-								>
-									Auction
-								</TableHead>
-							</TableRow>
-						</TableHeader>
-						<TableBody>
-							{salesData.data.map(
-								(sale: any, index: number) => (
-									<TableRow key={index}>
-										<TableCell>
-											{sale?.Car.car_model}{" "}
-											{sale?.Car.car?.make}
-										</TableCell>
-										<TableCell>
-											{sale?.Company.company?.name}
-										</TableCell>
-										<TableCell>
-											{sale.price.toLocaleString()}
-										</TableCell>
-										<TableCell>
-											{sale.vat_tax.toLocaleString()}
-										</TableCell>
-										<TableCell>
-											{sale.recycle_fee.toLocaleString()}
-										</TableCell>
-										<TableCell>
-											{new Date(
-												sale.auction_date
-											).toLocaleDateString()}
-										</TableCell>
-										<TableCell>
-											{sale.auction}
-										</TableCell>
-									</TableRow>
-								)
-							)}
-						</TableBody>
-					</Table>
-					<div className="flex justify-between items-center mt-4">
+		<div className="container mx-auto py-10">
+			<Card>
+				<CardHeader>
+					<div className="flex items-center justify-between">
 						<div>
-							<Select
-								onValueChange={(value) =>
-									handleLimitChange(Number(value))
-								}
-							>
-								<SelectTrigger className="w-[100px]">
-									<SelectValue
-										placeholder={limit.toString()}
-									/>
-								</SelectTrigger>
-								<SelectContent>
-									{[5, 10, 20, 50,100,1000,50000,10000000].map(
-										(pageSize) => (
-											<SelectItem
-												key={pageSize}
-												value={pageSize.toString()}
-											>
-												{pageSize}
-											</SelectItem>
-										)
-									)}
-								</SelectContent>
-							</Select>
+							<CardTitle>Car Sales</CardTitle>
+							<CardDescription>
+								Manage your car sales and transactions
+								here.
+							</CardDescription>
 						</div>
-						<div className="flex gap-2">
-							<Button
-								onClick={() =>
-									handlePageChange(page - 1)
-								}
-								disabled={page === 1}
-							>
-								Previous
-							</Button>
-							<Button
-								onClick={() =>
-									handlePageChange(page + 1)
-								}
-								disabled={
-									page * limit >=
-									(salesData.total || 0)
-								}
-							>
-								Next
-							</Button>
-						</div>
+						<Button onClick={() => setIsAddSaleOpen(true)}>
+							<Plus className="mr-2 h-4 w-4" />
+							Add Sale
+						</Button>
 					</div>
-				</>
-			) : (
-				<div className="text-center py-4">No sales found.</div>
-			)}
+				</CardHeader>
+				<CardContent>
+					{isLoading ? (
+						<Loader />
+					) : salesData?.data && salesData.data.length > 0 ? (
+						<>
+							<div className="flex items-center justify-between py-4">
+								<Input
+									placeholder="Filter cars..."
+									value={filterCar}
+									onChange={(e) =>
+										setFilterCar(e.target.value)
+									}
+									className="max-w-sm"
+								/>
+								<div className="flex space-x-2">
+									<Select
+										value={limit.toString()}
+										onValueChange={(value) =>
+											handleLimitChange(
+												Number(value)
+											)
+										}
+									>
+										<SelectTrigger className="w-[100px]">
+											<SelectValue
+												placeholder={limit.toString()}
+											/>
+										</SelectTrigger>
+										<SelectContent>
+											{[
+												5, 10, 20, 50, 100,
+											].map((pageSize) => (
+												<SelectItem
+													key={pageSize}
+													value={pageSize.toString()}
+												>
+													{pageSize}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+								</div>
+							</div>
+
+							<div className="rounded-md border">
+								<Table>
+									<TableHeader>
+										<TableRow>
+											<TableHead
+												onClick={() =>
+													handleSort(
+														"Car.car_model"
+													)
+												}
+											>
+												Car Details
+											</TableHead>
+											<TableHead
+												onClick={() =>
+													handleSort(
+														"Company.name"
+													)
+												}
+											>
+												Company
+											</TableHead>
+											<TableHead
+												onClick={() =>
+													handleSort(
+														"price"
+													)
+												}
+											>
+												Price
+											</TableHead>
+											<TableHead
+												onClick={() =>
+													handleSort(
+														"vat_tax"
+													)
+												}
+											>
+												VAT
+											</TableHead>
+											<TableHead
+												onClick={() =>
+													handleSort(
+														"recycle_fee"
+													)
+												}
+											>
+												Recycle Fee
+											</TableHead>
+											<TableHead
+												onClick={() =>
+													handleSort(
+														"auction_date"
+													)
+												}
+											>
+												Auction Date
+											</TableHead>
+											<TableHead
+												onClick={() =>
+													handleSort(
+														"auction"
+													)
+												}
+											>
+												Auction
+											</TableHead>
+										</TableRow>
+									</TableHeader>
+									<TableBody>
+										{salesData.data.map(
+											(
+												sale: any,
+												index: number
+											) => (
+												<TableRow
+													key={index}
+												>
+													<TableCell>
+														{
+															sale
+																?.Car
+																.car_model
+														}{" "}
+														{
+															sale
+																?.Car
+																.car
+																?.make
+														}
+													</TableCell>
+													<TableCell>
+														{
+															sale
+																?.Company
+																.company
+																?.name
+														}
+													</TableCell>
+													<TableCell>
+														{sale.price.toLocaleString()}
+													</TableCell>
+													<TableCell>
+														{sale.vat_tax.toLocaleString()}
+													</TableCell>
+													<TableCell>
+														{sale.recycle_fee.toLocaleString()}
+													</TableCell>
+													<TableCell>
+														{new Date(
+															sale.auction_date
+														).toLocaleDateString()}
+													</TableCell>
+													<TableCell>
+														{
+															sale.auction
+														}
+													</TableCell>
+												</TableRow>
+											)
+										)}
+									</TableBody>
+								</Table>
+							</div>
+
+							<div className="flex items-center justify-between py-4">
+								<div className="flex items-center gap-2">
+									<Select
+										value={limit.toString()}
+										onValueChange={(value) =>
+											handleLimitChange(
+												Number(value)
+											)
+										}
+									>
+										<SelectTrigger className="w-[80px]">
+											<SelectValue
+												placeholder={limit.toString()}
+											/>
+										</SelectTrigger>
+										<SelectContent>
+											{[
+												5, 10, 20, 50, 100,
+											].map((pageSize) => (
+												<SelectItem
+													key={pageSize}
+													value={pageSize.toString()}
+												>
+													{pageSize}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+									<p className="text-sm text-muted-foreground">
+										Showing {startIndex} to{" "}
+										{endIndex} of{" "}
+										{salesData.total} entries
+									</p>
+								</div>
+								<div className="flex items-center space-x-2">
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={() =>
+											handlePageChange(1)
+										}
+										disabled={page === 1}
+									>
+										First
+									</Button>
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={() =>
+											handlePageChange(
+												page - 1
+											)
+										}
+										disabled={page === 1}
+									>
+										Previous
+									</Button>
+									<span className="text-sm">
+										Page {page} of {totalPages}
+									</span>
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={() =>
+											handlePageChange(
+												page + 1
+											)
+										}
+										disabled={page >= totalPages}
+									>
+										Next
+									</Button>
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={() =>
+											handlePageChange(
+												totalPages
+											)
+										}
+										disabled={page >= totalPages}
+									>
+										Last
+									</Button>
+								</div>
+							</div>
+						</>
+					) : (
+						<div className="text-center py-4">
+							No sales found.
+						</div>
+					)}
+				</CardContent>
+			</Card>
+
+			<Dialog
+				open={isAddSaleOpen}
+				onOpenChange={setIsAddSaleOpen}
+			>
+				<DialogContent className="sm:max-w-[600px]">
+					<DialogHeader>
+						<DialogTitle>Add New Sale</DialogTitle>
+					</DialogHeader>
+					<Form {...form}>
+						<form
+							onSubmit={form.handleSubmit(handleAddSale)}
+							className="grid grid-cols-2 gap-4"
+						>
+							<FormField
+								control={form.control}
+								name="car_id"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Car</FormLabel>
+										<Select
+											onValueChange={(value) =>
+												field.onChange(
+													Number(value)
+												)
+											}
+										>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder="Select car" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												{carList?.data.map(
+													(car: any) => (
+														<SelectItem
+															key={
+																car
+																	?.car
+																	.ID
+															}
+															value={car?.car.ID.toString()}
+														>
+															{
+																car
+																	.car
+																	.make
+															}{" "}
+															{
+																car
+																	.car
+																	.car_model
+															}{" "}
+															-{" "}
+															{
+																car
+																	.car
+																	.chasis_number
+															}
+														</SelectItem>
+													)
+												)}
+											</SelectContent>
+										</Select>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="company_id"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Company</FormLabel>
+										<Select
+											onValueChange={(value) =>
+												field.onChange(
+													Number(value)
+												)
+											}
+										>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder="Select company" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												{companiesData?.data.map(
+													(
+														company: ICompany
+													) => (
+														<SelectItem
+															key={
+																company.ID
+															}
+															value={company.ID.toString()}
+														>
+															{
+																company.name
+															}
+														</SelectItem>
+													)
+												)}
+											</SelectContent>
+										</Select>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="price"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Price</FormLabel>
+										<FormControl>
+											<Input
+												type="number"
+												{...field}
+												onChange={(e) =>
+													field.onChange(
+														Number(
+															e
+																.target
+																.value
+														)
+													)
+												}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="vat_tax"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>VAT Tax</FormLabel>
+										<FormControl>
+											<Input
+												type="number"
+												{...field}
+												onChange={(e) =>
+													field.onChange(
+														Number(
+															e
+																.target
+																.value
+														)
+													)
+												}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="recycle_fee"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>
+											Recycle Fee
+										</FormLabel>
+										<FormControl>
+											<Input
+												type="number"
+												{...field}
+												onChange={(e) =>
+													field.onChange(
+														Number(
+															e
+																.target
+																.value
+														)
+													)
+												}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="auction_date"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>
+											Auction Date
+										</FormLabel>
+										<FormControl>
+											<Input
+												type="date"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="auction"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Auction</FormLabel>
+										<FormControl>
+											<Input
+												type="text"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<Button
+								type="submit"
+								className="col-span-2"
+							>
+								Add Sale
+							</Button>
+						</form>
+					</Form>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 }

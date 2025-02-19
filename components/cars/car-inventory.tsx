@@ -75,7 +75,6 @@ const formSchema = z.object({
 });
 
 export function CarInventory() {
-    const { data: carList, error, isLoading } = useSWR(`/cars`, fetcher);
 const user = useUserStore((state) => state.user);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -94,13 +93,22 @@ const user = useUserStore((state) => state.user);
  const [selectedCarForExpense, setSelectedCarForExpense] = React.useState<
 		string | null
 	 >(null);
+
+	 const storedUserData = JSON.parse(
+		localStorage.getItem("user-details") || "{}"
+	);
+
+	const companyId = storedUserData?.state?.user?.company_id;
+
+	const endpoint = companyId ? `/cars/search?to_company_id=${companyId}` : `/cars`;
 	
+	const { data: carList, error, isLoading } = useSWR(endpoint, fetcher);
 
   React.useEffect(() => {
     if (carList?.data) {
-      const flattenedList = carList?.data.map((item: any) => item.car);
+      const flattenedList = carList?.data.map((item: any) => item?.car);
 
-      setCars(flattenedList);
+      setCars(carList?.data);
     }
   }, [carList]);
 
@@ -169,8 +177,8 @@ const user = useUserStore((state) => state.user);
     );
   };
 
-
-
+console.log(cars,"AM CAR")
+console.log(carList,"AM LIST")
   const columns: ColumnDef<Car>[] = [
     {
       accessorKey: 'chasis_number',
@@ -345,7 +353,7 @@ const user = useUserStore((state) => state.user);
   ];
 
   const table = useReactTable({
-    data: cars || [],
+    data:  cars || [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -371,12 +379,7 @@ const user = useUserStore((state) => state.user);
 				<Card>
 					<CardHeader>
 						<CardTitle>Car Inventory</CardTitle>
-						<div className="flex gap-2">
-							{/* <Button onClick={handleDownloadPDF}>
-								<FileText className="mr-2 h-4 w-4" />{" "}
-								Download PDF
-							</Button> */}
-						</div>
+						
 						<CardDescription>
 							Manage your car inventory, upload documents,
 							and track vehicle details.
