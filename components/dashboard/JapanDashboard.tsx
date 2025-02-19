@@ -10,21 +10,21 @@ import {
 	SwapOutlined,
 	FileTextOutlined,
 } from "@ant-design/icons";
-import { cn } from "@/lib/utils";
+import { cn, formatAmount } from "@/lib/utils";
 import useSWR from "swr";
 import { fetcher } from "@/apis";
 import { Car, JapaneseYen } from "lucide-react";
 import { BASE_URL } from "@/constants/baseUrl";
 
-
-
 export function JapanDashboard() {
+	const { data, error, isLoading } = useSWR(`${BASE_URL}/cars`, fetcher);
 
-    const { data, error, isLoading } = useSWR(`${BASE_URL}/cars`, fetcher)
-	
-	const totalCarExpenditure = data?.data?.reduce((sum: any, item: any) => sum + item?.car.bid_price, 0)
+	const totalCarExpenditure = data?.data?.reduce(
+		(sum: any, item: any) => sum + item?.car.bid_price,
+		0
+	);
 
-    const stats = [
+	const stats = [
 		{
 			title: "Total Cars Purchased",
 			value: data?.data?.length || 0,
@@ -50,8 +50,9 @@ export function JapanDashboard() {
 		},
 		{
 			title: "Total Car Expenditure",
-			value: isLoading ? "loading" : totalCarExpenditure || 0,
-
+			value: isLoading
+				? "loading"
+				: formatAmount(totalCarExpenditure, "¥"),
 			icon: <JapaneseYen />,
 			chart: (
 				<LineChart
@@ -90,7 +91,7 @@ export function JapanDashboard() {
 				/>
 			),
 		},
-    ];
+	];
 	return (
 		<div className="flex-1 overflow-y-auto p-8">
 			<div className="grid gap-6">

@@ -1,25 +1,41 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import type { Car } from "@/types/car"
-import { CarIcon, Info, DollarSign, Truck, User, Receipt } from "lucide-react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import useSWR from "swr"
-import { fetcher } from "@/apis"
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogDescription,
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Car } from "@/types/car";
+import { CarIcon, Info, DollarSign, Truck, User, Receipt } from "lucide-react";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
+import useSWR from "swr";
+import { fetcher } from "@/apis";
+import { formatAmount } from "@/lib/utils";
 
 interface CarDetailsModalProps {
-  car: Car | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
+	car: Car | null;
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
 }
 
-export function CarDetailsModal({ car, open, onOpenChange }: CarDetailsModalProps) {
-	if (!car) return null
-	
-	const { data: expenseData } = useSWR(`/car/${car?.ID}/expenses`,fetcher)
+export function CarDetailsModal({
+	car,
+	open,
+	onOpenChange,
+}: CarDetailsModalProps) {
+	if (!car) return null;
 
-  
+	const { data: expenseData } = useSWR(`/car/${car?.ID}/expenses`, fetcher);
 
-  return (
+	return (
 		<Dialog
 			open={open}
 			onOpenChange={onOpenChange}
@@ -128,11 +144,17 @@ export function CarDetailsModal({ car, open, onOpenChange }: CarDetailsModalProp
 						<div className="grid grid-cols-2 gap-4">
 							<InfoItem
 								label="Bid Price"
-								value={`${car.currency} ${car.bid_price}`}
+								value={formatAmount(
+									car.bid_price,
+									car.currency
+								)}
 							/>
 							<InfoItem
 								label="VAT Tax"
-								value={`${car.currency} ${car.vat_tax}`}
+								value={formatAmount(
+									car.vat_tax,
+									car.currency
+								)}
 							/>
 							<InfoItem
 								label="Purchase Date"
@@ -195,8 +217,10 @@ export function CarDetailsModal({ car, open, onOpenChange }: CarDetailsModalProp
 												}
 											</TableCell>
 											<TableCell>
-												{expense?.currency}{" "}
-												{expense?.amount}
+												{formatAmount(
+													expense?.amount,
+													expense?.currency
+												)}
 											</TableCell>
 											<TableCell>
 												{new Date(
@@ -226,15 +250,20 @@ export function CarDetailsModal({ car, open, onOpenChange }: CarDetailsModalProp
 				</div>
 			</DialogContent>
 		</Dialog>
-  );
+	);
 }
 
-function InfoItem({ label, value }: { label: string; value: string | number | undefined }) {
-  return (
-    <div className="space-y-1">
-      <h4 className="text-sm font-medium text-gray-500">{label}</h4>
-      <p className="text-base">{value || "N/A"}</p>
-    </div>
-  )
+function InfoItem({
+	label,
+	value,
+}: {
+	label: string;
+	value: string | number | undefined;
+}) {
+	return (
+		<div className="space-y-1">
+			<h4 className="text-sm font-medium text-gray-500">{label}</h4>
+			<p className="text-base">{value || "N/A"}</p>
+		</div>
+	);
 }
-

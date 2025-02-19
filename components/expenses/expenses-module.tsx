@@ -47,6 +47,7 @@ import { saveAs } from "file-saver";
 import { ICurrency } from "@/types/cost-management";
 import { ExpenseForm } from "./expense-form";
 import useUserStore from "@/app/store/userStore";
+import { formatAmount } from "@/lib/utils";
 
 interface ITotalExpense {
 	sum: number;
@@ -266,13 +267,9 @@ export function ExpensesModule() {
 								</CardHeader>
 								<CardContent>
 									<div className="text-2xl flex space-x-2 items-center font-bold">
+										
 										<span>
-											<JapaneseYen />{" "}
-										</span>
-										<span>
-											{totalExpenses?.toFixed(
-												2
-											)}
+											{formatAmount(totalExpenses, "¥")}
 										</span>
 									</div>
 								</CardContent>
@@ -285,13 +282,9 @@ export function ExpensesModule() {
 								</CardHeader>
 								<CardContent>
 									<div className="text-2xl flex space-x-2 items-center font-bold">
+										
 										<span>
-											<JapaneseYen />{" "}
-										</span>
-										<span>
-											{averageExpense.toFixed(
-												2
-											)}
+											{formatAmount(averageExpense, "¥")}
 										</span>
 									</div>
 								</CardContent>

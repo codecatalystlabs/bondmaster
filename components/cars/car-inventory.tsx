@@ -371,12 +371,7 @@ const user = useUserStore((state) => state.user);
 				<Card>
 					<CardHeader>
 						<CardTitle>Car Inventory</CardTitle>
-						<div className="flex gap-2">
-							{/* <Button onClick={handleDownloadPDF}>
-								<FileText className="mr-2 h-4 w-4" />{" "}
-								Download PDF
-							</Button> */}
-						</div>
+						
 						<CardDescription>
 							Manage your car inventory, upload documents,
 							and track vehicle details.
