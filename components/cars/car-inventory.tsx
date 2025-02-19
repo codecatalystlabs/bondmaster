@@ -51,7 +51,7 @@ import { CarDetailsModal } from './car-details-modal';
 import { Car, CarResponse } from '@/types/car';
 import useSWR, { mutate } from 'swr';
 import { BASE_URL } from '@/constants/baseUrl';
-import { addCarExpenses, addInvoiceToCar, fetcher } from '@/apis';
+import { addCarDetails, addCarExpenses, addInvoiceToCar, fetcher } from '@/apis';
 import { Loader } from '../ui/loader';
 import { AddCarForm } from './AddCarForm';
 import toast from 'react-hot-toast';
@@ -60,6 +60,7 @@ import * as z from "zod";
 import useUserStore from '@/app/store/userStore';
 import { handleDownloadExcel } from '@/lib/utils';
 import { CarInvoiceModal } from './car-invoice-modal';
+import { AddCarDetails } from './AddCarDetails';
 
 
 const formSchema = z.object({
@@ -90,6 +91,7 @@ const user = useUserStore((state) => state.user);
   const [cars, setCars] = React.useState<Car[]>([]);
 	const [showExpenseModal, setShowExpenseModal] = React.useState(false);
 	const [showInvoiceModal, setShowInvoiceModal] = React.useState(false);
+	const [showAddCarDetailsModal,setShowAddCarDetailsModal] =  React.useState(false);
  const [selectedCarForExpense, setSelectedCarForExpense] = React.useState<
 		string | null
 	 >(null);
@@ -122,6 +124,12 @@ const user = useUserStore((state) => state.user);
     setShowEditForm(true);
   };
 
+  const handleAddCarDetails = (car: any) => {
+    setSelectedCar(car);
+    setShowAddCarDetailsModal(true);
+  };
+
+
  
 
 	const handleCarExpenseSubmit = async (data: any) => {
@@ -142,6 +150,32 @@ const user = useUserStore((state) => state.user);
 
 			mutate(`${BASE_URL}/expenses`);
 			toast.success("Expense added successfully");
+			
+		} catch (error) {
+			console.log("failed");
+		}
+		
+		
+	};
+
+	const handleCarAddCarDetails = async (data: any) => {
+		 console.log(data,"AAJAJJA++>>>>")
+		// const newExpense: any = {
+		// 	...data,
+		// 	car_id: selectedCar?.ID || 1,
+		// 	created_by: user?.username,
+		// 	updated_by: user?.username,
+		// };
+
+
+		try {
+			 await addCarDetails({
+				url: `${BASE_URL}/car/${selectedCar.ID}/sale`,
+				carInfo: data,
+			});
+
+			mutate(`${BASE_URL}/cars/search?to_company_id=${companyId}`);
+			toast.success("Details added successfully");
 			
 		} catch (error) {
 			console.log("failed");
@@ -319,11 +353,17 @@ console.log(carList,"AM LIST")
 					</DropdownMenuItem>
 					<DropdownMenuItem
 						onClick={() => {
-							console.log("Edit car", car);
 							handleEditCar(car);
 						}}
 					>
 						Edit car
+					</DropdownMenuItem>
+					<DropdownMenuItem
+						onClick={() => {
+							handleAddCarDetails(car);
+						}}
+					>
+						Add car details
 					</DropdownMenuItem>
 					<DropdownMenuItem className="text-red-600">
 						Delete car
@@ -597,11 +637,18 @@ console.log(carList,"AM LIST")
 						onOpenChange={setShowAddForm}
 						onCancel={() => setShowAddForm(false)}
 					/>
+
 					<AddCarForm
 						open={showEditForm}
 						onOpenChange={setShowEditForm}
 						initialData={selectedCar}
 						onCancel={() => setShowEditForm(false)}
+					/>
+					<AddCarDetails
+				       carId={selectedCar?.ID || ""}
+						open={showAddCarDetailsModal}
+						onOpenChange={setShowAddCarDetailsModal}
+						onSubmit={handleCarAddCarDetails}
 					/>
 					<CarDetailsModal
 						open={showDetailsModal}
@@ -615,6 +662,7 @@ console.log(carList,"AM LIST")
 						onOpenChange={setShowExpenseModal}
 						onSubmit={handleCarExpenseSubmit}
 					/>
+					
 
 					<CarInvoiceModal
 						carId={selectedCar?.ID || ""}
