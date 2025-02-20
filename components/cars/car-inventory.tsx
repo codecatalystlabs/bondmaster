@@ -99,7 +99,7 @@ export function CarInventory() {
 	const [selectedCarForExpense, setSelectedCarForExpense] = React.useState<
 		string | null
 	>(null);
-	const [showAddCarDetailsModal,setShowAddCarDetailsModal] =  React.useState(false);
+	const [showAddCarDetailsModal, setShowAddCarDetailsModal] = React.useState(false);
 
 
 	const storedUserData = JSON.parse(
@@ -152,9 +152,8 @@ export function CarInventory() {
 
 		const queryString = queryParams.toString().replace(/&/g, "&&");
 		return queryString
-			? `${baseEndpoint}${
-					baseEndpoint.includes("?") ? "&&" : "?"
-			  }${queryString}`
+			? `${baseEndpoint}${baseEndpoint.includes("?") ? "&&" : "?"
+			}${queryString}`
 			: baseEndpoint;
 	}, [debouncedFilters, companyId]);
 
@@ -205,8 +204,8 @@ export function CarInventory() {
 	const handleAddCarDetails = (car: any) => {
 		setSelectedCar(car);
 		setShowAddCarDetailsModal(true);
-	  };
-	
+	};
+
 
 	const handleInvoiceAttachment = async (data: any) => {
 		const invoice: any = {
@@ -235,30 +234,30 @@ export function CarInventory() {
 	};
 
 	const handleCarAddCarDetails = async (data: any) => {
-		console.log(data,"AAJAJJA++>>>>")
-	   // const newExpense: any = {
-	   // 	...data,
-	   // 	car_id: selectedCar?.ID || 1,
-	   // 	created_by: user?.username,
-	   // 	updated_by: user?.username,
-	   // };
+		console.log(data, "AAJAJJA++>>>>")
+		// const newExpense: any = {
+		// 	...data,
+		// 	car_id: selectedCar?.ID || 1,
+		// 	created_by: user?.username,
+		// 	updated_by: user?.username,
+		// };
 
 
-	   try {
+		try {
 			await addCarDetails({
-			   url: `${BASE_URL}/car/${selectedCar.ID}/sale`,
-			   carInfo: data,
-		   });
+				url: `${BASE_URL}/car/${selectedCar.ID}/sale`,
+				carInfo: data,
+			});
 
-		   mutate(`${BASE_URL}/cars/search?to_company_id=${companyId}`);
-		   toast.success("Details added successfully");
-		   
-	   } catch (error) {
-		   console.log("failed");
-	   }
-	   
-	   
-   };
+			mutate(`${BASE_URL}/cars/search?to_company_id=${companyId}`);
+			toast.success("Details added successfully");
+
+		} catch (error) {
+			console.log("failed");
+		}
+
+
+	};
 
 	console.log(cars, "AM CAR");
 	console.log(carList, "AM LIST");
@@ -435,26 +434,26 @@ export function CarInventory() {
 								View details
 							</DropdownMenuItem>
 
-							{companyId !=1 &&     
+							{companyId != 1 &&
 
-<DropdownMenuItem
-	onClick={() => {
-		handleEditCar(car);
-	}}
->
-	Edit car
-</DropdownMenuItem>
-}
-{companyId ==1 &&     
+								<DropdownMenuItem
+									onClick={() => {
+										handleEditCar(car);
+									}}
+								>
+									Edit car
+								</DropdownMenuItem>
+							}
+							{companyId == 1 &&
 
-<DropdownMenuItem
-	onClick={() => {
-		handleAddCarDetails(car);
-	}}
->
-	Add car details
-</DropdownMenuItem>
-			}
+								<DropdownMenuItem
+									onClick={() => {
+										handleAddCarDetails(car);
+									}}
+								>
+									Add car details
+								</DropdownMenuItem>
+							}
 
 							<DropdownMenuItem className="text-red-600">
 								Delete car
@@ -563,10 +562,12 @@ export function CarInventory() {
 							>
 								Reset Filters
 							</Button>
+                            {companyId != 1 &&
 							<Button onClick={() => setShowAddForm(true)}>
 								<Plus className="mr-2 h-4 w-4" /> Add
 								Car
 							</Button>
+							}
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
 									<Button variant="outline">
@@ -745,11 +746,11 @@ export function CarInventory() {
 						onCancel={() => setShowEditForm(false)}
 					/>
 					<AddCarDetails
-				       carId={selectedCar?.ID || ""}
+						carId={selectedCar?.ID || ""}
 						open={showAddCarDetailsModal}
 						onOpenChange={setShowAddCarDetailsModal}
 						onSubmit={handleCarAddCarDetails}
-					/> 
+					/>
 					<CarDetailsModal
 						open={showDetailsModal}
 						onOpenChange={setShowDetailsModal}

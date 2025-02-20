@@ -139,11 +139,7 @@ const updateCar = async ({ url, carInfo }: ICreateCar) => {
 
 const addCarDetails = async ({ url, carInfo }: any) => {
     try {
-        const { data } = await apiClient.put(url, carInfo,{
-            headers: {
-              "Content-Type": "multipart/form-data", // Not strictly needed, but added for clarity
-            },
-          });
+        const { data } = await apiClient.put(url, carInfo);
         return data;
     } catch (error) {
         console.log(error,"AM ERROR")
