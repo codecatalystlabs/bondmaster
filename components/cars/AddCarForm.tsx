@@ -90,10 +90,10 @@ const formSchema = z.object({
 	auction: z.string().optional(),
 
 	// Step 5: Shipping and Destination
-	from_company_id: z.number().min(1, "From company ID is required"),
-	to_company_id: z.string().min(1, "Destination company is required"),
-	destination: z.string().min(1, "Destination is required"),
-	port: z.string().min(1, "Port is required"),
+	from_company_id: z.number().optional(),
+	to_company_id: z.string().optional(),
+	destination: z.string().optional(),
+	port: z.string().optional(),
 	broker_name: z.string().optional(),
 	broker_number: z.string().optional(),
 	number_plate: z.string().optional(),
@@ -192,7 +192,7 @@ export function AddCarForm({
 			ac: initialData?.ac || false,
 			currency: initialData?.currency || "JPY",
 			bid_price: initialData?.bid_price || 0,
-			vat_tax: initialData?.vat_tax ?? null, // Ensure null is preserved
+			vat_tax: initialData?.vat_tax ?? null, 
 			purchase_date: initialData?.purchase_date || "",
 			auction: initialData?.auction || "",
 			from_company_id:
@@ -749,18 +749,27 @@ export function AddCarForm({
 														>
 															<FormControl>
 																<SelectTrigger>
-																	<SelectValue placeholder="Select transmission" />
+																	<SelectValue placeholder="Select transmission type" />
 																</SelectTrigger>
 															</FormControl>
 															<SelectContent>
-																<SelectItem value="manual">
-																	Manual
-																</SelectItem>
 																<SelectItem value="automatic">
 																	Automatic
 																</SelectItem>
-																<SelectItem value="cvt">
-																	CVT
+																<SelectItem value="manual">
+																	Manual
+																</SelectItem>
+																<SelectItem value="gear_5">
+																	Gear
+																	5
+																</SelectItem>
+																<SelectItem value="gear_6">
+																	Gear
+																	6
+																</SelectItem>
+																<SelectItem value="gear_7">
+																	Gear
+																	7
 																</SelectItem>
 															</SelectContent>
 														</Select>
@@ -1128,14 +1137,30 @@ export function AddCarForm({
 													<FormItem>
 														<FormLabel>
 															Fuel
-															Consumption
+															Type
 														</FormLabel>
-														<FormControl>
-															<Input
-																placeholder="Enter fuel consumption"
-																{...field}
-															/>
-														</FormControl>
+														<Select
+															onValueChange={
+																field.onChange
+															}
+															defaultValue={
+																field.value
+															}
+														>
+															<FormControl>
+																<SelectTrigger>
+																	<SelectValue placeholder="Select fuel type" />
+																</SelectTrigger>
+															</FormControl>
+															<SelectContent>
+																<SelectItem value="petrol">
+																	Petrol
+																</SelectItem>
+																<SelectItem value="diesel">
+																	Diesel
+																</SelectItem>
+															</SelectContent>
+														</Select>
 														<FormMessage />
 													</FormItem>
 												)}

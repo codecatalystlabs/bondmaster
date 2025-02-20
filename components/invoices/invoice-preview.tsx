@@ -1,3 +1,4 @@
+import { formatAmount } from "@/lib/utils";
 import { forwardRef } from "react";
 
 interface InvoicePreviewProps {
@@ -128,11 +129,11 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 										{car.chasis_number || "n/a"}
 									</td>
 									<td className="border border-gray-300 p-2 text-sm text-right">
-										{car.bid_price || "n/a"}
+										{formatAmount(car.bid_price,"JPY") || "n/a"}
 									</td>
 									<td className="border border-gray-300 p-2 text-sm text-right">
-										{(car.vat_tax / 100) *
-											car.bid_price || "n/a"}
+										{ formatAmount((car.vat_tax / 100) *
+											car.bid_price , "JPY") || "n/a"}
 									</td>
 									{/* <td className="border border-gray-300 p-2 text-sm text-right">
 										{car.millage || "n/a"}
@@ -150,8 +151,8 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 										{car.freight || "n/a"}
 									</td> */}
 									<td className="border border-gray-300 p-2 text-sm text-right">
-										{car.bid_price + ((car.vat_tax / 100) *
-											car.bid_price || "n/a")}
+										{formatAmount(car.bid_price + ((car.vat_tax / 100) *
+											car.bid_price),"JPY")}
 									</td>
 								</tr>
 							))
