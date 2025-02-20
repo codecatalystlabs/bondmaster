@@ -334,21 +334,29 @@ export function CarInventory() {
 				</div>
 			),
 		},
-
+		{
+			accessorKey: "currency",
+			header: "Currency",
+			cell: ({ row }) => (
+				<div>{row.getValue("currency") || "JPY"}</div>
+			),
+		},
 		{
 			accessorKey: "bid_price",
 			header: () => <div className="text-right">Bid Price</div>,
 			cell: ({ row }) => {
-				const amount = row.getValue("bid_price");
+				const amount =
+					parseFloat(row.getValue("bid_price") as string) || 0;
+				const currency =
+					(row.getValue("currency") as string) || "JPY";
 
 				return (
 					<div className="text-right font-medium">
-						{formatAmount(amount, "JPY")}
+						{formatAmount(amount, currency)}
 					</div>
 				);
 			},
 		},
-
 		{
 			id: "actions",
 			enableHiding: false,
@@ -704,7 +712,6 @@ export function CarInventory() {
 						onOpenChange={setShowExpenseModal}
 						onSubmit={handleCarExpenseSubmit}
 					/>
-					
 
 					<CarInvoiceModal
 						carId={selectedCar?.ID || ""}
