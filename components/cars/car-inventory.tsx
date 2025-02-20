@@ -679,12 +679,19 @@ export function CarInventory() {
 						onOpenChange={setShowAddForm}
 						onCancel={() => setShowAddForm(false)}
 					/>
+
 					<AddCarForm
 						open={showEditForm}
 						onOpenChange={setShowEditForm}
 						initialData={selectedCar}
 						onCancel={() => setShowEditForm(false)}
 					/>
+					{/* <AddCarDetails
+				       carId={selectedCar?.ID || ""}
+						open={showAddCarDetailsModal}
+						onOpenChange={setShowAddCarDetailsModal}
+						onSubmit={handleCarAddCarDetails}
+					/> */}
 					<CarDetailsModal
 						open={showDetailsModal}
 						onOpenChange={setShowDetailsModal}
@@ -697,6 +704,7 @@ export function CarInventory() {
 						onOpenChange={setShowExpenseModal}
 						onSubmit={handleCarExpenseSubmit}
 					/>
+					
 
 					<CarInvoiceModal
 						carId={selectedCar?.ID || ""}
