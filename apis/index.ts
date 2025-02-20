@@ -122,6 +122,7 @@ const addCar = async ({ url, carInfo }: ICreateCar) => {
 
 };
 
+
 const updateCar = async ({ url, carInfo }: ICreateCar) => {
     try {
         const { data } = await apiClient.put(url, carInfo,{

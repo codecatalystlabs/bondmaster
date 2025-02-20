@@ -51,7 +51,7 @@ import { CarDetailsModal } from "./car-details-modal";
 import { Car, CarResponse } from "@/types/car";
 import useSWR, { mutate } from "swr";
 import { BASE_URL } from "@/constants/baseUrl";
-import { addCarExpenses, addInvoiceToCar, fetcher } from "@/apis";
+import { addCarExpenses, addInvoiceToCar, fetcher, addCarDetails } from "@/apis";
 import { Loader } from "../ui/loader";
 import { AddCarForm } from "./AddCarForm";
 import toast from "react-hot-toast";
@@ -60,6 +60,7 @@ import * as z from "zod";
 import useUserStore from "@/app/store/userStore";
 import { handleDownloadExcel, formatAmount } from "@/lib/utils";
 import { CarInvoiceModal } from "./car-invoice-modal";
+import { AddCarDetails } from "./AddCarDetails";
 
 const formSchema = z.object({
 	car_id: z.number(),
@@ -98,6 +99,8 @@ export function CarInventory() {
 	const [selectedCarForExpense, setSelectedCarForExpense] = React.useState<
 		string | null
 	>(null);
+	const [showAddCarDetailsModal,setShowAddCarDetailsModal] =  React.useState(false);
+
 
 	const storedUserData = JSON.parse(
 		localStorage.getItem("user-details") || "{}"
@@ -198,6 +201,13 @@ export function CarInventory() {
 		}
 	};
 
+
+	const handleAddCarDetails = (car: any) => {
+		setSelectedCar(car);
+		setShowAddCarDetailsModal(true);
+	  };
+	
+
 	const handleInvoiceAttachment = async (data: any) => {
 		const invoice: any = {
 			...data,
@@ -223,6 +233,32 @@ export function CarInventory() {
 			)
 		);
 	};
+
+	const handleCarAddCarDetails = async (data: any) => {
+		console.log(data,"AAJAJJA++>>>>")
+	   // const newExpense: any = {
+	   // 	...data,
+	   // 	car_id: selectedCar?.ID || 1,
+	   // 	created_by: user?.username,
+	   // 	updated_by: user?.username,
+	   // };
+
+
+	   try {
+			await addCarDetails({
+			   url: `${BASE_URL}/car/${selectedCar.ID}/sale`,
+			   carInfo: data,
+		   });
+
+		   mutate(`${BASE_URL}/cars/search?to_company_id=${companyId}`);
+		   toast.success("Details added successfully");
+		   
+	   } catch (error) {
+		   console.log("failed");
+	   }
+	   
+	   
+   };
 
 	console.log(cars, "AM CAR");
 	console.log(carList, "AM LIST");
@@ -398,14 +434,28 @@ export function CarInventory() {
 							>
 								View details
 							</DropdownMenuItem>
-							<DropdownMenuItem
-								onClick={() => {
-									console.log("Edit car", car);
-									handleEditCar(car);
-								}}
-							>
-								Edit car
-							</DropdownMenuItem>
+
+							{companyId !=1 &&     
+
+<DropdownMenuItem
+	onClick={() => {
+		handleEditCar(car);
+	}}
+>
+	Edit car
+</DropdownMenuItem>
+}
+{companyId ==1 &&     
+
+<DropdownMenuItem
+	onClick={() => {
+		handleAddCarDetails(car);
+	}}
+>
+	Add car details
+</DropdownMenuItem>
+			}
+
 							<DropdownMenuItem className="text-red-600">
 								Delete car
 							</DropdownMenuItem>
@@ -694,12 +744,12 @@ export function CarInventory() {
 						initialData={selectedCar}
 						onCancel={() => setShowEditForm(false)}
 					/>
-					{/* <AddCarDetails
+					<AddCarDetails
 				       carId={selectedCar?.ID || ""}
 						open={showAddCarDetailsModal}
 						onOpenChange={setShowAddCarDetailsModal}
 						onSubmit={handleCarAddCarDetails}
-					/> */}
+					/> 
 					<CarDetailsModal
 						open={showDetailsModal}
 						onOpenChange={setShowDetailsModal}
