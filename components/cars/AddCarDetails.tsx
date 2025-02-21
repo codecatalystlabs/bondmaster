@@ -34,10 +34,11 @@ interface CarBrokerModalProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	onSubmit: (data: z.infer<typeof formSchema>) => void;
-    carId:string
+    carId:string;
+	customers: any[]
 }
 
-export function AddCarDetails({ open, onOpenChange, onSubmit,carId }: CarBrokerModalProps) {
+export function AddCarDetails({ open, onOpenChange, onSubmit,carId,customers }: CarBrokerModalProps) {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -56,6 +57,8 @@ export function AddCarDetails({ open, onOpenChange, onSubmit,carId }: CarBrokerM
 		form.reset();
 		onOpenChange(false);
 	};
+
+	console.log(customers,"AM CUSYOMEYE")
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -96,15 +99,27 @@ export function AddCarDetails({ open, onOpenChange, onSubmit,carId }: CarBrokerM
 							</FormItem>
 						)} />
 
-						<FormField control={form.control} name="customer_id" render={({ field }) => (
-							<FormItem>
-								<FormLabel>Customer ID</FormLabel>
-								<FormControl>
-									<Input type="number" placeholder="Enter customer ID" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)} />
+<FormField control={form.control} name="customer_id" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Customer</FormLabel>
+                <Select onValueChange={(value) => field.onChange(Number(value))} defaultValue={String(field.value)}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select customer" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {customers?.map((info:any) => (
+                      <SelectItem key={info?.customer?.ID} value={String(info?.customer?.ID)}>
+                        {info?.customer?.surname} {info?.customer?.firstname}
+
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )} />
 
 						<FormField control={form.control} name="car_status" render={({ field }) => (
 							<FormItem>

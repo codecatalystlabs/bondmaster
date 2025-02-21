@@ -89,7 +89,11 @@ const addInvoiceToCar = async ({ url, invoiceNumber }: any) => {
 }
 
 const createCustomer = async ({ url, customerInfo }: ICreateCustomer) => {
-    const { data } = await apiClient.post(url, customerInfo);
+    const { data } = await apiClient.post(url, customerInfo,{
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
     return data;
 };
 
@@ -202,6 +206,12 @@ const deleteSale = async (url:string) => {
     return data;
 }
 
+
+const deleteCustomer = async (url:string) => {
+    const { data } = await apiClient.delete(url);
+    return data;
+}
+
 // Export API functions
 export {
     createUser,
@@ -225,5 +235,6 @@ export {
     addInvoice,
     addDeposit,
     addPayment,
-    addCarDetails
+    addCarDetails,
+    deleteCustomer
 };

@@ -158,6 +158,8 @@ export function CarInventory() {
 	}, [debouncedFilters, companyId]);
 
 	const { data: carList, error, isLoading } = useSWR(endpoint, fetcher);
+	const { data: customers } = useSWR(`${BASE_URL}/customers`, fetcher);
+
 
 	React.useEffect(() => {
 		if (carList?.data) {
@@ -750,6 +752,7 @@ export function CarInventory() {
 						open={showAddCarDetailsModal}
 						onOpenChange={setShowAddCarDetailsModal}
 						onSubmit={handleCarAddCarDetails}
+						customers={customers?.data}
 					/>
 					<CarDetailsModal
 						open={showDetailsModal}

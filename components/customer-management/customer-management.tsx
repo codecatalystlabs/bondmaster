@@ -54,7 +54,7 @@ import {
 import { Customer, CustomerResponse, DataItem } from "@/types/customer";
 import { Loader } from "@/components/ui/loader";
 import useSWR, { mutate } from "swr";
-import { createCustomer, editCustomer, fetcher } from "@/apis";
+import { createCustomer, deleteCustomer, editCustomer, fetcher } from "@/apis";
 import { BASE_URL } from "@/constants/baseUrl";
 import toast from "react-hot-toast";
 
@@ -74,6 +74,8 @@ const formSchema = z.object({
 	telephone: z.string().min(10, "Telephone must be at least 10 characters."),
 	email: z.string().email("Invalid email address."),
 	nin: z.string().min(1, "NIN is required."),
+	upload_file: z.instanceof(File).optional()
+
 });
 
 export function CustomerManagement() {
@@ -95,6 +97,7 @@ export function CustomerManagement() {
 			telephone: "",
 			email: "",
 			nin: "",
+			upload_file:undefined
 		},
 	});
 
@@ -185,12 +188,14 @@ export function CustomerManagement() {
 		}
 	}
 
-	const deleteCustomer = (customerUuid: string) => {
-		setCustomers(
-			customers?.filter(
-				(customer) => customer.customer_uuid !== customerUuid
-			)
-		);
+	const handleDeleteCustomer = async () => {
+      console.log(editingCustomer,"AM THE USERRERERERER")
+	  const response = await deleteCustomer(`${BASE_URL}/customer/${editingCustomer?.ID}`);
+
+	mutate(`${BASE_URL}/customers`);
+	if (response.data) {
+		toast.success("Customer deleted successfully");
+	}
 	};
 
 	return (
@@ -464,6 +469,9 @@ export function CustomerManagement() {
 													</FormItem>
 												)}
 											/>
+                                           
+
+
 											<FormField
 												control={
 													form.control
@@ -485,6 +493,26 @@ export function CustomerManagement() {
 													</FormItem>
 												)}
 											/>
+
+<FormField
+								control={form.control}
+								name="upload_file"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Upload File</FormLabel>
+										<FormControl>
+											<Input
+												type="file"
+												onChange={(e) => {
+													const file = e.target.files?.[0];
+													field.onChange(file);
+												}}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 										</div>
 									</form>
 								</Form>
@@ -600,6 +628,13 @@ export function CustomerManagement() {
 															<Button
 																variant="ghost"
 																size="icon"
+																onClick={()=>{
+																	setEditingCustomer(
+																		{
+																			...item.customer,
+																		}
+																	);
+																}}
 															>
 																<Trash2 className="h-4 w-4" />
 															</Button>
@@ -639,11 +674,7 @@ export function CustomerManagement() {
 																	Cancel
 																</AlertDialogCancel>
 																<AlertDialogAction
-																	onClick={() =>
-																		console.log(
-																			"deleted"
-																		)
-																	}
+																	onClick={handleDeleteCustomer}
 																>
 																	Delete
 																</AlertDialogAction>
