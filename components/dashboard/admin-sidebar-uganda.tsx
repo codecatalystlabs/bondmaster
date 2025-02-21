@@ -35,26 +35,26 @@ const menuItems = [
 				icon: <CarOutlined />,
 				href: "/uganda/admin/car-inventory",
 			},
-			{
-				title: "Shipping Preparation",
-				icon: <ShoppingOutlined />,
-				href: "/uganda/admin/shipping-preparation",
-			},
+			// {
+			// 	title: "Shipping Preparation",
+			// 	icon: <ShoppingOutlined />,
+			// 	href: "/uganda/admin/shipping-preparation",
+			// },
 			{
 				title: "Cost Management",
 				icon: <DollarOutlined />,
 				href: "/uganda/admin/cost-management",
 			},
-			{
-				title: "Shipping Logistics",
-				icon: <Ship size={16} />,
-				href: "/uganda/admin/shipping-logistics",
-			},
-			{
-				title: "Export Compliance",
-				icon: <FileCheck size={16} />,
-				href: "/uganda/admin/export-compliance",
-			},
+			// {
+			// 	title: "Shipping Logistics",
+			// 	icon: <Ship size={16} />,
+			// 	href: "/uganda/admin/shipping-logistics",
+			// },
+			// {
+			// 	title: "Export Compliance",
+			// 	icon: <FileCheck size={16} />,
+			// 	href: "/uganda/admin/export-compliance",
+			// },
 			{
 				title: "User Management",
 				icon: <UserOutlined />,

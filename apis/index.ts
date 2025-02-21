@@ -89,7 +89,11 @@ const addInvoiceToCar = async ({ url, invoiceNumber }: any) => {
 }
 
 const createCustomer = async ({ url, customerInfo }: ICreateCustomer) => {
-    const { data } = await apiClient.post(url, customerInfo);
+    const { data } = await apiClient.post(url, customerInfo,{
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
     return data;
 };
 
@@ -122,6 +126,7 @@ const addCar = async ({ url, carInfo }: ICreateCar) => {
 
 };
 
+
 const updateCar = async ({ url, carInfo }: ICreateCar) => {
     try {
         const { data } = await apiClient.put(url, carInfo,{
@@ -129,6 +134,16 @@ const updateCar = async ({ url, carInfo }: ICreateCar) => {
               "Content-Type": "multipart/form-data", // Not strictly needed, but added for clarity
             },
           });
+        return data;
+    } catch (error) {
+        console.log(error,"AM ERROR")
+    }
+
+};
+
+const addCarDetails = async ({ url, carInfo }: any) => {
+    try {
+        const { data } = await apiClient.put(url, carInfo);
         return data;
     } catch (error) {
         console.log(error,"AM ERROR")
@@ -191,6 +206,12 @@ const deleteSale = async (url:string) => {
     return data;
 }
 
+
+const deleteCustomer = async (url:string) => {
+    const { data } = await apiClient.delete(url);
+    return data;
+}
+
 // Export API functions
 export {
     createUser,
@@ -213,5 +234,7 @@ export {
     deleteSale,
     addInvoice,
     addDeposit,
-    addPayment
+    addPayment,
+    addCarDetails,
+    deleteCustomer
 };
