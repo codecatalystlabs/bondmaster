@@ -25,7 +25,7 @@ import useSWR from "swr";
 import { BASE_URL } from "@/constants/baseUrl";
 import { fetcher } from "@/apis";
 
-
+ 
 export function CostManagement() {
 	const [costs, setCosts] = React.useState<Cost[]>([]);
 	const [invoices, setInvoices] = React.useState<Invoice[]>([]);
