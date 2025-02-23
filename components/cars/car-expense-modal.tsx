@@ -33,18 +33,20 @@ import toast from "react-hot-toast";
 import useUserStore from "@/app/store/userStore";
 
 const formSchema = z.object({
-	description: z.string().min(1, "Description is required"),
+	description_type: z.string(),
+	custom_description: z.string().optional(),
 	currency: z.string().min(1, "Currency is required"),
-	amount: z.number().positive("Amount must be positive"),
-	dollar_rate: z.number().optional(),
-	expense_date: z.string().min(1, "Expense date is required"),
+	amount: z.number().min(1, "Amount must be positive"),
+	expense_date: z.string().min(1, "Date is required"),
+	carrier_name: z.string().optional(),
+	expense_remark: z.string().optional(),
 });
 
 interface CarExpenseModalProps {
 	carId: string;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
-	onSubmit: (data: z.infer<typeof formSchema>) => void;
+	onSubmit: (data: any) => void;
 }
 
 export function CarExpenseModal({
@@ -54,39 +56,66 @@ export function CarExpenseModal({
 	onSubmit,
 }: CarExpenseModalProps) {
 	const {
-		data: currencies,
-		error: currencyError,
-		isLoading: idLoadingCurrency,
-	} = useSWR(`/meta/currency`, fetcher);
+		data: expenses,
+		error: expenseError,
+		isLoading: idLoadingExpense,
+	} = useSWR(`/meta/expenses`, fetcher);
 
-		const {
-			data: expenses,
-			error: expenseError,
-			isLoading: idLoadingExpense,
-		} = useSWR(`/meta/expenses`, fetcher);
-	
-	// console.log(expenses, "??????");
+	// Filter car expenses
+	const carExpenses =
+		expenses?.data?.filter(
+			(expense: any) => expense.category === "car"
+		) || [];
 
-	const user = useUserStore((state) => state.user)
+	const user = useUserStore((state) => state.user);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			description: "",
-			currency: "JPY",
+			description_type: "",
+			custom_description: "",
+			currency: "UGX",
 			amount: 0,
-			dollar_rate:0,
 			expense_date: new Date().toISOString().split("T")[0],
+			carrier_name: "",
+			expense_remark: "",
 		},
 	});
 
-
 	const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+		const description =
+			values.description_type === "CUSTOM"
+				? values.custom_description
+				: values.description_type;
 
-		
-		onSubmit({ ...values });
-		form.reset();
-		onOpenChange(false);
+		try {
+			await onSubmit({
+				car_id: Number(carId),
+				description,
+				currency: values.currency,
+				amount: values.amount,
+				expense_date: values.expense_date,
+				carrier_name:
+					values.description_type === "Carrier car fee(RISKO)"
+						? values.carrier_name
+						: "",
+				expense_remark: values.expense_remark,
+			});
+
+			await Promise.all([
+				mutate(`/car/${carId}/expenses`),
+				mutate(`/car/vin/${carId}`),
+				mutate(`/expenses`),
+				mutate(`/car/${carId}/expenses?page=1&limit=10`),
+			]);
+
+			form.reset();
+			onOpenChange(false);
+			toast.success("Expense added successfully");
+		} catch (error) {
+			toast.error("Failed to add expense");
+			console.error("Error adding expense:", error);
+		}
 	};
 
 	return (
@@ -96,7 +125,7 @@ export function CarExpenseModal({
 		>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
-					<DialogTitle>Add Car Expense</DialogTitle>
+					<DialogTitle>Add Expense</DialogTitle>
 					<DialogDescription>
 						Enter the details for the new car expense.
 					</DialogDescription>
@@ -108,44 +137,111 @@ export function CarExpenseModal({
 					>
 						<FormField
 							control={form.control}
-							name="description"
+							name="description_type"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Expense Type</FormLabel>
+									<FormLabel>
+										Description Type
+									</FormLabel>
 									<Select
 										onValueChange={field.onChange}
 										defaultValue={field.value}
 									>
 										<FormControl>
 											<SelectTrigger>
-												<SelectValue placeholder="Select expense" />
+												<SelectValue placeholder="Select description" />
 											</SelectTrigger>
 										</FormControl>
 										<SelectContent>
-											{expenses?.data.map(
-												(exp: any) => (
+											{carExpenses?.map(
+												(expense: any) => (
 													<SelectItem
 														key={
-															exp.ID
+															expense.ID
 														}
 														value={
-															exp.name
+															expense.name
 														}
 													>
-														{exp.name}
+														{
+															expense.name
+														}
 													</SelectItem>
 												)
 											)}
+											<SelectItem value="CUSTOM">
+												Custom Description
+											</SelectItem>
 										</SelectContent>
 									</Select>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
-						<div className="hidden">
+
+						{form.watch("description_type") === "CUSTOM" && (
+							<FormField
+								control={form.control}
+								name="custom_description"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>
+											Custom Description
+										</FormLabel>
+										<FormControl>
+											<Input
+												{...field}
+												placeholder="Enter custom description"
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						)}
+
+						{form.watch("description_type") ===
+							"Carrier car fee(RISKO)" && (
+							<FormField
+								control={form.control}
+								name="carrier_name"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>
+											Carrier Name
+										</FormLabel>
+										<FormControl>
+											<Input
+												{...field}
+												placeholder="Enter carrier name"
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						)}
 
 						<FormField
-						
+							control={form.control}
+							name="expense_remark"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>
+										Expense Remark
+									</FormLabel>
+									<FormControl>
+										<Input
+											{...field}
+											placeholder="Enter expense remark"
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
 							control={form.control}
 							name="currency"
 							render={({ field }) => (
@@ -161,63 +257,22 @@ export function CarExpenseModal({
 											</SelectTrigger>
 										</FormControl>
 										<SelectContent>
-											{currencies?.data.map(
-												(
-													currency: ICurrency
-												) => (
-													<SelectItem
-														key={
-															currency.ID
-														}
-														value={
-															currency.symbol
-														}
-														defaultValue={
-															"JPY"
-														}
-													>
-														{
-															currency.symbol
-														}
-													</SelectItem>
-												)
-											)}
+											<SelectItem value="UGX">
+												UGX
+											</SelectItem>
+											<SelectItem value="USD">
+												USD
+											</SelectItem>
+											<SelectItem value="JPY">
+												JPY
+											</SelectItem>
 										</SelectContent>
 									</Select>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
-						</div>
-						<div className="hidden">
 
-						<FormField
-							
-							control={form.control}
-							name="dollar_rate"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Dollar Rate</FormLabel>
-									<FormControl>
-										<Input
-											type="number"
-											placeholder="Enter dollar rate"
-											{...field}
-											onChange={(e) =>
-												field.onChange(
-													Number.parseFloat(
-														e.target
-															.value
-													)
-												)
-											}
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						</div>
 						<FormField
 							control={form.control}
 							name="amount"
@@ -227,11 +282,10 @@ export function CarExpenseModal({
 									<FormControl>
 										<Input
 											type="number"
-											placeholder="Enter amount"
 											{...field}
 											onChange={(e) =>
 												field.onChange(
-													Number.parseFloat(
+													Number(
 														e.target
 															.value
 													)
@@ -243,12 +297,13 @@ export function CarExpenseModal({
 								</FormItem>
 							)}
 						/>
+
 						<FormField
 							control={form.control}
 							name="expense_date"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Expense Date</FormLabel>
+									<FormLabel>Date</FormLabel>
 									<FormControl>
 										<Input
 											type="date"
@@ -259,6 +314,7 @@ export function CarExpenseModal({
 								</FormItem>
 							)}
 						/>
+
 						<Button type="submit">Add Expense</Button>
 					</form>
 				</Form>

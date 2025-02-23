@@ -236,7 +236,7 @@ export function CarInventory() {
 	};
 
 	const handleCarAddCarDetails = async (data: any) => {
-		console.log(data, "AAJAJJA++>>>>")
+		
 		// const newExpense: any = {
 		// 	...data,
 		// 	car_id: selectedCar?.ID || 1,

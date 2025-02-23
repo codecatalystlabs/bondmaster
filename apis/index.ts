@@ -212,6 +212,12 @@ const deleteCustomer = async (url:string) => {
     return data;
 }
 
+export const deleteCarExpense = async ({ expenseId }: { expenseId: number }) => {
+    return await fetcher(`${BASE_URL}/car/expense/${expenseId}`, {
+        method: 'DELETE',
+    });
+};
+
 // Export API functions
 export {
     createUser,

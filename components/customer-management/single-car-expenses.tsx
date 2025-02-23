@@ -11,7 +11,12 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import useSWR, { mutate } from "swr";
-import { addCarExpenses, fetcher, updateExpense } from "@/apis";
+import {
+	addCarExpenses,
+	fetcher,
+	updateExpense,
+	deleteCarExpense,
+} from "@/apis";
 import type { Car } from "@/types/car";
 import {
 	Table,
@@ -73,7 +78,6 @@ export function SingleCarExpense() {
 	const handleCarExpenseSubmit = async (data: any) => {
 		const newExpense: any = {
 			...data,
-			car_id: selectedCar?.ID || 1,
 			created_by: user?.username,
 			updated_by: user?.username,
 		};
@@ -84,7 +88,15 @@ export function SingleCarExpense() {
 				expense: newExpense,
 			});
 
-			mutate(`/car/${selectedCar?.ID}/expenses`);
+			// Immediately revalidate the data
+			await Promise.all([
+				mutate(`/car/${selectedCar?.ID}/expenses`),
+				mutate(
+					`/car/${selectedCar?.ID}/expenses?page=${page}&limit=${limit}&search=${searchChasis}`
+				),
+			]);
+
+			setShowExpenseModal(false);
 			toast.success("Expense added successfully");
 		} catch (error) {
 			console.error("Failed to add expense:", error);
@@ -189,16 +201,19 @@ export function SingleCarExpense() {
 		if (!confirm("Are you sure you want to delete this expense?")) return;
 
 		try {
-			const response = await fetch(
-				`${BASE_URL}/car/expense/${expenseId}`,
-				{
-					method: "DELETE",
-				}
-			);
+			const response = await deleteCarExpense({ expenseId });
 
-			if (response.ok) {
+			if (response) {
+				// Revalidate all relevant data
+				await Promise.all([
+					mutate(`/car/${selectedCar?.ID}/expenses`),
+					mutate(
+						`/car/${selectedCar?.ID}/expenses?page=${page}&limit=${limit}&search=${searchChasis}`
+					),
+					mutate(`/car/vin/${searchChasis}`),
+				]);
+
 				toast.success("Expense deleted successfully");
-				mutate(`/car/${selectedCar?.ID}/expenses`);
 			} else {
 				toast.error("Failed to delete expense");
 			}
@@ -440,11 +455,11 @@ export function SingleCarExpense() {
 																			<SelectValue />
 																		</SelectTrigger>
 																		<SelectContent>
-																			<SelectItem value="¥">
-																				¥
+																			<SelectItem value="JPY">
+																				JPY
 																			</SelectItem>
-																			<SelectItem value="$">
-																				$
+																			<SelectItem value="USD">
+																				USD
 																			</SelectItem>
 																		</SelectContent>
 																	</Select>
