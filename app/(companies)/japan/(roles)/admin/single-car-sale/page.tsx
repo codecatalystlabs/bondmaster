@@ -83,8 +83,8 @@ export default function CarSalePage() {
 	} = useSWR<{ data: any; total: number }>(
 		`${BASE_URL}/auction-sales?page=${page}&limit=${limit}&company=${filterCompany}&car=${filterCar}&sortBy=${sortBy}&sortOrder=${sortOrder}`,
 		fetcher
-		);
-	
+	);
+
 	console.log(salesData?.data, "salesData");
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -92,7 +92,7 @@ export default function CarSalePage() {
 		defaultValues: {
 			car_id: 0,
 			company_id: 0,
-			auction_date: new Date().toISOString().split('T')[0],
+			auction_date: new Date().toISOString().split("T")[0],
 			auction: "",
 			price: 0,
 			vat_tax: 0,
@@ -452,237 +452,240 @@ export default function CarSalePage() {
 				</CardContent>
 			</Card>
 
-				<Dialog
-					open={isAddSaleOpen}
-					onOpenChange={setIsAddSaleOpen}
-				>
-					<DialogContent className="sm:max-w-[600px]">
-						<DialogHeader>
-							<DialogTitle>Add New Sale</DialogTitle>
-						</DialogHeader>
-						<Form {...form}>
-							<form
+			<Dialog
+				open={isAddSaleOpen}
+				onOpenChange={setIsAddSaleOpen}
+			>
+				<DialogContent className="sm:max-w-[600px]">
+					<DialogHeader>
+						<DialogTitle>Add New Sale</DialogTitle>
+					</DialogHeader>
+					<Form {...form}>
+						<form
 							onSubmit={form.handleSubmit(handleAddSale)}
-								className="grid grid-cols-2 gap-4"
-							>
-								<FormField
-									control={form.control}
-									name="car_id"
-									render={({ field }) => (
-										<FormItem>
+							className="grid grid-cols-2 gap-4"
+						>
+							<FormField
+								control={form.control}
+								name="car_id"
+								render={({ field }) => (
+									<FormItem>
 										<FormLabel>Car</FormLabel>
-											<Select
+										<Select
 											onValueChange={(value) =>
-													field.onChange(
+												field.onChange(
 													Number(value)
-													)
-												}
-											>
-												<FormControl>
-													<SelectTrigger>
-														<SelectValue placeholder="Select car" />
-													</SelectTrigger>
-												</FormControl>
-												<SelectContent>
-													{carList?.data.map(
+												)
+											}
+										>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder="Select car" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												{carList?.data.map(
 													(car: any) => (
-															<SelectItem
-																key={
-																	car
-																		?.car
-																		.ID
-																}
-																value={car?.car.ID.toString()}
-															>
-																{
-																	car
-																		.car
-																		.make
-																}{" "}
-																{
-																	car
-																		.car
-																		.car_model
-																}{" "}
-																-{" "}
-																{
-																	car
-																		.car
-																		.chasis_number
-																}
-															</SelectItem>
-														)
-													)}
-												</SelectContent>
-											</Select>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="company_id"
-									render={({ field }) => (
-										<FormItem>
+														<SelectItem
+															key={
+																car
+																	?.car
+																	.ID
+															}
+															value={car?.car.ID.toString()}
+														>
+															{
+																car
+																	.car
+																	.make
+															}{" "}
+															{
+																car
+																	.car
+																	.car_model
+															}{" "}
+															-{" "}
+															{
+																car
+																	.car
+																	.chasis_number
+															}
+														</SelectItem>
+													)
+												)}
+											</SelectContent>
+										</Select>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="company_id"
+								render={({ field }) => (
+									<FormItem>
 										<FormLabel>Company</FormLabel>
-											<Select
+										<Select
 											onValueChange={(value) =>
-													field.onChange(
+												field.onChange(
 													Number(value)
+												)
+											}
+										>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder="Select company" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												{companiesData?.data.map(
+													(
+														company: ICompany
+													) => (
+														<SelectItem
+															key={
+																company.ID
+															}
+															value={company.ID.toString()}
+														>
+															{
+																company.name
+															}
+														</SelectItem>
+													)
+												)}
+											</SelectContent>
+										</Select>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="price"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Price</FormLabel>
+										<FormControl>
+											<Input
+												type="number"
+												{...field}
+												onChange={(e) =>
+													field.onChange(
+														Number(
+															e
+																.target
+																.value
+														)
 													)
 												}
-											>
-												<FormControl>
-													<SelectTrigger>
-														<SelectValue placeholder="Select company" />
-													</SelectTrigger>
-												</FormControl>
-												<SelectContent>
-													{companiesData?.data.map(
-														(
-															company: ICompany
-														) => (
-															<SelectItem
-																key={
-																	company.ID
-																}
-																value={company.ID.toString()}
-															>
-																{
-																	company.name
-																}
-															</SelectItem>
-														)
-													)}
-												</SelectContent>
-											</Select>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="price"
-									render={({ field }) => (
-										<FormItem>
-										<FormLabel>Price</FormLabel>
-											<FormControl>
-												<Input
-													type="number"
-													{...field}
-												onChange={(e) =>
-														field.onChange(
-															Number(
-																e
-																	.target
-																	.value
-															)
-														)
-													}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="vat_tax"
-									render={({ field }) => (
-										<FormItem>
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="vat_tax"
+								render={({ field }) => (
+									<FormItem>
 										<FormLabel>VAT Tax</FormLabel>
-											<FormControl>
-												<Input
-													type="number"
-													{...field}
+										<FormControl>
+											<Input
+												type="number"
+												{...field}
 												onChange={(e) =>
-														field.onChange(
-															Number(
-																e
-																	.target
-																	.value
-															)
+													field.onChange(
+														Number(
+															e
+																.target
+																.value
 														)
-													}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="recycle_fee"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>
-												Recycle Fee
-											</FormLabel>
-											<FormControl>
-												<Input
-													type="number"
-													{...field}
+													)
+												}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="recycle_fee"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>
+											Recycle Fee
+										</FormLabel>
+										<FormControl>
+											<Input
+												type="number"
+												{...field}
 												onChange={(e) =>
-														field.onChange(
-															Number(
-																e
-																	.target
-																	.value
-															)
+													field.onChange(
+														Number(
+															e
+																.target
+																.value
 														)
-													}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="auction_date"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>
-												Auction Date
-											</FormLabel>
-											<FormControl>
-												<Input
-													type="date"
-													{...field}
-													required
-													value={field.value || ''}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="auction"
-									render={({ field }) => (
-										<FormItem>
+													)
+												}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="auction_date"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>
+											Auction Date
+										</FormLabel>
+										<FormControl>
+											<Input
+												type="date"
+												{...field}
+												required
+												value={
+													field.value ||
+													""
+												}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="auction"
+								render={({ field }) => (
+									<FormItem>
 										<FormLabel>Auction</FormLabel>
-											<FormControl>
-												<Input
-													type="text"
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<Button
-									type="submit"
-									className="col-span-2"
-								>
-									Add Sale
-								</Button>
-							</form>
-						</Form>
-					</DialogContent>
-				</Dialog>
+										<FormControl>
+											<Input
+												type="text"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<Button
+								type="submit"
+								className="col-span-2"
+							>
+								Add Sale
+							</Button>
+						</form>
+					</Form>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 }
