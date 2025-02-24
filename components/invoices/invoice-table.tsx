@@ -49,8 +49,7 @@ export function InvoiceTable() {
 					<TableRow>
 						<TableHead>Invoice No</TableHead>
 						<TableHead>Ship Date</TableHead>
-						<TableHead>Currency</TableHead>
-						<TableHead>Total Cost</TableHead>
+						
 						<TableHead>Vessel Name</TableHead>
 						<TableHead>From</TableHead>
 						<TableHead>To</TableHead>

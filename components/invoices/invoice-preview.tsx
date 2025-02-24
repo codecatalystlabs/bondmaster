@@ -92,13 +92,13 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 							<th className="border border-gray-300 p-2 text-sm">
 								TAX
 							</th>
-							{/* <th className="border border-gray-300 p-2 text-sm">
+							<th className="border border-gray-300 p-2 text-sm">
 								REC
-							</th> */}
+							</th>
 							<th className="border border-gray-300 p-2 text-sm">
 								AUCTION
 							</th>
-							{/* <th className="border border-gray-300 p-2 text-sm">
+							<th className="border border-gray-300 p-2 text-sm">
 								COMMISSION
 							</th>
 							<th className="border border-gray-300 p-2 text-sm">
@@ -106,7 +106,7 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 							</th>
 							<th className="border border-gray-300 p-2 text-sm">
 								FREIGHT
-							</th> */}
+							</th>
 							<th className="border border-gray-300 p-2 text-sm">
 								TOTAL
 							</th>
