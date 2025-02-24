@@ -135,7 +135,7 @@ export default function CarSalePage() {
 			try {
 				const carData = await fetcher(`/car/vin/${value}`);
 				if (carData?.data?.car) {
-					form.setValue('car_id', carData.data.car.ID);
+					form.setValue("car_id", carData.data.car.ID);
 					setSelectedCar(carData.data.car);
 					toast.success("Car found!");
 				}
@@ -145,7 +145,9 @@ export default function CarSalePage() {
 		}
 	};
 
-	const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleSearchInputChange = (
+		e: React.ChangeEvent<HTMLInputElement>
+	) => {
 		const value = e.target.value;
 		setSearchChasis(value);
 		debouncedSearch(value);
@@ -217,7 +219,8 @@ export default function CarSalePage() {
 						<div>
 							<CardTitle>Car Sales</CardTitle>
 							<CardDescription>
-								Search for a car by VIN/chassis number and add sale details
+								Search for a car by VIN/chassis number
+								and add sale details
 							</CardDescription>
 						</div>
 						<Button onClick={() => setIsAddSaleOpen(true)}>
@@ -238,12 +241,26 @@ export default function CarSalePage() {
 
 					{selectedCar && (
 						<div className="mb-6 p-4 border rounded-md bg-muted">
-							<h3 className="font-medium mb-2">Selected Car:</h3>
+							<h3 className="font-medium mb-2">
+								Selected Car:
+							</h3>
 							<div className="grid grid-cols-2 gap-4">
-								<p><strong>Make:</strong> {selectedCar.car_make}</p>
-								<p><strong>Model:</strong> {selectedCar.car_model}</p>
-								<p><strong>Chassis:</strong> {selectedCar.chasis_number}</p>
-								<p><strong>Year:</strong> {selectedCar.manufacture_year}</p>
+								<p>
+									<strong>Make:</strong>{" "}
+									{selectedCar.car_make}
+								</p>
+								<p>
+									<strong>Model:</strong>{" "}
+									{selectedCar.car_model}
+								</p>
+								<p>
+									<strong>Chassis:</strong>{" "}
+									{selectedCar.chasis_number}
+								</p>
+								<p>
+									<strong>Year:</strong>{" "}
+									{selectedCar.manufacture_year}
+								</p>
 							</div>
 						</div>
 					)}
@@ -529,17 +546,33 @@ export default function CarSalePage() {
 								name="car_id"
 								render={({ field }) => (
 									<FormItem className="col-span-2">
-										<FormLabel>Search Car</FormLabel>
+										<FormLabel>
+											Search Car
+										</FormLabel>
 										<FormControl>
 											<Input
 												placeholder="Search by VIN/chassis number"
 												value={searchChasis}
-												onChange={handleSearchInputChange}
+												onChange={
+													handleSearchInputChange
+												}
 											/>
 										</FormControl>
 										{selectedCar && (
 											<div className="mt-2 p-4 border rounded-md">
-												<p className="font-medium">Selected: {selectedCar.car_make} {selectedCar.car_model} - {selectedCar.chasis_number}</p>
+												<p className="font-medium">
+													Selected:{" "}
+													{
+														selectedCar.car_make
+													}{" "}
+													{
+														selectedCar.car_model
+													}{" "}
+													-{" "}
+													{
+														selectedCar.chasis_number
+													}
+												</p>
 											</div>
 										)}
 										<FormMessage />

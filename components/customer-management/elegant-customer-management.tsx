@@ -69,7 +69,9 @@ export function ElegantCostManagement() {
 		[]
 	);
 
-	const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleSearchInputChange = (
+		e: React.ChangeEvent<HTMLInputElement>
+	) => {
 		const value = e.target.value;
 		setSearchChasis(value);
 		debouncedSearch(value);
@@ -106,24 +108,44 @@ export function ElegantCostManagement() {
 					</div>
 					{!selectedCar && (
 						<div>
-							<p className="text-sm text-muted-foreground mb-2">Or select from list:</p>
+							<p className="text-sm text-muted-foreground mb-2">
+								Or select from list:
+							</p>
 							<Select onValueChange={handleCarSelect}>
 								<SelectTrigger className="w-full">
 									<SelectValue placeholder="Select a car" />
 								</SelectTrigger>
 								<SelectContent>
-									{carList?.data?.map((car: any, index: any) => (
-										<SelectItem
-											key={index}
-											value={JSON.stringify(car?.car)}
-										>
-											{car?.car?.car_make} {car?.car.car_model} - (
-											{car?.car.colour}) - (
-											{car?.car.engine_capacity}) - (
-											{car?.car.manufacture_year}) - (
-											{car?.car.chasis_number})
-										</SelectItem>
-									))}
+									{carList?.data?.map(
+										(car: any, index: any) => (
+											<SelectItem
+												key={index}
+												value={JSON.stringify(
+													car?.car
+												)}
+											>
+												{car?.car?.car_make}{" "}
+												{car?.car.car_model}{" "}
+												- ({car?.car.colour}
+												) - (
+												{
+													car?.car
+														.engine_capacity
+												}
+												) - (
+												{
+													car?.car
+														.manufacture_year
+												}
+												) - (
+												{
+													car?.car
+														.chasis_number
+												}
+												)
+											</SelectItem>
+										)
+									)}
 								</SelectContent>
 							</Select>
 						</div>
@@ -135,7 +157,8 @@ export function ElegantCostManagement() {
 				<Card>
 					<CardHeader>
 						<CardTitle>
-							{selectedCar?.car_make} {selectedCar?.car_model}
+							{selectedCar?.car_make}{" "}
+							{selectedCar?.car_model}
 						</CardTitle>
 					</CardHeader>
 					<CardContent>
