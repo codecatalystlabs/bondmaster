@@ -79,6 +79,8 @@ const formSchema = z.object({
 });
 
 export function CustomerManagement() {
+	const [search, setSearch] = React.useState("");
+	const [gender, setGender] = React.useState("");
 	const [customers, setCustomers] = React.useState<Customer[]>([]);
 	const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 	const [editingCustomer, setEditingCustomer] =
@@ -197,6 +199,12 @@ export function CustomerManagement() {
 		toast.success("Customer deleted successfully");
 	}
 	};
+
+	  const filteredCustomers = customerList?.data?.filter((info:any) =>
+    info?.customer.surname.toLowerCase().includes(search.toLowerCase()) ||
+    (gender ? info?.customer?.gender === gender : true) || info?.customer?.firstname.toLowerCase().includes(search.toLowerCase()) 
+	// && info?.customer?.lastname.toLowerCase().includes(search.toLowerCase()) 
+  );
 
 	return (
 		<>
@@ -537,6 +545,14 @@ export function CustomerManagement() {
 					</div>
 					<Table>
 						<TableHeader>
+							      <div className="mb-4 flex space-x-4">
+        <Input 
+          placeholder="Search by name" 
+          value={search} 
+          onChange={(e) => setSearch(e.target.value)} 
+        />
+
+      </div>
 							<TableRow>
 								<TableHead>Name</TableHead>
 								<TableHead>Gender</TableHead>
@@ -558,7 +574,7 @@ export function CustomerManagement() {
 									</TableCell>
 								</TableRow>
 							) : (
-								customerList?.data?.map(
+								filteredCustomers?.map(
 									(item: DataItem) => (
 										<TableRow
 											key={item?.customer?.ID}
