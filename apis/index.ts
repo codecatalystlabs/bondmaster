@@ -1,5 +1,6 @@
 "use client";
 
+import { BASE_URL } from "@/constants/baseUrl";
 import apiClient from "./apiClient";
 import { Car } from "@/types/car";
 import { Cost } from "@/types/cost-management";
@@ -212,11 +213,11 @@ const deleteCustomer = async (url:string) => {
     return data;
 }
 
-export const deleteCarExpense = async ({ expenseId }: { expenseId: number }) => {
-    return await fetcher(`${BASE_URL}/car/expense/${expenseId}`, {
-        method: 'DELETE',
-    });
-};
+// export const deleteCarExpense = async ({ expenseId }: { expenseId: number }) => {
+//     return await fetcher(`${BASE_URL}/car/expense/${expenseId}`, {
+//         method: 'DELETE',
+//     });
+// };
 
 // Export API functions
 export {

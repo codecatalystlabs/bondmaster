@@ -200,11 +200,15 @@ export function CustomerManagement() {
 	}
 	};
 
-	  const filteredCustomers = customerList?.data?.filter((info:any) =>
-    info?.customer.surname.toLowerCase().includes(search.toLowerCase()) ||
-    (gender ? info?.customer?.gender === gender : true) || info?.customer?.firstname.toLowerCase().includes(search.toLowerCase()) 
-	// && info?.customer?.lastname.toLowerCase().includes(search.toLowerCase()) 
-  );
+	const filteredCustomers = customerList?.data?.filter((info: any) => {
+		return (
+		  (search
+			? info?.customer?.surname.toLowerCase().includes(search.toLowerCase()) ||
+			  info?.customer?.firstname.toLowerCase().includes(search.toLowerCase())
+			: true) 
+		);
+	  });
+	  
 
 	return (
 		<>

@@ -15,7 +15,6 @@ import {
 	addCarExpenses,
 	fetcher,
 	updateExpense,
-	deleteCarExpense,
 } from "@/apis";
 import type { Car } from "@/types/car";
 import {
@@ -198,29 +197,7 @@ export function SingleCarExpense() {
 	};
 
 	const handleDeleteExpense = async (expenseId: number) => {
-		if (!confirm("Are you sure you want to delete this expense?")) return;
-
-		try {
-			const response = await deleteCarExpense({ expenseId });
-
-			if (response) {
-				// Revalidate all relevant data
-				await Promise.all([
-					mutate(`/car/${selectedCar?.ID}/expenses`),
-					mutate(
-						`/car/${selectedCar?.ID}/expenses?page=${page}&limit=${limit}&search=${searchChasis}`
-					),
-					mutate(`/car/vin/${searchChasis}`),
-				]);
-
-				toast.success("Expense deleted successfully");
-			} else {
-				toast.error("Failed to delete expense");
-			}
-		} catch (error) {
-			console.error("Failed to delete expense:", error);
-			toast.error("Failed to delete expense");
-		}
+		console.log("logs")
 	};
 
 	return (
