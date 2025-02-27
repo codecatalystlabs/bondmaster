@@ -34,11 +34,13 @@ export const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
 		const calculateCarTotal = (car: any) => {
 			const basePrice = car.bid_price || 0;
 			const vatAmount = (car.vat_tax / 100) * basePrice;
-			const expensesTotal = car.expenses?.reduce(
-				(sum: number, expense: any) => sum + (expense.amount || 0),
-				0
-			) || 0;
-			
+			const expensesTotal =
+				car.expenses?.reduce(
+					(sum: number, expense: any) =>
+						sum + (expense.amount || 0),
+					0
+				) || 0;
+
 			return basePrice + vatAmount + expensesTotal;
 		};
 
@@ -73,7 +75,9 @@ export const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
 					<div>
 						<p>
 							<span className="font-semibold">Date:</span>{" "}
-							{new Date(invoice?.invoice?.ship_date).toLocaleDateString()}
+							{new Date(
+								invoice?.invoice?.ship_date
+							).toLocaleDateString()}
 						</p>
 					</div>
 				</div>
@@ -92,7 +96,9 @@ export const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
 					</p>
 					<p>
 						<span className="font-semibold">Sailing ON:</span>{" "}
-						{new Date(invoice?.invoice?.ship_date).toLocaleDateString()}
+						{new Date(
+							invoice?.invoice?.ship_date
+						).toLocaleDateString()}
 					</p>
 					<p>
 						<span className="font-semibold">FROM:</span>{" "}
@@ -129,10 +135,11 @@ export const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
 										{index + 1}
 									</td>
 									<td className="border border-gray-300 p-2 text-sm">
-										{car.purchase_date ? 
-											new Date(car.purchase_date).toLocaleDateString() : 
-											'N/A'
-										}
+										{car.purchase_date
+											? new Date(
+													car.purchase_date
+											  ).toLocaleDateString()
+											: "N/A"}
 									</td>
 									<td className="border border-gray-300 p-2 text-sm">
 										{car.car_model || "N/A"}
@@ -141,7 +148,10 @@ export const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
 										{car.chasis_number || "N/A"}
 									</td>
 									<td className="border border-gray-300 p-2 text-sm text-right">
-										{formatAmount(calculateCarTotal(car), car.currency)}
+										{formatAmount(
+											calculateCarTotal(car),
+											car.currency
+										)}
 									</td>
 								</tr>
 							))
@@ -158,11 +168,17 @@ export const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
 					</tbody>
 					<tfoot>
 						<tr className="bg-gray-50 font-bold">
-							<td colSpan={4} className="border border-gray-300 p-2 text-sm text-right">
+							<td
+								colSpan={4}
+								className="border border-gray-300 p-2 text-sm text-right"
+							>
 								Grand Total:
 							</td>
 							<td className="border border-gray-300 p-2 text-sm text-right">
-								{formatAmount(grandTotal, invoice.cars[0]?.currency || 'JPY')}
+								{formatAmount(
+									grandTotal,
+									invoice.cars[0]?.currency || "JPY"
+								)}
 							</td>
 						</tr>
 					</tfoot>
@@ -174,12 +190,15 @@ export const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
 						<div>
 							<p className="font-semibold">Notes:</p>
 							<p className="text-sm text-gray-600">
-								All prices are in {invoice.cars[0]?.currency || 'JPY'}
+								All prices are in{" "}
+								{invoice.cars[0]?.currency || "JPY"}
 							</p>
 						</div>
 						<div className="text-center">
 							<div className="mt-16 pt-4 border-t border-gray-400 w-48">
-								<p className="font-semibold">Authorized Signature</p>
+								<p className="font-semibold">
+									Authorized Signature
+								</p>
 							</div>
 						</div>
 					</div>
