@@ -3,21 +3,51 @@ import { forwardRef } from "react";
 
 interface InvoicePreviewProps {
 	invoice: {
-		invoice_no: string;
-		ship_date: string;
-		currency: string;
-		total_cost: number;
-		vessel_name: string;
-		from_location: string;
-		to_location: string;
-		created_by: string;
-		updated_by: string;
+		cars: Array<{
+			ID: number;
+			purchase_date?: string;
+			car_model: string;
+			chasis_number: string;
+			bid_price: number;
+			vat_tax: number;
+			currency: string;
+			expenses?: Array<{
+				amount: number;
+				description: string;
+			}>;
+		}>;
+		invoice: {
+			invoice_no: string;
+			ship_date: string;
+			vessel_name: string;
+			from_location: string;
+			to_location: string;
+			created_by: string;
+			updated_by: string;
+		};
 	};
 }
 
-export const InvoicePreview = forwardRef<HTMLDivElement, any>(
+export const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
 	({ invoice }, ref) => {
-		console.log(invoice, "ooooo");
+		// Calculate total for a single car including all expenses
+		const calculateCarTotal = (car: any) => {
+			const basePrice = car.bid_price || 0;
+			const vatAmount = (car.vat_tax / 100) * basePrice;
+			const expensesTotal = car.expenses?.reduce(
+				(sum: number, expense: any) => sum + (expense.amount || 0),
+				0
+			) || 0;
+			
+			return basePrice + vatAmount + expensesTotal;
+		};
+
+		// Calculate grand total for all cars
+		const grandTotal = invoice.cars.reduce(
+			(total, car) => total + calculateCarTotal(car),
+			0
+		);
+
 		return (
 			<div
 				ref={ref}
@@ -43,7 +73,7 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 					<div>
 						<p>
 							<span className="font-semibold">Date:</span>{" "}
-							{invoice?.invoice?.ship_date}
+							{new Date(invoice?.invoice?.ship_date).toLocaleDateString()}
 						</p>
 					</div>
 				</div>
@@ -62,7 +92,7 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 					</p>
 					<p>
 						<span className="font-semibold">Sailing ON:</span>{" "}
-						{invoice?.invoice?.ship_date}
+						{new Date(invoice?.invoice?.ship_date).toLocaleDateString()}
 					</p>
 					<p>
 						<span className="font-semibold">FROM:</span>{" "}
@@ -86,80 +116,39 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 							<th className="border border-gray-300 p-2 text-sm">
 								CHASSIS
 							</th>
-							<th className="border border-gray-300 p-2 text-sm">
-								BUY
-							</th>
-							<th className="border border-gray-300 p-2 text-sm">
-								TAX
-							</th>
-							<th className="border border-gray-300 p-2 text-sm">
-								REC
-							</th>
-							<th className="border border-gray-300 p-2 text-sm">
-								AUCTION
-							</th>
-							<th className="border border-gray-300 p-2 text-sm">
-								COMMISSION
-							</th>
-							<th className="border border-gray-300 p-2 text-sm">
-								RIKSO
-							</th>
-							<th className="border border-gray-300 p-2 text-sm">
-								FREIGHT
-							</th>
-							<th className="border border-gray-300 p-2 text-sm">
+							<th className="border border-gray-300 p-2 text-sm text-right">
 								TOTAL
 							</th>
 						</tr>
 					</thead>
 					<tbody>
 						{invoice.cars.length > 0 ? (
-							invoice.cars.map((car: any, index: any) => (
+							invoice.cars.map((car, index) => (
 								<tr key={car.ID}>
 									<td className="border border-gray-300 p-2 text-sm">
 										{index + 1}
 									</td>
 									<td className="border border-gray-300 p-2 text-sm">
-										{car.purchase_date}
+										{car.purchase_date ? 
+											new Date(car.purchase_date).toLocaleDateString() : 
+											'N/A'
+										}
 									</td>
 									<td className="border border-gray-300 p-2 text-sm">
-										{car.car_model || "n/a"}
+										{car.car_model || "N/A"}
 									</td>
 									<td className="border border-gray-300 p-2 text-sm">
-										{car.chasis_number || "n/a"}
+										{car.chasis_number || "N/A"}
 									</td>
 									<td className="border border-gray-300 p-2 text-sm text-right">
-										{formatAmount(car.bid_price,"JPY") || "n/a"}
-									</td>
-									<td className="border border-gray-300 p-2 text-sm text-right">
-										{ formatAmount((car.vat_tax / 100) *
-											car.bid_price , "JPY") || "n/a"}
-									</td>
-									{/* <td className="border border-gray-300 p-2 text-sm text-right">
-										{car.millage || "n/a"}
-									</td> */}
-									<td className="border border-gray-300 p-2 text-sm text-right">
-										{car.auction || "n/a"}
-									</td>
-									{/* <td className="border border-gray-300 p-2 text-sm text-right">
-										{car.commission || "n/a"}
-									</td>
-									<td className="border border-gray-300 p-2 text-sm text-right">
-										{car.rikso || "n/a"}
-									</td>
-									<td className="border border-gray-300 p-2 text-sm text-right">
-										{car.freight || "n/a"}
-									</td> */}
-									<td className="border border-gray-300 p-2 text-sm text-right">
-										{formatAmount(car.bid_price + ((car.vat_tax / 100) *
-											car.bid_price),"JPY")}
+										{formatAmount(calculateCarTotal(car), car.currency)}
 									</td>
 								</tr>
 							))
 						) : (
 							<tr>
 								<td
-									colSpan={12}
+									colSpan={5}
 									className="text-center p-2"
 								>
 									No cars available for this invoice.
@@ -167,7 +156,34 @@ export const InvoicePreview = forwardRef<HTMLDivElement, any>(
 							</tr>
 						)}
 					</tbody>
+					<tfoot>
+						<tr className="bg-gray-50 font-bold">
+							<td colSpan={4} className="border border-gray-300 p-2 text-sm text-right">
+								Grand Total:
+							</td>
+							<td className="border border-gray-300 p-2 text-sm text-right">
+								{formatAmount(grandTotal, invoice.cars[0]?.currency || 'JPY')}
+							</td>
+						</tr>
+					</tfoot>
 				</table>
+
+				{/* Signature Section */}
+				<div className="mt-12 pt-8 border-t">
+					<div className="flex justify-between">
+						<div>
+							<p className="font-semibold">Notes:</p>
+							<p className="text-sm text-gray-600">
+								All prices are in {invoice.cars[0]?.currency || 'JPY'}
+							</p>
+						</div>
+						<div className="text-center">
+							<div className="mt-16 pt-4 border-t border-gray-400 w-48">
+								<p className="font-semibold">Authorized Signature</p>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		);
 	}

@@ -67,12 +67,7 @@ export function InvoiceTable() {
 							<TableCell>
 								{invoice?.invoice?.ship_date}
 							</TableCell>
-							<TableCell>
-								{invoice?.invoice?.currency}
-							</TableCell>
-							<TableCell>
-								{invoice?.invoice?.total_cost?.toLocaleString()}
-							</TableCell>
+							
 							<TableCell>
 								{invoice?.invoice?.vessel_name}
 							</TableCell>
