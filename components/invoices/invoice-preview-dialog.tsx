@@ -217,7 +217,7 @@ export function InvoicePreviewDialog({
 
 				{isLoading ? (
 					<div className="flex justify-center items-center h-64">
-						<Loader className="w-8 h-8" />
+						<Loader />
 						<span className="ml-2">
 							Loading expense data...
 						</span>
