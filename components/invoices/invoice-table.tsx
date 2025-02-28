@@ -16,30 +16,47 @@ import useSWR from "swr";
 import { BASE_URL } from "@/constants/baseUrl";
 import { fetcher } from "@/apis";
 
-interface Invoice {
+interface Car {
+	ID: number;
+	car_uuid: string;
+	chasis_number: string;
+	engine_number: string;
+	engine_capacity: string;
+	make: string;
+	car_model: string;
+	manufacture_year: number;
+	colour: string;
+	bid_price: number;
+	vat_tax: number;
+	currency: string;
+	purchase_date?: string;
+}
+
+interface InvoiceDetails {
+	ID: number;
 	invoice_no: string;
 	ship_date: string;
-	currency: string;
-	total_cost: number;
 	vessel_name: string;
 	from_location: string;
 	to_location: string;
 	created_by: string;
 	updated_by: string;
+	CreatedAt: string;
 }
 
+interface Invoice {
+	cars: Car[];
+	invoice: InvoiceDetails;
+}
 
+interface InvoiceTableProps {
+	data: Invoice[];
+	onDownloadPDF: () => void;
+	onDownloadExcel: () => void;
+}
 
-export function InvoiceTable() {
-	const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(
-		null
-	);
-
-	const { data: invoicesData, isLoading } = useSWR(
-		`${BASE_URL}/shipping/invoices`,fetcher
-	);
-
-	// console.log(invoicesData?.data,"pppads")
+export function InvoiceTable({ data, onDownloadPDF, onDownloadExcel }: InvoiceTableProps) {
+	const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
 
 	return (
 		<>
@@ -59,7 +76,7 @@ export function InvoiceTable() {
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{invoicesData?.data?.map((invoice: any) => (
+					{data?.map((invoice: any) => (
 						<TableRow key={invoice?.invoice?.invoice_no}>
 							<TableCell>
 								{invoice?.invoice?.invoice_no}
@@ -67,12 +84,7 @@ export function InvoiceTable() {
 							<TableCell>
 								{invoice?.invoice?.ship_date}
 							</TableCell>
-							<TableCell>
-								{invoice?.invoice?.currency}
-							</TableCell>
-							<TableCell>
-								{invoice?.invoice?.total_cost?.toLocaleString()}
-							</TableCell>
+							
 							<TableCell>
 								{invoice?.invoice?.vessel_name}
 							</TableCell>

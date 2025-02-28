@@ -74,7 +74,7 @@ export function CarExpenseModal({
 		defaultValues: {
 			description_type: "",
 			custom_description: "",
-			currency: "UGX",
+			currency: "JPY",
 			amount: 0,
 			expense_date: new Date().toISOString().split("T")[0],
 			carrier_name: "",

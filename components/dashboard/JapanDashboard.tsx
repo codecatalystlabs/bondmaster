@@ -17,6 +17,8 @@ import { fetcher } from "@/apis";
 export function JapanDashboard() {
 	const { data: dashData, error, isLoading } = useSWR(`/car/dash`, fetcher);
 
+	console.log(dashData);
+
 	const stats = [
 		{
 			title: "Total Cars",
@@ -84,6 +86,29 @@ export function JapanDashboard() {
 			title: "Total Expenses (JPY)",
 			value: formatAmount(
 				dashData?.data?.total_car_expenses?.JPY || 0,
+				"¥"
+			),
+			icon: <JapaneseYen />,
+			chart: (
+				<LineChart
+					data={[65, 59, 80, 81, 56, 55, 40]}
+					categories={[
+						"Jan",
+						"Feb",
+						"Mar",
+						"Apr",
+						"May",
+						"Jun",
+						"Jul",
+					]}
+					index="0"
+				/>
+			),
+		},
+		{
+			title: "Total Money (JPY)",
+			value: formatAmount(
+				dashData?.data?.total_money_spent || 0,
 				"¥"
 			),
 			icon: <JapaneseYen />,
