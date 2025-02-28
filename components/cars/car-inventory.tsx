@@ -147,7 +147,7 @@ export function CarInventory() {
 		}
 
 		const baseEndpoint = companyId
-			? `/cars/search?from_company_id=${companyId}`
+			? `/cars/search?to_company_id=${companyId}`
 			: "/cars";
 
 		const queryString = queryParams.toString().replace(/&/g, "&&");
