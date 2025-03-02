@@ -266,7 +266,7 @@ export default function CarSalePage() {
 					)}
 
 					{isLoading ? (
-						<Loader />
+						<Loader className="w-8 h-8" />
 					) : salesData?.data && salesData.data.length > 0 ? (
 						<>
 							<div className="flex items-center justify-between py-4">

@@ -213,7 +213,7 @@ export function CustomerManagement() {
 	return (
 		<>
 			{isLoading ? (
-				<Loader />
+				<Loader className="w-8 h-8" />
 			) : (
 				<div className="space-y-4">
 					<div className="flex justify-between items-center">
@@ -537,7 +537,7 @@ export function CustomerManagement() {
 										disabled={isLoading}
 									>
 										{isLoading ? (
-											<Loader />
+											<Loader className="w-8 h-8" />
 										) : null}
 										{isLoading
 											? "Saving..."
@@ -574,7 +574,7 @@ export function CustomerManagement() {
 										colSpan={7}
 										className="h-24 text-center"
 									>
-										<Loader />
+										<Loader className="w-8 h-8" />
 									</TableCell>
 								</TableRow>
 							) : (

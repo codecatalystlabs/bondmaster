@@ -228,7 +228,7 @@ export function UserManagement() {
 	return (
 		<div className="space-y-4">
 			{isLoading ? (
-				<Loader />
+				<Loader className="w-8 h-8" />
 			) : (
 				<>
 					<div className="flex justify-between items-center">
