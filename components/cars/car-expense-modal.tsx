@@ -92,7 +92,7 @@ export function CarExpenseModal({
 			await onSubmit({
 				car_id: Number(carId),
 				description,
-				currency: values.currency,
+				currency: "JPY",
 				amount: values.amount,
 				expense_date: values.expense_date,
 				carrier_name:
@@ -109,7 +109,16 @@ export function CarExpenseModal({
 				mutate(`/car/${carId}/expenses?page=1&limit=10`),
 			]);
 
-			form.reset();
+			form.reset({
+				description_type: "",
+				custom_description: "",
+				currency: "JPY",
+				amount: 0,
+				expense_date: new Date().toISOString().split("T")[0],
+				carrier_name: "",
+				expense_remark: "",
+			});
+			
 			onOpenChange(false);
 			toast.success("Expense added successfully");
 		} catch (error) {
@@ -247,27 +256,16 @@ export function CarExpenseModal({
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>Currency</FormLabel>
-									<Select
-										onValueChange={field.onChange}
-										defaultValue={field.value}
-									>
-										<FormControl>
-											<SelectTrigger>
-												<SelectValue placeholder="Select currency" />
-											</SelectTrigger>
-										</FormControl>
-										<SelectContent>
-											<SelectItem value="UGX">
-												UGX
-											</SelectItem>
-											<SelectItem value="USD">
-												USD
-											</SelectItem>
-											<SelectItem value="JPY">
-												JPY
-											</SelectItem>
-										</SelectContent>
-									</Select>
+									<div className="flex items-center space-x-2">
+										<div className="w-full h-10 px-3 py-2 border border-input rounded-md bg-gray-100 flex items-center">
+											<span className="text-sm">JPY (Japanese Yen)</span>
+										</div>
+										<Input 
+											type="hidden" 
+											{...field} 
+											value="JPY" 
+										/>
+									</div>
 									<FormMessage />
 								</FormItem>
 							)}
