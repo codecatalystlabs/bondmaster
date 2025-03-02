@@ -209,7 +209,7 @@ export default function CarSalePage() {
 
 	if (error || getCompanyError || carListError)
 		return <div>Failed to load</div>;
-	if (isLoading || isLoadingCompanies || carListLoading) return <Loader />;
+	if (isLoading || isLoadingCompanies || carListLoading) return <Loader className="w-8 h-8" />;
 
 	return (
 		<div className="container mx-auto py-10">
