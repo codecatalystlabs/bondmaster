@@ -1,7 +1,16 @@
 "use client";
 
 import * as React from "react";
-import { Plus, Edit, Trash2, FileText, Phone, MapPin, UserPlus, MoreHorizontal } from "lucide-react";
+import {
+	Plus,
+	Edit,
+	Trash2,
+	FileText,
+	Phone,
+	MapPin,
+	UserPlus,
+	MoreHorizontal,
+} from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -255,10 +264,17 @@ export function CustomerManagement() {
 		number | null
 	>(null);
 	const [isContactsModalOpen, setIsContactsModalOpen] = useState(false);
-	const [addModalType, setAddModalType] = useState<"contact" | "address" | null>(null);
-	const [selectedCustomerForAdd, setSelectedCustomerForAdd] = useState<Customer | null>(null);
-	const [selectedCustomerContacts, setSelectedCustomerContacts] = useState<any[]>([]);
-	const [selectedCustomerAddresses, setSelectedCustomerAddresses] = useState<any[]>([]);
+	const [addModalType, setAddModalType] = useState<
+		"contact" | "address" | null
+	>(null);
+	const [selectedCustomerForAdd, setSelectedCustomerForAdd] =
+		useState<Customer | null>(null);
+	const [selectedCustomerContacts, setSelectedCustomerContacts] = useState<
+		any[]
+	>([]);
+	const [selectedCustomerAddresses, setSelectedCustomerAddresses] = useState<
+		any[]
+	>([]);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -319,7 +335,7 @@ export function CustomerManagement() {
 	console.log(customerList?.data, "customerList");
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		const userPayload: Omit<Customer, 'ID' | 'id' | 'customer_id'> = {
+		const userPayload: Omit<Customer, "ID" | "id" | "customer_id"> = {
 			...values,
 			created_by: "admin",
 			updated_by: "admin",
@@ -333,7 +349,7 @@ export function CustomerManagement() {
 					created_by: "admin",
 					updated_by: "admin",
 				};
-				
+
 				const response = await editCustomer({
 					url: `${BASE_URL}/customer/${editingCustomer.ID}`,
 					customerInfo: updatedCustomer,
@@ -815,89 +831,164 @@ export function CustomerManagement() {
 											</TableCell>
 											<TableCell>
 												<DropdownMenu>
-													<DropdownMenuTrigger asChild>
-														<Button variant="ghost" size="icon">
+													<DropdownMenuTrigger
+														asChild
+													>
+														<Button
+															variant="ghost"
+															size="icon"
+														>
 															<MoreHorizontal className="h-4 w-4" />
 														</Button>
 													</DropdownMenuTrigger>
 													<DropdownMenuContent align="end">
-														<DropdownMenuLabel>Actions</DropdownMenuLabel>
+														<DropdownMenuLabel>
+															Actions
+														</DropdownMenuLabel>
 														<DropdownMenuSeparator />
-														
-														<DropdownMenuItem 
+
+														<DropdownMenuItem
 															onClick={() => {
-																setSelectedCustomerId(item.customer.ID);
-																setIsStatementModalOpen(true);
+																setSelectedCustomerId(
+																	item
+																		.customer
+																		.ID
+																);
+																setIsStatementModalOpen(
+																	true
+																);
 															}}
 														>
 															<FileText className="h-4 w-4 mr-2" />
-															<span>View Statement</span>
+															<span>
+																View
+																Statement
+															</span>
 														</DropdownMenuItem>
-														
+
 														<DropdownMenuItem
 															onClick={() => {
-																const customerData = customerList?.data?.find(
-																	(item: any) => item.customer.ID === item.customer.ID
+																const customerData =
+																	customerList?.data?.find(
+																		(
+																			item: any
+																		) =>
+																			item
+																				.customer
+																				.ID ===
+																			item
+																				.customer
+																				.ID
+																	);
+
+																setSelectedContactCustomerId(
+																	item
+																		.customer
+																		.ID
 																);
-																
-																setSelectedContactCustomerId(item.customer.ID);
-																setSelectedCustomerContacts(customerData?.contacts || []);
-																setSelectedCustomerAddresses(customerData?.addresses || []);
-																setIsContactsModalOpen(true);
+																setSelectedCustomerContacts(
+																	customerData?.contacts ||
+																		[]
+																);
+																setSelectedCustomerAddresses(
+																	customerData?.addresses ||
+																		[]
+																);
+																setIsContactsModalOpen(
+																	true
+																);
 															}}
 														>
 															<Phone className="h-4 w-4 mr-2" />
-															<span>View Contacts</span>
+															<span>
+																View
+																Contacts
+															</span>
 														</DropdownMenuItem>
-														
+
 														<DropdownMenuItem
 															onClick={() => {
-																setSelectedCustomerForAdd(customerResponseToCustomer(item.customer));
-																setAddModalType("contact");
+																setSelectedCustomerForAdd(
+																	customerResponseToCustomer(
+																		item.customer
+																	)
+																);
+																setAddModalType(
+																	"contact"
+																);
 															}}
 														>
 															<UserPlus className="h-4 w-4 mr-2" />
-															<span>Add Contact</span>
+															<span>
+																Add
+																Contact
+															</span>
 														</DropdownMenuItem>
-														
+
 														<DropdownMenuItem
 															onClick={() => {
-																setSelectedCustomerForAdd(customerResponseToCustomer(item.customer));
-																setAddModalType("address");
+																setSelectedCustomerForAdd(
+																	customerResponseToCustomer(
+																		item.customer
+																	)
+																);
+																setAddModalType(
+																	"address"
+																);
 															}}
 														>
 															<MapPin className="h-4 w-4 mr-2" />
-															<span>Add Address</span>
+															<span>
+																Add
+																Address
+															</span>
 														</DropdownMenuItem>
-														
+
 														<DropdownMenuItem
 															onClick={() => {
-																setEditingCustomer({
-																	...item.customer,
-																});
-																setIsDialogOpen(true);
+																setEditingCustomer(
+																	{
+																		...item.customer,
+																	}
+																);
+																setIsDialogOpen(
+																	true
+																);
 															}}
 														>
 															<Edit className="h-4 w-4 mr-2" />
-															<span>Edit Customer</span>
+															<span>
+																Edit
+																Customer
+															</span>
 														</DropdownMenuItem>
-														
+
 														<DropdownMenuSeparator />
-														
+
 														<DropdownMenuItem
 															onClick={() => {
-																setEditingCustomer({
-																	...item.customer,
-																});
-																const result = confirm("Are you sure you want to delete this customer? This action cannot be undone.");
-																if (result) {
+																setEditingCustomer(
+																	{
+																		...item.customer,
+																	}
+																);
+																const result =
+																	confirm(
+																		"Are you sure you want to delete this customer? This action cannot be undone."
+																	);
+																if (
+																	result
+																) {
 																	handleDeleteCustomer();
 																}
 															}}
 															className="text-red-600"
 														>
 															<Trash2 className="h-4 w-4 mr-2" />
-															<span>Delete Customer</span>
+															<span>
+																Delete
+																Customer
+															</span>
 														</DropdownMenuItem>
 													</DropdownMenuContent>
 												</DropdownMenu>
@@ -938,7 +1029,7 @@ export function CustomerManagement() {
 					isOpen={isContactsModalOpen}
 					onClose={() => setIsContactsModalOpen(false)}
 					onDataChange={() => {
-						mutate('/customer');
+						mutate("/customer");
 					}}
 				/>
 			)}
@@ -950,9 +1041,17 @@ export function CustomerManagement() {
 					onClose={() => setAddModalType(null)}
 					onSuccess={() => {
 						setAddModalType(null);
-						if (selectedContactCustomerId === selectedCustomerForAdd.ID && isContactsModalOpen) {
-							mutate(`/customer/${selectedCustomerForAdd.ID}/contacts`);
-							mutate(`/customer/${selectedCustomerForAdd.ID}/addresses`);
+						if (
+							selectedContactCustomerId ===
+								selectedCustomerForAdd.ID &&
+							isContactsModalOpen
+						) {
+							mutate(
+								`/customer/${selectedCustomerForAdd.ID}/contacts`
+							);
+							mutate(
+								`/customer/${selectedCustomerForAdd.ID}/addresses`
+							);
 						}
 					}}
 				/>

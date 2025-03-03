@@ -91,7 +91,10 @@ export function CustomerAddModal({
 			const response = await addCustomerContact({
 				url: `${BASE_URL}/customer/contact`,
 				contactInfo: {
-					customer_id: (customer.id || customer.ID || customer.customer_id || 0) as number,
+					customer_id: (customer.id ||
+						customer.ID ||
+						customer.customer_id ||
+						0) as number,
 					contact_type: values.contact_type,
 					contact_information: values.contact_information,
 					created_by: user?.username || "admin",
@@ -120,7 +123,10 @@ export function CustomerAddModal({
 			const response = await addCustomerAddress({
 				url: `${BASE_URL}/customer/address`,
 				addressInfo: {
-					customer_id: (customer.id || customer.ID || customer.customer_id || 0) as number,
+					customer_id: (customer.id ||
+						customer.ID ||
+						customer.customer_id ||
+						0) as number,
 					district: values.district,
 					subcounty: values.subcounty,
 					parish: values.parish,
