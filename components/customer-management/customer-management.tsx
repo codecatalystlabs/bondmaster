@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Plus, Edit, Trash2, FileText } from "lucide-react";
+import { Plus, Edit, Trash2, FileText, Phone, MapPin, UserPlus, MoreHorizontal } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -59,6 +59,16 @@ import { BASE_URL } from "@/constants/baseUrl";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { formatAmount } from "@/lib/utils";
+import { CustomerContactsModal } from "@/components/customer-management/customer-contacts-modal";
+import { CustomerAddModal } from "@/components/customer-management/customer-add-modal";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const formSchema = z.object({
 	surname: z.string().min(1, "Surname is required."),
@@ -241,6 +251,14 @@ export function CustomerManagement() {
 		number | null
 	>(null);
 	const [isStatementModalOpen, setIsStatementModalOpen] = useState(false);
+	const [selectedContactCustomerId, setSelectedContactCustomerId] = useState<
+		number | null
+	>(null);
+	const [isContactsModalOpen, setIsContactsModalOpen] = useState(false);
+	const [addModalType, setAddModalType] = useState<"contact" | "address" | null>(null);
+	const [selectedCustomerForAdd, setSelectedCustomerForAdd] = useState<Customer | null>(null);
+	const [selectedCustomerContacts, setSelectedCustomerContacts] = useState<any[]>([]);
+	const [selectedCustomerAddresses, setSelectedCustomerAddresses] = useState<any[]>([]);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -797,102 +815,93 @@ export function CustomerManagement() {
 												}
 											</TableCell>
 											<TableCell>
-												<div className="flex items-center space-x-2">
-													<Button
-														variant="ghost"
-														size="icon"
-														onClick={() => {
-															setSelectedCustomerId(
-																item
-																	.customer
-																	.ID
-															);
-															setIsStatementModalOpen(
-																true
-															);
-														}}
-													>
-														<FileText className="h-4 w-4" />
-													</Button>
-													<Button
-														variant="ghost"
-														size="icon"
-														onClick={() => {
-															setEditingCustomer(
-																{
-																	...item.customer,
-																}
-															);
-															setIsDialogOpen(
-																true
-															);
-														}}
-													>
-														<Edit className="h-4 w-4" />
-													</Button>
-													<AlertDialog>
-														<AlertDialogTrigger
-															asChild
+												<DropdownMenu>
+													<DropdownMenuTrigger asChild>
+														<Button variant="ghost" size="icon">
+															<MoreHorizontal className="h-4 w-4" />
+														</Button>
+													</DropdownMenuTrigger>
+													<DropdownMenuContent align="end">
+														<DropdownMenuLabel>Actions</DropdownMenuLabel>
+														<DropdownMenuSeparator />
+														
+														<DropdownMenuItem 
+															onClick={() => {
+																setSelectedCustomerId(item.customer.ID);
+																setIsStatementModalOpen(true);
+															}}
 														>
-															<Button
-																variant="ghost"
-																size="icon"
-																onClick={() => {
-																	setEditingCustomer(
-																		{
-																			...item.customer,
-																		}
-																	);
-																}}
-															>
-																<Trash2 className="h-4 w-4" />
-															</Button>
-														</AlertDialogTrigger>
-														<AlertDialogContent>
-															<AlertDialogHeader>
-																<AlertDialogTitle>
-																	Are
-																	you
-																	absolutely
-																	sure?
-																</AlertDialogTitle>
-																<AlertDialogDescription>
-																	This
-																	action
-																	cannot
-																	be
-																	undone.
-																	This
-																	will
-																	permanently
-																	delete
-																	the
-																	customer
-																	account
-																	and
-																	remove
-																	their
-																	data
-																	from
-																	our
-																	servers.
-																</AlertDialogDescription>
-															</AlertDialogHeader>
-															<AlertDialogFooter>
-																<AlertDialogCancel>
-																	Cancel
-																</AlertDialogCancel>
-																<AlertDialogAction
-																	onClick={
-																		handleDeleteCustomer
-																	}
-																>
-																	Delete
-																</AlertDialogAction>
-															</AlertDialogFooter>
-														</AlertDialogContent>
-													</AlertDialog>
-												</div>
+															<FileText className="h-4 w-4 mr-2" />
+															<span>View Statement</span>
+														</DropdownMenuItem>
+														
+														<DropdownMenuItem
+															onClick={() => {
+																const customerData = customerList?.data?.find(
+																	(item: any) => item.customer.ID === item.customer.ID
+																);
+																
+																setSelectedContactCustomerId(item.customer.ID);
+																setSelectedCustomerContacts(customerData?.contacts || []);
+																setSelectedCustomerAddresses(customerData?.addresses || []);
+																setIsContactsModalOpen(true);
+															}}
+														>
+															<Phone className="h-4 w-4 mr-2" />
+															<span>View Contacts</span>
+														</DropdownMenuItem>
+														
+														<DropdownMenuItem
+															onClick={() => {
+																setSelectedCustomerForAdd(item.customer);
+																setAddModalType("contact");
+															}}
+														>
+															<UserPlus className="h-4 w-4 mr-2" />
+															<span>Add Contact</span>
+														</DropdownMenuItem>
+														
+														<DropdownMenuItem
+															onClick={() => {
+																setSelectedCustomerForAdd(item.customer);
+																setAddModalType("address");
+															}}
+														>
+															<MapPin className="h-4 w-4 mr-2" />
+															<span>Add Address</span>
+														</DropdownMenuItem>
+														
+														<DropdownMenuItem
+															onClick={() => {
+																setEditingCustomer({
+																	...item.customer,
+																});
+																setIsDialogOpen(true);
+															}}
+														>
+															<Edit className="h-4 w-4 mr-2" />
+															<span>Edit Customer</span>
+														</DropdownMenuItem>
+														
+														<DropdownMenuSeparator />
+														
+														<DropdownMenuItem
+															onClick={() => {
+																setEditingCustomer({
+																	...item.customer,
+																});
+																const result = confirm("Are you sure you want to delete this customer? This action cannot be undone.");
+																if (result) {
+																	handleDeleteCustomer();
+																}
+															}}
+															className="text-red-600"
+														>
+															<Trash2 className="h-4 w-4 mr-2" />
+															<span>Delete Customer</span>
+														</DropdownMenuItem>
+													</DropdownMenuContent>
+												</DropdownMenu>
 											</TableCell>
 										</TableRow>
 									)
@@ -907,6 +916,48 @@ export function CustomerManagement() {
 					customerId={selectedCustomerId}
 					isOpen={isStatementModalOpen}
 					onClose={() => setIsStatementModalOpen(false)}
+				/>
+			)}
+			{selectedContactCustomerId && (
+				<CustomerContactsModal
+					customerId={selectedContactCustomerId}
+					customerName={
+						customerList?.data?.find(
+							(item: any) =>
+								item.customer.ID ===
+								selectedContactCustomerId
+						)?.customer?.surname +
+						" " +
+						customerList?.data?.find(
+							(item: any) =>
+								item.customer.ID ===
+								selectedContactCustomerId
+						)?.customer?.firstname
+					}
+					contacts={selectedCustomerContacts}
+					addresses={selectedCustomerAddresses}
+					isOpen={isContactsModalOpen}
+					onClose={() => setIsContactsModalOpen(false)}
+					onDataChange={() => {
+						// Refresh the main customer list when contacts/addresses change
+						mutate('/customer');
+					}}
+				/>
+			)}
+			{addModalType && selectedCustomerForAdd && (
+				<CustomerAddModal
+					customer={selectedCustomerForAdd}
+					type={addModalType}
+					isOpen={addModalType !== null}
+					onClose={() => setAddModalType(null)}
+					onSuccess={() => {
+						setAddModalType(null);
+						if (selectedContactCustomerId === selectedCustomerForAdd.ID && isContactsModalOpen) {
+							// Refresh contacts/addresses data if contacts modal is open
+							mutate(`/customer/${selectedCustomerForAdd.ID}/contacts`);
+							mutate(`/customer/${selectedCustomerForAdd.ID}/addresses`);
+						}
+					}}
 				/>
 			)}
 		</>
