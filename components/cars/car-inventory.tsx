@@ -265,8 +265,7 @@ export function CarInventory() {
 
 	};
 
-	console.log(cars, "AM CAR");
-	console.log(carList, "AM LIST");
+	
 	const columns: ColumnDef<Car>[] = [
 		{
 			accessorKey: "chasis_number",

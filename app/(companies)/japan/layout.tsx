@@ -42,7 +42,7 @@ export default function JapanLayout({
 		}
    }, []);
 
-   if(!isClient) return <Loader />
+   if(!isClient) return <Loader className="w-8 h-8" />
 
    return (
       <WithAuth>

@@ -209,7 +209,7 @@ export default function CarSalePage() {
 
 	if (error || getCompanyError || carListError)
 		return <div>Failed to load</div>;
-	if (isLoading || isLoadingCompanies || carListLoading) return <Loader />;
+	if (isLoading || isLoadingCompanies || carListLoading) return <Loader className="w-8 h-8" />;
 
 	return (
 		<div className="container mx-auto py-10">
@@ -266,7 +266,7 @@ export default function CarSalePage() {
 					)}
 
 					{isLoading ? (
-						<Loader />
+						<Loader className="w-8 h-8" />
 					) : salesData?.data && salesData.data.length > 0 ? (
 						<>
 							<div className="flex items-center justify-between py-4">

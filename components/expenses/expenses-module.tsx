@@ -388,7 +388,7 @@ export function ExpensesModule() {
 			</TabsContent>
 			<TabsContent value="list">
 				{isLoading ? (
-					<Loader />
+					<Loader className="w-8 h-8" />
 				) : (
 					<Card>
 						<CardHeader>

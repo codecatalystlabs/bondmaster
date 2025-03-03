@@ -49,8 +49,8 @@ const formSchema = z.object({
 		.string()
 		.min(5, "Chassis number must be at least 5 characters"),
 	make: z.string().min(1, "Make is required"),
-	car_model: z.string().min(1, "Model is required"),
-	manufacture_year: z.number().min(1900, "Year must be 1900 or later"),
+	car_model: z.string().optional(),
+	manufacture_year: z.number().optional(),
 	first_registration_year: z.number().optional(),
 	colour: z.string().optional(),
 
@@ -206,6 +206,7 @@ export function AddCarForm({
 			car_payment_status: initialData?.car_payment_status || "",
 			images: initialData?.images || [],
 		},
+		mode: "onChange",
 	});
 
 	const { getRootProps, getInputProps } = useDropzone({
@@ -223,6 +224,11 @@ export function AddCarForm({
 	});
 
 	async function handleSubmit(values: z.infer<typeof formSchema>) {
+		if (step !== 5) {
+			setStep(Math.min(5, step + 1));
+			return;
+		}
+
 		try {
 			const formData = new FormData();
 
@@ -330,8 +336,7 @@ export function AddCarForm({
 				ac: initialData.ac || false,
 				currency: initialData.currency || "JPY",
 				bid_price: initialData.bid_price || 0,
-				vat_tax: initialData.vat_tax ?? null, // Preserve null
-
+				vat_tax: initialData.vat_tax ?? null,
 				purchase_date: initialData.purchase_date || "",
 				auction: initialData.auction || "",
 				from_company_id:
@@ -342,7 +347,7 @@ export function AddCarForm({
 				broker_name: initialData.broker_name || "",
 				broker_number: initialData.broker_number || "",
 				number_plate: initialData.number_plate || "",
-				customer_id: initialData.customer_id ?? null, // Preserve null
+				customer_id: initialData.customer_id ?? null,
 				car_status: initialData.car_status || "",
 				car_payment_status: initialData.car_payment_status || "",
 				images: initialData.images || [],
@@ -481,9 +486,8 @@ export function AddCarForm({
 						<form
 							onSubmit={(e) => {
 								e.preventDefault();
-								if (step === 5) {
-									form.handleSubmit(handleSubmit)(e);
-								}
+
+								form.handleSubmit(handleSubmit)(e);
 							}}
 							className="space-y-6"
 						>
@@ -1463,7 +1467,7 @@ export function AddCarForm({
 
 								{step === 4 && (
 									<>
-										<div className="space-y-4">
+										<div className="hidden space-y-4">
 											<FormField
 												control={
 													form.control
@@ -1680,8 +1684,10 @@ export function AddCarForm({
 															onValueChange={
 																field.onChange
 															}
-															defaultValue={
+															value={
 																field.value
+																	? field.value.toString()
+																	: undefined
 															}
 														>
 															<FormControl>
@@ -1706,9 +1712,7 @@ export function AddCarForm({
 																				key={
 																					company?.ID
 																				}
-																				value={
-																					company?.name
-																				}
+																				value={company?.ID.toString()}
 																			>
 																				{
 																					company?.name
@@ -1934,7 +1938,16 @@ export function AddCarForm({
 										Next
 									</Button>
 								) : (
-									<Button type="submit">
+									<Button
+										type="button"
+										onClick={() => {
+											if (step === 5) {
+												form.handleSubmit(
+													handleSubmit
+												)();
+											}
+										}}
+									>
 										Submit
 									</Button>
 								)}
