@@ -1,4 +1,7 @@
 export interface Customer {
+  ID: number;
+  id?: number;
+  customer_id?: number;
   customer_uuid?: string;
   surname: string;
   firstname: string;
@@ -39,4 +42,8 @@ export type DataItem = {
   addresses: any[];
   customer: CustomerResponse;
   customer_ports:any[]
+}
+
+export interface NewCustomer extends Omit<Customer, 'ID' | 'id' | 'customer_id'> {
+  // Any additional fields specific to new customers could go here
 }

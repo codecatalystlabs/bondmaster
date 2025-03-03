@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import * as XLSX from 'xlsx';
+import { Customer, CustomerResponse } from "@/types/customer";
 
 
 export function cn(...inputs: ClassValue[]) {
@@ -27,3 +28,10 @@ export const formatAmount = (amount: number | undefined | null, currency: string
 
   return currency ? `${currency}${formattedNumber}` : formattedNumber;
 };
+
+export function customerResponseToCustomer(response: CustomerResponse): Customer {
+  return {
+    ...response,
+    gender: response.gender as "Male" | "Female" | "Other"
+  };
+}

@@ -58,7 +58,7 @@ import { createCustomer, deleteCustomer, editCustomer, fetcher } from "@/apis";
 import { BASE_URL } from "@/constants/baseUrl";
 import toast from "react-hot-toast";
 import { useState } from "react";
-import { formatAmount } from "@/lib/utils";
+import { formatAmount, customerResponseToCustomer } from "@/lib/utils";
 import { CustomerContactsModal } from "@/components/customer-management/customer-contacts-modal";
 import { CustomerAddModal } from "@/components/customer-management/customer-add-modal";
 import {
@@ -319,21 +319,21 @@ export function CustomerManagement() {
 	console.log(customerList?.data, "customerList");
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		const userPayload: Customer = {
+		const userPayload: Omit<Customer, 'ID' | 'id' | 'customer_id'> = {
 			...values,
 			created_by: "admin",
 			updated_by: "admin",
 		};
 
 		try {
-			const updatedCustomer: Customer = {
-				...editCustomer,
-				...values,
-				created_by: "admin",
-				updated_by: "admin",
-			};
 			if (editingCustomer) {
-				// console.log(editCustomer, "######");
+				const updatedCustomer: Customer = {
+					...values,
+					ID: editingCustomer.ID,
+					created_by: "admin",
+					updated_by: "admin",
+				};
+				
 				const response = await editCustomer({
 					url: `${BASE_URL}/customer/${editingCustomer.ID}`,
 					customerInfo: updatedCustomer,
@@ -343,7 +343,6 @@ export function CustomerManagement() {
 					toast.success("User updated successfully");
 				}
 			} else {
-				// Create new user
 				const response = await createCustomer({
 					url: `${BASE_URL}/customer`,
 					customerInfo: userPayload,
@@ -853,7 +852,7 @@ export function CustomerManagement() {
 														
 														<DropdownMenuItem
 															onClick={() => {
-																setSelectedCustomerForAdd(item.customer);
+																setSelectedCustomerForAdd(customerResponseToCustomer(item.customer));
 																setAddModalType("contact");
 															}}
 														>
@@ -863,7 +862,7 @@ export function CustomerManagement() {
 														
 														<DropdownMenuItem
 															onClick={() => {
-																setSelectedCustomerForAdd(item.customer);
+																setSelectedCustomerForAdd(customerResponseToCustomer(item.customer));
 																setAddModalType("address");
 															}}
 														>
@@ -939,7 +938,6 @@ export function CustomerManagement() {
 					isOpen={isContactsModalOpen}
 					onClose={() => setIsContactsModalOpen(false)}
 					onDataChange={() => {
-						// Refresh the main customer list when contacts/addresses change
 						mutate('/customer');
 					}}
 				/>
@@ -953,7 +951,6 @@ export function CustomerManagement() {
 					onSuccess={() => {
 						setAddModalType(null);
 						if (selectedContactCustomerId === selectedCustomerForAdd.ID && isContactsModalOpen) {
-							// Refresh contacts/addresses data if contacts modal is open
 							mutate(`/customer/${selectedCustomerForAdd.ID}/contacts`);
 							mutate(`/customer/${selectedCustomerForAdd.ID}/addresses`);
 						}
