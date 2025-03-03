@@ -1,7 +1,16 @@
 "use client";
 
 import * as React from "react";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import {
+	Plus,
+	Edit,
+	Trash2,
+	FileText,
+	Phone,
+	MapPin,
+	UserPlus,
+	MoreHorizontal,
+} from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -57,6 +66,18 @@ import useSWR, { mutate } from "swr";
 import { createCustomer, deleteCustomer, editCustomer, fetcher } from "@/apis";
 import { BASE_URL } from "@/constants/baseUrl";
 import toast from "react-hot-toast";
+import { useState } from "react";
+import { formatAmount, customerResponseToCustomer } from "@/lib/utils";
+import { CustomerContactsModal } from "@/components/customer-management/customer-contacts-modal";
+import { CustomerAddModal } from "@/components/customer-management/customer-add-modal";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const formSchema = z.object({
 	surname: z.string().min(1, "Surname is required."),
@@ -74,15 +95,186 @@ const formSchema = z.object({
 	telephone: z.string().min(10, "Telephone must be at least 10 characters."),
 	email: z.string().email("Invalid email address."),
 	nin: z.string().min(1, "NIN is required."),
-	upload_file: z.instanceof(File).optional()
-
+	upload_file: z.instanceof(File).optional(),
 });
 
+function CustomerStatementModal({
+	customerId,
+	isOpen,
+	onClose,
+}: {
+	customerId: number;
+	isOpen: boolean;
+	onClose: () => void;
+}) {
+	const {
+		data: statement,
+		error,
+		isLoading,
+	} = useSWR(isOpen ? `/sale/statement/${customerId}` : null, fetcher);
+
+	return (
+		<Dialog
+			open={isOpen}
+			onOpenChange={onClose}
+		>
+			<DialogContent className="sm:max-w-[500px]">
+				<DialogHeader>
+					<DialogTitle>Customer Statement</DialogTitle>
+					<DialogDescription>
+						Financial statement for customer
+					</DialogDescription>
+				</DialogHeader>
+
+				{isLoading ? (
+					<div className="flex justify-center p-4">
+						<Loader className="w-8 h-8" />
+					</div>
+				) : error ? (
+					<div className="text-red-500">
+						Error loading statement
+					</div>
+				) : statement ? (
+					<div className="space-y-4">
+						<div className="grid grid-cols-2 gap-2">
+							<div className="font-medium">
+								Customer Name:
+							</div>
+							<div>{statement.data.customer_name}</div>
+
+							<div className="font-medium">
+								Total Sales:
+							</div>
+							<div>
+								{formatAmount(
+									statement.data.total_sales,
+									""
+								)}
+							</div>
+
+							<div className="font-medium">
+								Total Paid:
+							</div>
+							<div>
+								{formatAmount(
+									statement.data.total_paid,
+									""
+								)}
+							</div>
+
+							<div className="font-medium">
+								Outstanding Balance:
+							</div>
+							<div
+								className={
+									statement.data.total_outstanding >
+									0
+										? "text-red-500 font-bold"
+										: "text-green-500"
+								}
+							>
+								{formatAmount(
+									statement.data.total_outstanding,
+									""
+								)}
+							</div>
+						</div>
+
+						{statement.data.sales &&
+						statement.data.sales.length > 0 ? (
+							<div className="mt-4">
+								<h3 className="font-semibold mb-2">
+									Sales History
+								</h3>
+								<Table>
+									<TableHeader>
+										<TableRow>
+											<TableHead>
+												Date
+											</TableHead>
+											<TableHead>
+												Amount
+											</TableHead>
+											<TableHead>
+												Status
+											</TableHead>
+										</TableRow>
+									</TableHeader>
+									<TableBody>
+										{statement.data.sales.map(
+											(sale: any) => (
+												<TableRow
+													key={sale.ID}
+												>
+													<TableCell>
+														{new Date(
+															sale.sale_date
+														).toLocaleDateString()}
+													</TableCell>
+													<TableCell>
+														{formatAmount(
+															sale.total_price,
+															""
+														)}
+													</TableCell>
+													<TableCell>
+														<span
+															className={
+																sale.payment_status ===
+																"Paid"
+																	? "text-green-500"
+																	: "text-red-500"
+															}
+														>
+															{
+																sale.payment_status
+															}
+														</span>
+													</TableCell>
+												</TableRow>
+											)
+										)}
+									</TableBody>
+								</Table>
+							</div>
+						) : (
+							<p className="text-muted-foreground">
+								No sales history available
+							</p>
+						)}
+					</div>
+				) : null}
+			</DialogContent>
+		</Dialog>
+	);
+}
+
 export function CustomerManagement() {
+	const [search, setSearch] = React.useState("");
+	const [gender, setGender] = React.useState("");
 	const [customers, setCustomers] = React.useState<Customer[]>([]);
 	const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 	const [editingCustomer, setEditingCustomer] =
 		React.useState<CustomerResponse | null>(null);
+	const [selectedCustomerId, setSelectedCustomerId] = useState<
+		number | null
+	>(null);
+	const [isStatementModalOpen, setIsStatementModalOpen] = useState(false);
+	const [selectedContactCustomerId, setSelectedContactCustomerId] = useState<
+		number | null
+	>(null);
+	const [isContactsModalOpen, setIsContactsModalOpen] = useState(false);
+	const [addModalType, setAddModalType] = useState<
+		"contact" | "address" | null
+	>(null);
+	const [selectedCustomerForAdd, setSelectedCustomerForAdd] =
+		useState<Customer | null>(null);
+	const [selectedCustomerContacts, setSelectedCustomerContacts] = useState<
+		any[]
+	>([]);
+	const [selectedCustomerAddresses, setSelectedCustomerAddresses] = useState<
+		any[]
+	>([]);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -97,7 +289,7 @@ export function CustomerManagement() {
 			telephone: "",
 			email: "",
 			nin: "",
-			upload_file:undefined
+			upload_file: undefined,
 		},
 	});
 
@@ -143,21 +335,21 @@ export function CustomerManagement() {
 	console.log(customerList?.data, "customerList");
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		const userPayload: Customer = {
+		const userPayload: Omit<Customer, "ID" | "id" | "customer_id"> = {
 			...values,
 			created_by: "admin",
 			updated_by: "admin",
 		};
 
 		try {
-			const updatedCustomer: Customer = {
-				...editCustomer,
-				...values,
-				created_by: "admin",
-				updated_by: "admin",
-			};
 			if (editingCustomer) {
-				// console.log(editCustomer, "######");
+				const updatedCustomer: Customer = {
+					...values,
+					ID: editingCustomer.ID,
+					created_by: "admin",
+					updated_by: "admin",
+				};
+
 				const response = await editCustomer({
 					url: `${BASE_URL}/customer/${editingCustomer.ID}`,
 					customerInfo: updatedCustomer,
@@ -167,7 +359,6 @@ export function CustomerManagement() {
 					toast.success("User updated successfully");
 				}
 			} else {
-				// Create new user
 				const response = await createCustomer({
 					url: `${BASE_URL}/customer`,
 					customerInfo: userPayload,
@@ -189,19 +380,32 @@ export function CustomerManagement() {
 	}
 
 	const handleDeleteCustomer = async () => {
-      console.log(editingCustomer,"AM THE USERRERERERER")
-	  const response = await deleteCustomer(`${BASE_URL}/customer/${editingCustomer?.ID}`);
+		console.log(editingCustomer, "AM THE USERRERERERER");
+		const response = await deleteCustomer(
+			`${BASE_URL}/customer/${editingCustomer?.ID}`
+		);
 
-	mutate(`${BASE_URL}/customers`);
-	if (response.data) {
-		toast.success("Customer deleted successfully");
-	}
+		mutate(`${BASE_URL}/customers`);
+		if (response.data) {
+			toast.success("Customer deleted successfully");
+		}
 	};
+
+	const filteredCustomers = customerList?.data?.filter((info: any) => {
+		return search
+			? info?.customer?.surname
+					.toLowerCase()
+					.includes(search.toLowerCase()) ||
+					info?.customer?.firstname
+						.toLowerCase()
+						.includes(search.toLowerCase())
+			: true;
+	});
 
 	return (
 		<>
 			{isLoading ? (
-				<Loader />
+				<Loader className="w-8 h-8" />
 			) : (
 				<div className="space-y-4">
 					<div className="flex justify-between items-center">
@@ -469,8 +673,6 @@ export function CustomerManagement() {
 													</FormItem>
 												)}
 											/>
-                                           
-
 
 											<FormField
 												control={
@@ -494,25 +696,39 @@ export function CustomerManagement() {
 												)}
 											/>
 
-<FormField
-								control={form.control}
-								name="upload_file"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Upload File</FormLabel>
-										<FormControl>
-											<Input
-												type="file"
-												onChange={(e) => {
-													const file = e.target.files?.[0];
-													field.onChange(file);
-												}}
+											<FormField
+												control={
+													form.control
+												}
+												name="upload_file"
+												render={({
+													field,
+												}) => (
+													<FormItem>
+														<FormLabel>
+															Upload
+															File
+														</FormLabel>
+														<FormControl>
+															<Input
+																type="file"
+																onChange={(
+																	e
+																) => {
+																	const file =
+																		e
+																			.target
+																			.files?.[0];
+																	field.onChange(
+																		file
+																	);
+																}}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
 											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
 										</div>
 									</form>
 								</Form>
@@ -525,7 +741,7 @@ export function CustomerManagement() {
 										disabled={isLoading}
 									>
 										{isLoading ? (
-											<Loader />
+											<Loader className="w-8 h-8" />
 										) : null}
 										{isLoading
 											? "Saving..."
@@ -534,6 +750,13 @@ export function CustomerManagement() {
 								</DialogFooter>
 							</DialogContent>
 						</Dialog>
+					</div>
+					<div className="mb-4 flex space-x-4">
+						<Input
+							placeholder="Search by name"
+							value={search}
+							onChange={(e) => setSearch(e.target.value)}
+						/>
 					</div>
 					<Table>
 						<TableHeader>
@@ -554,11 +777,11 @@ export function CustomerManagement() {
 										colSpan={7}
 										className="h-24 text-center"
 									>
-										<Loader />
+										<Loader className="w-8 h-8" />
 									</TableCell>
 								</TableRow>
 							) : (
-								customerList?.data?.map(
+								filteredCustomers?.map(
 									(item: DataItem) => (
 										<TableRow
 											key={item?.customer?.ID}
@@ -589,7 +812,10 @@ export function CustomerManagement() {
 												}
 											</TableCell>
 											<TableCell>
-												{item?.customer?.age}
+												{
+													item?.customer
+														?.age
+												}
 											</TableCell>
 											<TableCell>
 												{
@@ -604,84 +830,168 @@ export function CustomerManagement() {
 												}
 											</TableCell>
 											<TableCell>
-												<div className="flex items-center space-x-2">
-													<Button
-														variant="ghost"
-														size="icon"
-														onClick={() => {
-															setEditingCustomer(
-																{
-																	...item.customer,
-																}
-															);
-															setIsDialogOpen(
-																true
-															);
-														}}
+												<DropdownMenu>
+													<DropdownMenuTrigger
+														asChild
 													>
-														<Edit className="h-4 w-4" />
-													</Button>
-													<AlertDialog>
-														<AlertDialogTrigger
-															asChild
+														<Button
+															variant="ghost"
+															size="icon"
 														>
-															<Button
-																variant="ghost"
-																size="icon"
-																onClick={()=>{
-																	setEditingCustomer(
-																		{
-																			...item.customer,
-																		}
+															<MoreHorizontal className="h-4 w-4" />
+														</Button>
+													</DropdownMenuTrigger>
+													<DropdownMenuContent align="end">
+														<DropdownMenuLabel>
+															Actions
+														</DropdownMenuLabel>
+														<DropdownMenuSeparator />
+
+														<DropdownMenuItem
+															onClick={() => {
+																setSelectedCustomerId(
+																	item
+																		.customer
+																		.ID
+																);
+																setIsStatementModalOpen(
+																	true
+																);
+															}}
+														>
+															<FileText className="h-4 w-4 mr-2" />
+															<span>
+																View
+																Statement
+															</span>
+														</DropdownMenuItem>
+
+														<DropdownMenuItem
+															onClick={() => {
+																const customerData =
+																	customerList?.data?.find(
+																		(
+																			item: any
+																		) =>
+																			item
+																				.customer
+																				.ID ===
+																			item
+																				.customer
+																				.ID
 																	);
-																}}
-															>
-																<Trash2 className="h-4 w-4" />
-															</Button>
-														</AlertDialogTrigger>
-														<AlertDialogContent>
-															<AlertDialogHeader>
-																<AlertDialogTitle>
-																	Are
-																	you
-																	absolutely
-																	sure?
-																</AlertDialogTitle>
-																<AlertDialogDescription>
-																	This
-																	action
-																	cannot
-																	be
-																	undone.
-																	This
-																	will
-																	permanently
-																	delete
-																	the
-																	customer
-																	account
-																	and
-																	remove
-																	their
-																	data
-																	from
-																	our
-																	servers.
-																</AlertDialogDescription>
-															</AlertDialogHeader>
-															<AlertDialogFooter>
-																<AlertDialogCancel>
-																	Cancel
-																</AlertDialogCancel>
-																<AlertDialogAction
-																	onClick={handleDeleteCustomer}
-																>
-																	Delete
-																</AlertDialogAction>
-															</AlertDialogFooter>
-														</AlertDialogContent>
-													</AlertDialog>
-												</div>
+
+																setSelectedContactCustomerId(
+																	item
+																		.customer
+																		.ID
+																);
+																setSelectedCustomerContacts(
+																	customerData?.contacts ||
+																		[]
+																);
+																setSelectedCustomerAddresses(
+																	customerData?.addresses ||
+																		[]
+																);
+																setIsContactsModalOpen(
+																	true
+																);
+															}}
+														>
+															<Phone className="h-4 w-4 mr-2" />
+															<span>
+																View
+																Contacts
+															</span>
+														</DropdownMenuItem>
+
+														<DropdownMenuItem
+															onClick={() => {
+																setSelectedCustomerForAdd(
+																	customerResponseToCustomer(
+																		item.customer
+																	)
+																);
+																setAddModalType(
+																	"contact"
+																);
+															}}
+														>
+															<UserPlus className="h-4 w-4 mr-2" />
+															<span>
+																Add
+																Contact
+															</span>
+														</DropdownMenuItem>
+
+														<DropdownMenuItem
+															onClick={() => {
+																setSelectedCustomerForAdd(
+																	customerResponseToCustomer(
+																		item.customer
+																	)
+																);
+																setAddModalType(
+																	"address"
+																);
+															}}
+														>
+															<MapPin className="h-4 w-4 mr-2" />
+															<span>
+																Add
+																Address
+															</span>
+														</DropdownMenuItem>
+
+														<DropdownMenuItem
+															onClick={() => {
+																setEditingCustomer(
+																	{
+																		...item.customer,
+																	}
+																);
+																setIsDialogOpen(
+																	true
+																);
+															}}
+														>
+															<Edit className="h-4 w-4 mr-2" />
+															<span>
+																Edit
+																Customer
+															</span>
+														</DropdownMenuItem>
+
+														<DropdownMenuSeparator />
+
+														<DropdownMenuItem
+															onClick={() => {
+																setEditingCustomer(
+																	{
+																		...item.customer,
+																	}
+																);
+																const result =
+																	confirm(
+																		"Are you sure you want to delete this customer? This action cannot be undone."
+																	);
+																if (
+																	result
+																) {
+																	handleDeleteCustomer();
+																}
+															}}
+															className="text-red-600"
+														>
+															<Trash2 className="h-4 w-4 mr-2" />
+															<span>
+																Delete
+																Customer
+															</span>
+														</DropdownMenuItem>
+													</DropdownMenuContent>
+												</DropdownMenu>
 											</TableCell>
 										</TableRow>
 									)
@@ -690,6 +1000,61 @@ export function CustomerManagement() {
 						</TableBody>
 					</Table>
 				</div>
+			)}
+			{selectedCustomerId && (
+				<CustomerStatementModal
+					customerId={selectedCustomerId}
+					isOpen={isStatementModalOpen}
+					onClose={() => setIsStatementModalOpen(false)}
+				/>
+			)}
+			{selectedContactCustomerId && (
+				<CustomerContactsModal
+					customerId={selectedContactCustomerId}
+					customerName={
+						customerList?.data?.find(
+							(item: any) =>
+								item.customer.ID ===
+								selectedContactCustomerId
+						)?.customer?.surname +
+						" " +
+						customerList?.data?.find(
+							(item: any) =>
+								item.customer.ID ===
+								selectedContactCustomerId
+						)?.customer?.firstname
+					}
+					contacts={selectedCustomerContacts}
+					addresses={selectedCustomerAddresses}
+					isOpen={isContactsModalOpen}
+					onClose={() => setIsContactsModalOpen(false)}
+					onDataChange={() => {
+						mutate("/customer");
+					}}
+				/>
+			)}
+			{addModalType && selectedCustomerForAdd && (
+				<CustomerAddModal
+					customer={selectedCustomerForAdd}
+					type={addModalType}
+					isOpen={addModalType !== null}
+					onClose={() => setAddModalType(null)}
+					onSuccess={() => {
+						setAddModalType(null);
+						if (
+							selectedContactCustomerId ===
+								selectedCustomerForAdd.ID &&
+							isContactsModalOpen
+						) {
+							mutate(
+								`/customer/${selectedCustomerForAdd.ID}/contacts`
+							);
+							mutate(
+								`/customer/${selectedCustomerForAdd.ID}/addresses`
+							);
+						}
+					}}
+				/>
 			)}
 		</>
 	);

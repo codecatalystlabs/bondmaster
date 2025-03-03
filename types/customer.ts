@@ -1,4 +1,7 @@
 export interface Customer {
+  ID: number;
+  id?: number;
+  customer_id?: number;
   customer_uuid?: string;
   surname: string;
   firstname: string;
@@ -16,9 +19,9 @@ export interface Customer {
 
 export interface CustomerResponse {
   ID: number;
-  CreatedAt: string; 
-  UpdatedAt: string; 
-  DeletedAt: string | null; 
+  CreatedAt: string;
+  UpdatedAt: string;
+  DeletedAt: string | null;
   customer_uuid: string;
   surname: string;
   firstname: string;
@@ -26,7 +29,7 @@ export interface CustomerResponse {
   gender: string;
   nationality: string;
   age: number;
-  dob: string; 
+  dob: string;
   telephone: string;
   email: string;
   nin: string;
@@ -38,5 +41,9 @@ export interface CustomerResponse {
 export type DataItem = {
   addresses: any[];
   customer: CustomerResponse;
-  customer_ports:any[]
+  customer_ports: any[]
+}
+
+export interface NewCustomer extends Omit<Customer, 'ID' | 'id' | 'customer_id'> {
+  // Any additional fields specific to new customers could go here
 }

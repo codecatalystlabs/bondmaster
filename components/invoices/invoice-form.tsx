@@ -48,8 +48,8 @@ export function InvoiceForm() {
 		defaultValues: {
 			invoice_no: "",
 			ship_date: "",
-			currency: "JPY",
-			total_cost: 0,
+			// currency: "JPY",
+			// total_cost: 0,
 			vessel_name: "",
 			from_location: "",
 			to_location: "",
@@ -151,42 +151,8 @@ async function onSubmit(values: z.infer<typeof formSchema>) {
 						</FormItem>
 					)}
 				/>
-				<FormField
-					control={form.control}
-					name="currency"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Currency</FormLabel>
-							<FormControl>
-								<Input {...field} />
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name="total_cost"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Total Cost</FormLabel>
-							<FormControl>
-								<Input
-									type="number"
-									{...field}
-									onChange={(e) =>
-										field.onChange(
-											Number.parseFloat(
-												e.target.value
-											)
-										)
-									}
-								/>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
+				
+				
 				<FormField
 					control={form.control}
 					name="vessel_name"

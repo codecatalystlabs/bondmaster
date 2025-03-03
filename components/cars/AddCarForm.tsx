@@ -49,38 +49,36 @@ const formSchema = z.object({
 		.string()
 		.min(5, "Chassis number must be at least 5 characters"),
 	make: z.string().min(1, "Make is required"),
-	car_model: z.string().min(1, "Model is required"),
-	manufacture_year: z.number().min(1900, "Year must be 1900 or later"),
-	first_registration_year: z
-		.number()
-		.min(1900, "Year must be 1900 or later"),
-	colour: z.string().min(1, "Colour is required"),
+	car_model: z.string().optional(),
+	manufacture_year: z.number().optional(),
+	first_registration_year: z.number().optional(),
+	colour: z.string().optional(),
 
 	// Step 2: Technical Details
-	engine_number: z.string().min(1, "Engine number is required"),
-	engine_capacity: z.string().min(1, "Engine capacity is required"),
-	transmission: z.string().min(1, "Transmission is required"),
-	body_type: z.string().min(1, "Body type is required"),
-	maxim_carry: z.number().min(0, "Maximum carry must be 0 or greater"),
-	weight: z.number().min(0, "Weight must be 0 or greater"),
-	gross_weight: z.number().min(0, "Gross weight must be 0 or greater"),
-	length: z.number().min(0, "Length must be 0 or greater"),
-	width: z.number().min(0, "Width must be 0 or greater"),
-	height: z.number().min(0, "Height must be 0 or greater"),
-	car_millage: z.number().min(0, "Mileage must be 0 or greater"),
-	fuel_consumption: z.string().min(1, "Fuel consumption is required"),
+	engine_number: z.string().optional(),
+	engine_capacity: z.string().optional(),
+	transmission: z.string().optional(),
+	body_type: z.string().optional(),
+	maxim_carry: z.number().optional(),
+	weight: z.number().optional(),
+	gross_weight: z.number().optional(),
+	length: z.number().optional(),
+	width: z.number().optional(),
+	height: z.number().optional(),
+	car_millage: z.number().optional(),
+	fuel_consumption: z.string().optional(),
 
 	// Step 3: Features
-	power_steering: z.boolean(),
-	power_window: z.boolean(),
-	abs: z.boolean(),
-	ads: z.boolean(),
-	alloy_wheel: z.boolean(),
-	simple_wheel: z.boolean(),
-	navigation: z.boolean(),
-	ac: z.boolean(),
-	oil_brake: z.boolean(),
-	air_brake: z.boolean(),
+	power_steering: z.boolean().optional(),
+	power_window: z.boolean().optional(),
+	abs: z.boolean().optional(),
+	ads: z.boolean().optional(),
+	alloy_wheel: z.boolean().optional(),
+	simple_wheel: z.boolean().optional(),
+	navigation: z.boolean().optional(),
+	ac: z.boolean().optional(),
+	oil_brake: z.boolean().optional(),
+	air_brake: z.boolean().optional(),
 
 	// Step 4: Purchase Information
 	currency: z.string().min(1, "Currency is required"),
@@ -192,7 +190,7 @@ export function AddCarForm({
 			ac: initialData?.ac || false,
 			currency: initialData?.currency || "JPY",
 			bid_price: initialData?.bid_price || 0,
-			vat_tax: initialData?.vat_tax ?? null, 
+			vat_tax: initialData?.vat_tax ?? null,
 			purchase_date: initialData?.purchase_date || "",
 			auction: initialData?.auction || "",
 			from_company_id:
@@ -208,6 +206,7 @@ export function AddCarForm({
 			car_payment_status: initialData?.car_payment_status || "",
 			images: initialData?.images || [],
 		},
+		mode: "onChange",
 	});
 
 	const { getRootProps, getInputProps } = useDropzone({
@@ -225,6 +224,11 @@ export function AddCarForm({
 	});
 
 	async function handleSubmit(values: z.infer<typeof formSchema>) {
+		if (step !== 5) {
+			setStep(Math.min(5, step + 1));
+			return;
+		}
+
 		try {
 			const formData = new FormData();
 
@@ -332,8 +336,7 @@ export function AddCarForm({
 				ac: initialData.ac || false,
 				currency: initialData.currency || "JPY",
 				bid_price: initialData.bid_price || 0,
-				vat_tax: initialData.vat_tax ?? null, // Preserve null
-
+				vat_tax: initialData.vat_tax ?? null,
 				purchase_date: initialData.purchase_date || "",
 				auction: initialData.auction || "",
 				from_company_id:
@@ -344,7 +347,7 @@ export function AddCarForm({
 				broker_name: initialData.broker_name || "",
 				broker_number: initialData.broker_number || "",
 				number_plate: initialData.number_plate || "",
-				customer_id: initialData.customer_id ?? null, // Preserve null
+				customer_id: initialData.customer_id ?? null,
 				car_status: initialData.car_status || "",
 				car_payment_status: initialData.car_payment_status || "",
 				images: initialData.images || [],
@@ -481,7 +484,11 @@ export function AddCarForm({
 
 					<Form {...form}>
 						<form
-							onSubmit={form.handleSubmit(handleSubmit)}
+							onSubmit={(e) => {
+								e.preventDefault();
+
+								form.handleSubmit(handleSubmit)(e);
+							}}
 							className="space-y-6"
 						>
 							<div className="grid grid-cols-2 gap-6">
@@ -1460,7 +1467,7 @@ export function AddCarForm({
 
 								{step === 4 && (
 									<>
-										<div className="space-y-4">
+										<div className="hidden space-y-4">
 											<FormField
 												control={
 													form.control
@@ -1677,8 +1684,10 @@ export function AddCarForm({
 															onValueChange={
 																field.onChange
 															}
-															defaultValue={
+															value={
 																field.value
+																	? field.value.toString()
+																	: undefined
 															}
 														>
 															<FormControl>
@@ -1703,9 +1712,7 @@ export function AddCarForm({
 																				key={
 																					company?.ID
 																				}
-																				value={
-																					company?.name
-																				}
+																				value={company?.ID.toString()}
 																			>
 																				{
 																					company?.name
@@ -1931,7 +1938,16 @@ export function AddCarForm({
 										Next
 									</Button>
 								) : (
-									<Button type="submit">
+									<Button
+										type="button"
+										onClick={() => {
+											if (step === 5) {
+												form.handleSubmit(
+													handleSubmit
+												)();
+											}
+										}}
+									>
 										Submit
 									</Button>
 								)}

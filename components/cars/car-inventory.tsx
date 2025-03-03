@@ -146,9 +146,13 @@ export function CarInventory() {
 			);
 		}
 
-		const baseEndpoint = companyId
-			? `/cars/search?from_company_id=${companyId}`
-			: "/cars";
+		let baseEndpoint = "/cars";
+
+		if (companyId) {
+			baseEndpoint = companyId === 1
+				? `/cars/search?to_company_id=${companyId}`
+				: `/cars/search?from_company_id=${companyId}`;
+		}
 
 		const queryString = queryParams.toString().replace(/&/g, "&&");
 		return queryString
@@ -236,7 +240,7 @@ export function CarInventory() {
 	};
 
 	const handleCarAddCarDetails = async (data: any) => {
-		console.log(data, "AAJAJJA++>>>>")
+		
 		// const newExpense: any = {
 		// 	...data,
 		// 	car_id: selectedCar?.ID || 1,
@@ -261,8 +265,7 @@ export function CarInventory() {
 
 	};
 
-	console.log(cars, "AM CAR");
-	console.log(carList, "AM LIST");
+	
 	const columns: ColumnDef<Car>[] = [
 		{
 			accessorKey: "chasis_number",

@@ -1,5 +1,6 @@
 "use client";
 
+import { BASE_URL } from "@/constants/baseUrl";
 import apiClient from "./apiClient";
 import { Car } from "@/types/car";
 import { Cost } from "@/types/cost-management";
@@ -59,6 +60,31 @@ interface INewSale {
 interface IDeleteUser {
     url: string;
     password: string;
+}
+
+// Add these interfaces
+interface ICustomerContact {
+    url: string;
+    contactInfo: {
+        customer_id: number;
+        contact_type: string;
+        contact_information: string;
+        created_by: string;
+        updated_by: string;
+    };
+}
+
+interface ICustomerAddress {
+    url: string;
+    addressInfo: {
+        customer_id: number;
+        district: string;
+        subcounty: string;
+        parish: string;
+        village: string;
+        created_by: string;
+        updated_by: string;
+    };
 }
 
 // Generic Fetcher for GET requests
@@ -172,13 +198,13 @@ const addSale = async ({ url, sale }: ISale) => {
 };
 
 const addPayment = async ({ url, payment }: any) => {
-    console.log(payment,"MAMAJAJJA")
     const { data } = await apiClient.post(url, payment);
     return data;
 };
 
-const addDeposit = async ({ url, sale }: any) => {
-    const { data } = await apiClient.post(url, sale);
+const addDeposit = async ({ url, deposit }: any) => {
+    console.log(deposit,"AM THE DEPOSIT")
+    const { data } = await apiClient.post(url, deposit);
     return data;
 };
 
@@ -212,6 +238,33 @@ const deleteCustomer = async (url:string) => {
     return data;
 }
 
+// export const deleteCarExpense = async ({ expenseId }: { expenseId: number }) => {
+//     return await fetcher(`${BASE_URL}/car/expense/${expenseId}`, {
+//         method: 'DELETE',
+//     });
+// };
+
+// Add these functions in the API Functions section
+const addCustomerContact = async ({ url, contactInfo }: ICustomerContact) => {
+    const { data } = await apiClient.post(url, contactInfo);
+    return data;
+};
+
+const addCustomerAddress = async ({ url, addressInfo }: ICustomerAddress) => {
+    const { data } = await apiClient.post(url, addressInfo);
+    return data;
+};
+
+const deleteCustomerContact = async (url: string) => {
+    const { data } = await apiClient.delete(url);
+    return data;
+};
+
+const deleteCustomerAddress = async (url: string) => {
+    const { data } = await apiClient.delete(url);
+    return data;
+};
+
 // Export API functions
 export {
     createUser,
@@ -236,5 +289,9 @@ export {
     addDeposit,
     addPayment,
     addCarDetails,
-    deleteCustomer
+    deleteCustomer,
+    addCustomerContact,
+    addCustomerAddress,
+    deleteCustomerContact,
+    deleteCustomerAddress
 };

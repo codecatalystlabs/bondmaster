@@ -46,11 +46,16 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { updateSale } from "@/apis";
+import { fetcher, updateSale } from "@/apis";
 import toast from "react-hot-toast";
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 import { BASE_URL } from "@/constants/baseUrl";
 import InvoiceDialog from "./InvoiceModal";
+import PaymentDialog from "./PaymentModal";
+import {  Tabs, TabsContent, TabsList, TabsTrigger  } from "../ui/tabs";
+import { InvoiceTable } from "./InvoiceTable";
+import { PaymentsTable } from "./Payments";
+import { PaymentDepositsTable } from "./DepositTable";
 
 interface SalesTableProps {
 	data: Sale[];
@@ -78,6 +83,8 @@ export function SalesTable({
 	const [selectedSale, setSelectedSale] = React.useState<any>(null);
 	const [isDialogOpen, setDialogOpen] = React.useState(false);
 	const [invoiceDialogOpen, setInvoiceDialogOpen] = React.useState(false);
+    const [openPaymentDialog, setOpenPaymentDialog] = React.useState(false);
+	const [openSaleDetails, setOpenSaleDetails] = React.useState(false);
 
 	const openEditDialog = (sale: Sale) => {
 		setSelectedSale(sale);
@@ -89,10 +96,30 @@ export function SalesTable({
 		setInvoiceDialogOpen(true);
 	};
 
+	const paymentDialog=(sale:Sale)=>{
+		setSelectedSale(sale);
+		setOpenPaymentDialog(true);
+	}
+   const detailsDialog = (sale:Sale)=>{
+	   setSelectedSale(sale);
+	   setOpenSaleDetails(true)
+
+   }
 	const closeEditDialog = () => {
 		setDialogOpen(false);
 		setSelectedSale(null);
 	};
+
+
+	const { data: invoicesData } = useSWR("/invoices", fetcher);
+	const { data: paymentsData } = useSWR("/payments", fetcher);
+	const { data: depositsData } = useSWR("/deposits", fetcher);
+    const deposits = depositsData?.data.filter((deposit:any) => deposit?.sale_payment_id === selectedSale?.ID) || [];
+	const payments = paymentsData?.data.filter((payment:any) => payment?.sale_payment_id === selectedSale?.ID) || [];
+	 const invoices = invoicesData?.data.filter((invoice:any) => invoice?.sale_id === selectedSale?.ID) || [];
+
+    console.log(invoicesData,"AM THE Invoices")
+	console.log(selectedSale,"AM THE SALE")
 
 	const columns: ColumnDef<Sale>[] = [
 		{
@@ -141,10 +168,10 @@ export function SalesTable({
 			accessorKey: "Car.car_model",
 			header: "Car Model",
 		},
-		{
-			accessorKey: "Company.name",
-			header: "Company",
-		},
+		// {
+		// 	accessorKey: "Company.name",
+		// 	header: "Company",
+		// },
 		{
 			accessorKey: "is_full_payment",
 			header: "Payment Type",
@@ -214,6 +241,17 @@ export function SalesTable({
 					>
 						Add Invoice
 					</Button>
+					<Button
+						size="sm"
+						onClick={() => paymentDialog(row.original)}
+					>
+						Add Payment
+					</Button>
+					<Button
+						size="sm"
+						onClick={() => detailsDialog(row.original)}					>
+						View Details
+					</Button>
 				</div>
 			),
 		},
@@ -257,11 +295,6 @@ export function SalesTable({
 			<div className="flex items-center justify-between py-4">
 				<Input
 					placeholder="Filter by company..."
-					value={
-						(table
-							.getColumn("Company.name")
-							?.getFilterValue() as string) ?? ""
-					}
 					onChange={(event) =>
 						table
 							.getColumn("Company.name")
@@ -494,12 +527,58 @@ export function SalesTable({
 					)}
 				</DialogContent>
 			</Dialog>
+			<Dialog open={openSaleDetails} onOpenChange={setOpenSaleDetails}>
+			<DialogContent className="sm:max-w-[700px]">
+			<DialogHeader>
+					<DialogTitle className="text-2xl">
+                       Sale Details
+					</DialogTitle>
+				</DialogHeader>
+
+    <Tabs defaultValue="invoices" 					
+	className="w-full"
+	>
+		<TabsList className="grid w-full grid-cols-5">
+		<TabsTrigger  value="invoices">
+          Invoices
+        </TabsTrigger>
+        <TabsTrigger value="payments">
+          Payments Mode
+        </TabsTrigger>
+
+		<TabsTrigger value="deposits">
+          Payments Deposits
+        </TabsTrigger>
+      </TabsList>
+
+      <TabsContent className="p-4 bg-gray-50 rounded-lg" value="invoices">
+        <InvoiceTable data={invoices} />
+      </TabsContent>
+
+      <TabsContent className="p-4 bg-gray-50 rounded-lg" value="payments">
+        <PaymentsTable data={payments} />
+      </TabsContent>
+	  <TabsContent className="p-4 bg-gray-50 rounded-lg" value="deposits">
+        <PaymentDepositsTable data={deposits} />
+      </TabsContent>
+    </Tabs>
+
+    <div className="flex justify-end mt-4">
+      <Button variant="secondary" className="px-4 py-2" onClick={() => setOpenSaleDetails(false)}>
+        Close
+      </Button>
+    </div>
+  </DialogContent>
+</Dialog>
+
 
 			<InvoiceDialog
 				open={invoiceDialogOpen}
 				onOpenChange={setInvoiceDialogOpen}
 				selectedSale={selectedSale}
 			/>
+			<PaymentDialog open={openPaymentDialog} onOpenChange={setOpenPaymentDialog}  selectedSale={selectedSale} />
+			
 		</div>
 	);
 }

@@ -53,12 +53,15 @@ import {
 	CardContent,
 } from "@/components/ui/card";
 import { Plus } from "lucide-react";
+import React, { useCallback } from "react";
+import { debounce } from "lodash";
+import type { Car } from "@/types/car";
 
 const formSchema = z.object({
 	car_id: z.number(),
 	company_id: z.number(),
-	auction_date: z.string(),
-	auction: z.string(),
+	auction_date: z.string().min(1, "Auction date is required"),
+	auction: z.string().min(1, "Auction name is required"),
 	price: z.number().positive("Price must be positive"),
 	vat_tax: z.number().positive("VAT must be positive"),
 	recycle_fee: z.number().positive("Recycle must be positive"),
@@ -92,7 +95,7 @@ export default function CarSalePage() {
 		defaultValues: {
 			car_id: 0,
 			company_id: 0,
-			auction_date: "",
+			auction_date: new Date().toISOString().split("T")[0],
 			auction: "",
 			price: 0,
 			vat_tax: 0,
@@ -112,7 +115,50 @@ export default function CarSalePage() {
 		isLoading: carListLoading,
 	} = useSWR(`${BASE_URL}/cars`, fetcher);
 
+	const [searchChasis, setSearchChasis] = useState("");
+	const [selectedCar, setSelectedCar] = useState<Car | null>(null);
+
+	const { data: searchedCarData, error: searchError } = useSWR(
+		searchChasis ? `/car/vin/${searchChasis}` : null,
+		fetcher
+	);
+
+	const debouncedSearch = useCallback(
+		debounce((value: string) => handleSearch(value), 500),
+		[]
+	);
+
+	const handleSearch = async (value: string) => {
+		setSearchChasis(value);
+
+		if (value.length >= 5) {
+			try {
+				const carData = await fetcher(`/car/vin/${value}`);
+				if (carData?.data?.car) {
+					form.setValue("car_id", carData.data.car.ID);
+					setSelectedCar(carData.data.car);
+					toast.success("Car found!");
+				}
+			} catch (error) {
+				console.error("Error searching car:", error);
+			}
+		}
+	};
+
+	const handleSearchInputChange = (
+		e: React.ChangeEvent<HTMLInputElement>
+	) => {
+		const value = e.target.value;
+		setSearchChasis(value);
+		debouncedSearch(value);
+	};
+
 	const handleAddSale = async (values: z.infer<typeof formSchema>) => {
+		if (!values.auction_date) {
+			toast.error("Auction date is required");
+			return;
+		}
+
 		const payload = {
 			...values,
 			created_by: user?.username,
@@ -125,10 +171,14 @@ export default function CarSalePage() {
 				sale: payload,
 			});
 
-			if (res?.status === "success") toast.success(res?.message);
-			setIsAddSaleOpen(false);
-			form.reset();
-			mutateSales();
+			if (res?.status === "success") {
+				toast.success(res?.message);
+				setIsAddSaleOpen(false);
+				form.reset();
+				mutateSales();
+			} else {
+				toast.error(res?.message || "Failed to add sale");
+			}
 		} catch (error) {
 			console.error("Error adding sale:", error);
 			toast.error("Failed to add sale");
@@ -159,7 +209,7 @@ export default function CarSalePage() {
 
 	if (error || getCompanyError || carListError)
 		return <div>Failed to load</div>;
-	if (isLoading || isLoadingCompanies || carListLoading) return <Loader />;
+	if (isLoading || isLoadingCompanies || carListLoading) return <Loader className="w-8 h-8" />;
 
 	return (
 		<div className="container mx-auto py-10">
@@ -169,8 +219,8 @@ export default function CarSalePage() {
 						<div>
 							<CardTitle>Car Sales</CardTitle>
 							<CardDescription>
-								Manage your car sales and transactions
-								here.
+								Search for a car by VIN/chassis number
+								and add sale details
 							</CardDescription>
 						</div>
 						<Button onClick={() => setIsAddSaleOpen(true)}>
@@ -180,8 +230,43 @@ export default function CarSalePage() {
 					</div>
 				</CardHeader>
 				<CardContent>
+					<div className="mb-6">
+						<Input
+							placeholder="Search car by VIN/chassis number..."
+							value={searchChasis}
+							onChange={handleSearchInputChange}
+							className="max-w-md"
+						/>
+					</div>
+
+					{selectedCar && (
+						<div className="mb-6 p-4 border rounded-md bg-muted">
+							<h3 className="font-medium mb-2">
+								Selected Car:
+							</h3>
+							<div className="grid grid-cols-2 gap-4">
+								<p>
+									<strong>Make:</strong>{" "}
+									{selectedCar.car_make}
+								</p>
+								<p>
+									<strong>Model:</strong>{" "}
+									{selectedCar.car_model}
+								</p>
+								<p>
+									<strong>Chassis:</strong>{" "}
+									{selectedCar.chasis_number}
+								</p>
+								<p>
+									<strong>Year:</strong>{" "}
+									{selectedCar.manufacture_year}
+								</p>
+							</div>
+						</div>
+					)}
+
 					{isLoading ? (
-						<Loader />
+						<Loader className="w-8 h-8" />
 					) : salesData?.data && salesData.data.length > 0 ? (
 						<>
 							<div className="flex items-center justify-between py-4">
@@ -460,52 +545,36 @@ export default function CarSalePage() {
 								control={form.control}
 								name="car_id"
 								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Car</FormLabel>
-										<Select
-											onValueChange={(value) =>
-												field.onChange(
-													Number(value)
-												)
-											}
-										>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue placeholder="Select car" />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												{carList?.data.map(
-													(car: any) => (
-														<SelectItem
-															key={
-																car
-																	?.car
-																	.ID
-															}
-															value={car?.car.ID.toString()}
-														>
-															{
-																car
-																	.car
-																	.make
-															}{" "}
-															{
-																car
-																	.car
-																	.car_model
-															}{" "}
-															-{" "}
-															{
-																car
-																	.car
-																	.chasis_number
-															}
-														</SelectItem>
-													)
-												)}
-											</SelectContent>
-										</Select>
+									<FormItem className="col-span-2">
+										<FormLabel>
+											Search Car
+										</FormLabel>
+										<FormControl>
+											<Input
+												placeholder="Search by VIN/chassis number"
+												value={searchChasis}
+												onChange={
+													handleSearchInputChange
+												}
+											/>
+										</FormControl>
+										{selectedCar && (
+											<div className="mt-2 p-4 border rounded-md">
+												<p className="font-medium">
+													Selected:{" "}
+													{
+														selectedCar.car_make
+													}{" "}
+													{
+														selectedCar.car_model
+													}{" "}
+													-{" "}
+													{
+														selectedCar.chasis_number
+													}
+												</p>
+											</div>
+										)}
 										<FormMessage />
 									</FormItem>
 								)}
@@ -640,6 +709,11 @@ export default function CarSalePage() {
 											<Input
 												type="date"
 												{...field}
+												required
+												value={
+													field.value ||
+													""
+												}
 											/>
 										</FormControl>
 										<FormMessage />

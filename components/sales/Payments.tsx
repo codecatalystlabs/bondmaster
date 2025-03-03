@@ -38,7 +38,6 @@ export function PaymentsTable({ data }: DataTableProps) {
     { accessorKey: "ID", header: "ID" },
     { accessorKey: "mode_of_payment", header: "Payment Mode" },
     { accessorKey: "transaction_id", header: "Transaction ID" },
-    { accessorKey: "sale_payment_id", header: "Sale Payment ID" },
     { accessorKey: "created_by", header: "Created By" },
     { accessorKey: "updated_by", header: "Updated By" },
   ];
@@ -51,8 +50,6 @@ export function PaymentsTable({ data }: DataTableProps) {
   });
 
   return (
-    <div className="rounded-md border p-4">
-              <Button onClick={() => setOpenDialog(true)} className="mb-4">New Payment</Button>
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -89,8 +86,5 @@ export function PaymentsTable({ data }: DataTableProps) {
         </TableBody>
       </Table>
 
-      <PaymentDialog open={openDialog} onOpenChange={setOpenDialog}  />
-
-    </div>
   );
 }
