@@ -15,7 +15,13 @@ import useSWR from "swr";
 import { fetcher } from "@/apis";
 
 export function UgandaDashboard() {
-	const { data: dashData, error, isLoading } = useSWR(`/car/dash`, fetcher);
+
+	const storedUserData = JSON.parse(
+		localStorage.getItem("user-details") || "{}"
+	);
+
+	const companyId = storedUserData?.state?.user?.company_id;
+	const { data: dashData, error, isLoading } = useSWR(`/car/dash/${companyId}`, fetcher);
 
 	const stats = [
 		{

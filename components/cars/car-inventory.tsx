@@ -146,9 +146,13 @@ export function CarInventory() {
 			);
 		}
 
-		const baseEndpoint = companyId
-			? `/cars/search?to_company_id=${companyId}`
-			: "/cars";
+		let baseEndpoint = "/cars";
+
+		if (companyId) {
+			baseEndpoint = companyId === 1
+				? `/cars/search?to_company_id=${companyId}`
+				: `/cars/search?from_company_id=${companyId}`;
+		}
 
 		const queryString = queryParams.toString().replace(/&/g, "&&");
 		return queryString

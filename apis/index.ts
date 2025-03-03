@@ -173,13 +173,13 @@ const addSale = async ({ url, sale }: ISale) => {
 };
 
 const addPayment = async ({ url, payment }: any) => {
-    console.log(payment,"MAMAJAJJA")
     const { data } = await apiClient.post(url, payment);
     return data;
 };
 
-const addDeposit = async ({ url, sale }: any) => {
-    const { data } = await apiClient.post(url, sale);
+const addDeposit = async ({ url, deposit }: any) => {
+    console.log(deposit,"AM THE DEPOSIT")
+    const { data } = await apiClient.post(url, deposit);
     return data;
 };
 

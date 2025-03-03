@@ -254,12 +254,12 @@ console.log(invoices,"AM INVOICES")
 							Overview
 						</TabsTrigger>
 						<TabsTrigger value="sales">Sales</TabsTrigger>
-						<TabsTrigger value="invoice">Invoices</TabsTrigger>
-						<TabsTrigger value="payments">Payments</TabsTrigger>
+						{/* <TabsTrigger value="invoice">Invoices</TabsTrigger>
+						<TabsTrigger value="payments">Payments</TabsTrigger> */}
 
-						<TabsTrigger value="analytics">
+						{/* <TabsTrigger value="analytics">
 							Analytics
-						</TabsTrigger>
+						</TabsTrigger> */}
 					</TabsList>
 					<TabsContent value="overview">
 						<div className="space-y-4">
@@ -304,7 +304,7 @@ console.log(invoices,"AM INVOICES")
 									</CardContent>
 								</Card>
 							)}
-							<SalesVisualization sales={sales} />
+							<SalesVisualization sales={fetchedSales} />
 						</div>
 					</TabsContent>
 					<TabsContent value="sales">
@@ -320,7 +320,7 @@ console.log(invoices,"AM INVOICES")
 							onDeleteSale={handleDelete}
 						/>
 					</TabsContent>
-					<TabsContent value="invoice">
+					{/* <TabsContent value="invoice">
 						<div className="space-y-4">
                           <InvoiceTable data={invoices?.data} />
 						</div>
@@ -329,10 +329,10 @@ console.log(invoices,"AM INVOICES")
 						<div className="space-y-4">
                           <PaymentsTable data={payments?.data}/>
 						</div>
-					</TabsContent>
-					<TabsContent value="analytics">
+					</TabsContent> */}
+					{/* <TabsContent value="analytics">
 						<SalesVisualization sales={sales} />
-					</TabsContent>
+					</TabsContent> */}
 				</Tabs>
 			</CardContent>
 		</Card>
