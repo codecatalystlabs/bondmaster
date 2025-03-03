@@ -11,7 +11,6 @@ interface DataTableProps {
 export function InvoiceTable({ data }: DataTableProps) {
   const columns: ColumnDef<any>[] = [
     { accessorKey: "ID", header: "Invoice Id" },
-    { accessorKey: "name", header: "Car Make" },
     {
         accessorKey: "payment_date",
         header: "Payment Date",
@@ -28,7 +27,7 @@ export function InvoiceTable({ data }: DataTableProps) {
   });
 
   return (
-    <div className="rounded-md border">
+    
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -61,6 +60,6 @@ export function InvoiceTable({ data }: DataTableProps) {
           )}
         </TableBody>
       </Table>
-    </div>
+    
   );
 }
