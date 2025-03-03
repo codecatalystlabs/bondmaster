@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, Trash2, FileText } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -57,6 +57,8 @@ import useSWR, { mutate } from "swr";
 import { createCustomer, deleteCustomer, editCustomer, fetcher } from "@/apis";
 import { BASE_URL } from "@/constants/baseUrl";
 import toast from "react-hot-toast";
+import { useState } from "react";
+import { formatAmount } from "@/lib/utils";
 
 const formSchema = z.object({
 	surname: z.string().min(1, "Surname is required."),
@@ -74,9 +76,159 @@ const formSchema = z.object({
 	telephone: z.string().min(10, "Telephone must be at least 10 characters."),
 	email: z.string().email("Invalid email address."),
 	nin: z.string().min(1, "NIN is required."),
-	upload_file: z.instanceof(File).optional()
-
+	upload_file: z.instanceof(File).optional(),
 });
+
+function CustomerStatementModal({
+	customerId,
+	isOpen,
+	onClose,
+}: {
+	customerId: number;
+	isOpen: boolean;
+	onClose: () => void;
+}) {
+	const {
+		data: statement,
+		error,
+		isLoading,
+	} = useSWR(isOpen ? `/sale/statement/${customerId}` : null, fetcher);
+
+	return (
+		<Dialog
+			open={isOpen}
+			onOpenChange={onClose}
+		>
+			<DialogContent className="sm:max-w-[500px]">
+				<DialogHeader>
+					<DialogTitle>Customer Statement</DialogTitle>
+					<DialogDescription>
+						Financial statement for customer
+					</DialogDescription>
+				</DialogHeader>
+
+				{isLoading ? (
+					<div className="flex justify-center p-4">
+						<Loader className="w-8 h-8" />
+					</div>
+				) : error ? (
+					<div className="text-red-500">
+						Error loading statement
+					</div>
+				) : statement ? (
+					<div className="space-y-4">
+						<div className="grid grid-cols-2 gap-2">
+							<div className="font-medium">
+								Customer Name:
+							</div>
+							<div>{statement.data.customer_name}</div>
+
+							<div className="font-medium">
+								Total Sales:
+							</div>
+							<div>
+								{formatAmount(
+									statement.data.total_sales,
+									""
+								)}
+							</div>
+
+							<div className="font-medium">
+								Total Paid:
+							</div>
+							<div>
+								{formatAmount(
+									statement.data.total_paid,
+									""
+								)}
+							</div>
+
+							<div className="font-medium">
+								Outstanding Balance:
+							</div>
+							<div
+								className={
+									statement.data.total_outstanding >
+									0
+										? "text-red-500 font-bold"
+										: "text-green-500"
+								}
+							>
+								{formatAmount(
+									statement.data.total_outstanding,
+									""
+								)}
+							</div>
+						</div>
+
+						{statement.data.sales &&
+						statement.data.sales.length > 0 ? (
+							<div className="mt-4">
+								<h3 className="font-semibold mb-2">
+									Sales History
+								</h3>
+								<Table>
+									<TableHeader>
+										<TableRow>
+											<TableHead>
+												Date
+											</TableHead>
+											<TableHead>
+												Amount
+											</TableHead>
+											<TableHead>
+												Status
+											</TableHead>
+										</TableRow>
+									</TableHeader>
+									<TableBody>
+										{statement.data.sales.map(
+											(sale: any) => (
+												<TableRow
+													key={sale.ID}
+												>
+													<TableCell>
+														{new Date(
+															sale.sale_date
+														).toLocaleDateString()}
+													</TableCell>
+													<TableCell>
+														{formatAmount(
+															sale.total_price,
+															""
+														)}
+													</TableCell>
+													<TableCell>
+														<span
+															className={
+																sale.payment_status ===
+																"Paid"
+																	? "text-green-500"
+																	: "text-red-500"
+															}
+														>
+															{
+																sale.payment_status
+															}
+														</span>
+													</TableCell>
+												</TableRow>
+											)
+										)}
+									</TableBody>
+								</Table>
+							</div>
+						) : (
+							<p className="text-muted-foreground">
+								No sales history available
+							</p>
+						)}
+					</div>
+				) : null}
+			</DialogContent>
+		</Dialog>
+	);
+}
 
 export function CustomerManagement() {
 	const [search, setSearch] = React.useState("");
@@ -85,6 +237,10 @@ export function CustomerManagement() {
 	const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 	const [editingCustomer, setEditingCustomer] =
 		React.useState<CustomerResponse | null>(null);
+	const [selectedCustomerId, setSelectedCustomerId] = useState<
+		number | null
+	>(null);
+	const [isStatementModalOpen, setIsStatementModalOpen] = useState(false);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -99,7 +255,7 @@ export function CustomerManagement() {
 			telephone: "",
 			email: "",
 			nin: "",
-			upload_file:undefined
+			upload_file: undefined,
 		},
 	});
 
@@ -191,24 +347,27 @@ export function CustomerManagement() {
 	}
 
 	const handleDeleteCustomer = async () => {
-      console.log(editingCustomer,"AM THE USERRERERERER")
-	  const response = await deleteCustomer(`${BASE_URL}/customer/${editingCustomer?.ID}`);
+		console.log(editingCustomer, "AM THE USERRERERERER");
+		const response = await deleteCustomer(
+			`${BASE_URL}/customer/${editingCustomer?.ID}`
+		);
 
-	mutate(`${BASE_URL}/customers`);
-	if (response.data) {
-		toast.success("Customer deleted successfully");
-	}
+		mutate(`${BASE_URL}/customers`);
+		if (response.data) {
+			toast.success("Customer deleted successfully");
+		}
 	};
 
 	const filteredCustomers = customerList?.data?.filter((info: any) => {
-		return (
-		  (search
-			? info?.customer?.surname.toLowerCase().includes(search.toLowerCase()) ||
-			  info?.customer?.firstname.toLowerCase().includes(search.toLowerCase())
-			: true) 
-		);
-	  });
-	  
+		return search
+			? info?.customer?.surname
+					.toLowerCase()
+					.includes(search.toLowerCase()) ||
+					info?.customer?.firstname
+						.toLowerCase()
+						.includes(search.toLowerCase())
+			: true;
+	});
 
 	return (
 		<>
@@ -481,8 +640,6 @@ export function CustomerManagement() {
 													</FormItem>
 												)}
 											/>
-                                           
-
 
 											<FormField
 												control={
@@ -506,25 +663,39 @@ export function CustomerManagement() {
 												)}
 											/>
 
-<FormField
-								control={form.control}
-								name="upload_file"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Upload File</FormLabel>
-										<FormControl>
-											<Input
-												type="file"
-												onChange={(e) => {
-													const file = e.target.files?.[0];
-													field.onChange(file);
-												}}
+											<FormField
+												control={
+													form.control
+												}
+												name="upload_file"
+												render={({
+													field,
+												}) => (
+													<FormItem>
+														<FormLabel>
+															Upload
+															File
+														</FormLabel>
+														<FormControl>
+															<Input
+																type="file"
+																onChange={(
+																	e
+																) => {
+																	const file =
+																		e
+																			.target
+																			.files?.[0];
+																	field.onChange(
+																		file
+																	);
+																}}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
 											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
 										</div>
 									</form>
 								</Form>
@@ -547,16 +718,15 @@ export function CustomerManagement() {
 							</DialogContent>
 						</Dialog>
 					</div>
+					<div className="mb-4 flex space-x-4">
+						<Input
+							placeholder="Search by name"
+							value={search}
+							onChange={(e) => setSearch(e.target.value)}
+						/>
+					</div>
 					<Table>
 						<TableHeader>
-							      <div className="mb-4 flex space-x-4">
-        <Input 
-          placeholder="Search by name" 
-          value={search} 
-          onChange={(e) => setSearch(e.target.value)} 
-        />
-
-      </div>
 							<TableRow>
 								<TableHead>Name</TableHead>
 								<TableHead>Gender</TableHead>
@@ -609,7 +779,10 @@ export function CustomerManagement() {
 												}
 											</TableCell>
 											<TableCell>
-												{item?.customer?.age}
+												{
+													item?.customer
+														?.age
+												}
 											</TableCell>
 											<TableCell>
 												{
@@ -625,6 +798,22 @@ export function CustomerManagement() {
 											</TableCell>
 											<TableCell>
 												<div className="flex items-center space-x-2">
+													<Button
+														variant="ghost"
+														size="icon"
+														onClick={() => {
+															setSelectedCustomerId(
+																item
+																	.customer
+																	.ID
+															);
+															setIsStatementModalOpen(
+																true
+															);
+														}}
+													>
+														<FileText className="h-4 w-4" />
+													</Button>
 													<Button
 														variant="ghost"
 														size="icon"
@@ -648,7 +837,7 @@ export function CustomerManagement() {
 															<Button
 																variant="ghost"
 																size="icon"
-																onClick={()=>{
+																onClick={() => {
 																	setEditingCustomer(
 																		{
 																			...item.customer,
@@ -694,7 +883,9 @@ export function CustomerManagement() {
 																	Cancel
 																</AlertDialogCancel>
 																<AlertDialogAction
-																	onClick={handleDeleteCustomer}
+																	onClick={
+																		handleDeleteCustomer
+																	}
 																>
 																	Delete
 																</AlertDialogAction>
@@ -710,6 +901,13 @@ export function CustomerManagement() {
 						</TableBody>
 					</Table>
 				</div>
+			)}
+			{selectedCustomerId && (
+				<CustomerStatementModal
+					customerId={selectedCustomerId}
+					isOpen={isStatementModalOpen}
+					onClose={() => setIsStatementModalOpen(false)}
+				/>
 			)}
 		</>
 	);
